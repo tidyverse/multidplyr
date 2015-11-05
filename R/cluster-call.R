@@ -33,6 +33,11 @@ cluster_call.cluster <- function(.cl, .fun, ...) {
 }
 
 #' @export
+cluster_call.src_cluster <- function(.cl, .fun, ...) {
+  parallel::clusterCall(cl = .cl$cluster, fun = .fun, ...)
+}
+
+#' @export
 cluster_call.party_df <- function(.cl, .fun, ...) {
   cluster_call(.cl = .cl$cluster, .fun = .fun, ...)
 }
