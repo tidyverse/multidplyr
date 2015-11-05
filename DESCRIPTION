@@ -18,7 +18,8 @@ Imports:
     magrittr,
     parallel
 Suggests: 
-    nycflights13
+    nycflights13,
+    testthat
 RoxygenNote: 5.0.0
 URL: https://github.com/hadley/dparty
 BugReports: https://github.com/hadley/dparty/issues
