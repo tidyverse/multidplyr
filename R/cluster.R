@@ -1,8 +1,3 @@
-
-cluster_call <- function(fun, ..., .cl = cluster_get()) {
-  parallel::clusterCall(cl = .cl, fun = fun, ...)
-}
-
 cluster_eval <- function(expr, env = globalenv(), .cl = cluster_get()) {
   cluster_call(eval, expr, env = env, .cl = .cl)
 }
