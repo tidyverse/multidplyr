@@ -1,6 +1,7 @@
 # dparty
 
 [![Travis-CI Build Status](https://travis-ci.org/hadley/dparty.svg?branch=master)](https://travis-ci.org/hadley/dparty)
+[![Coverage Status](https://img.shields.io/codecov/c/github/hadley/dparty/master.svg)](https://codecov.io/github/hadley/dparty?branch=master)
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/dparty)](http://cran.r-project.org/package=dparty)
 
 dparty is a backend for dplyr that partitions a data frame across multiple cores. You tell dparty how to split the data up with `partition()` and then the data stays on each node until you explicitly retrieve it with `collect()`. This minimises the amount of time spent moving data around, and maximises parallel performance. This idea is inspired by [partools](http://bit.ly/1Nve8v5) by Norm Matloff and [distributedR](http://bit.ly/1KZVAwK) by the Vertica Analytics team.
