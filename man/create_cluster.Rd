@@ -7,13 +7,13 @@
 create_cluster(cores = NA, quiet = FALSE)
 }
 \arguments{
+\item{cores}{Number of cores to use. If \code{NA} will uses at least two
+cores, but if yo have extra it leaves one free for other stuff.}
+
 \item{quiet}{If \code{TRUE}, don't display initialisation message.}
 }
 \description{
 Clusters created with this function will automatically clean up after
 themselves. will automatically automatically clean up after itself.
-}
-\examples{
-c <- create_cluster()
 }
 

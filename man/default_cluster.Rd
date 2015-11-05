@@ -10,9 +10,12 @@ set_default_cluster(x)
 
 get_default_cluster()
 }
+\arguments{
+\item{x}{New cluster to use as default.}
+}
 \description{
-For parallel operations in \code{\link{do}}, dplyr maintains a light-weight
-local cluster. Cluster creation is relatively expensive (around a second)
+If no cluster is currently active, \code{get_default_cluster()} will create
+one.
 }
 \examples{
 get_default_cluster()

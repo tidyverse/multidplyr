@@ -41,10 +41,11 @@ can evaluate \code{expr} once on each code.}
   for each node.
 }
 \description{
-Object management
+If \code{cluster_assign_expr} fails on one node, successfully created
+objects will be automatically deleted on all the other nodes.
 }
 \examples{
-cl <- create_cluster(2)
+cl <- get_default_cluster()
 cl \%>\%
   cluster_assign_value("x", 10) \%>\%
   cluster_get("x")

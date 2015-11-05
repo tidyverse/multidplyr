@@ -12,7 +12,7 @@
 #' @return A list, with one element for each node.
 #' @export
 #' @examples
-#' cl <- create_cluster(2)
+#' cl <- get_default_cluster()
 #'
 #' # When given function object, it's copied to each node:
 #' f <- function() 0

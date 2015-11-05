@@ -1,5 +1,8 @@
 #' Object management
 #'
+#' If \code{cluster_assign_expr} fails on one node, successfully created
+#' objects will be automatically deleted on all the other nodes.
+#'
 #' @param cluster Cluster to work on
 #' @param name Name of variable as string.
 #' @param value,values,expr There are three ways to do assignment:
@@ -14,7 +17,7 @@
 #'   \code{cluster_ls} and \code{cluster_get} return lists with one element
 #'   for each node.
 #' @examples
-#' cl <- create_cluster(2)
+#' cl <- get_default_cluster()
 #' cl %>%
 #'   cluster_assign_value("x", 10) %>%
 #'   cluster_get("x")
@@ -38,11 +41,11 @@ cluster_assign_expr <- function(cluster, name, expr) {
   stopifnot(is.character(name))
   stopifnot(is.name(expr) || is.atomic(expr) || is.call(expr))
 
-  # If any fail, need to delete results everywhere
+  # If any nodes fail, delete assignment on all nodes
   tryCatch(
     cluster_call(.cl = cluster, assign_eval, name, expr),
     error = function(e) {
-      cluster_rm(cl, name)
+      cluster_rm(cluster, name)
       stop(e)
     }
   )

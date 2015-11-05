@@ -5,9 +5,9 @@
 \alias{cluster_eval_}
 \title{Evaluate arbitrary code on each node}
 \usage{
-cluster_eval(cluster, expr, env = globalenv())
+cluster_eval(cluster, expr)
 
-cluster_eval_(cluster, expr, env = globalenv())
+cluster_eval_(cluster, expr)
 }
 \arguments{
 \item{cluster}{Cluster to work on}
@@ -17,10 +17,11 @@ evaluation to automatically quote. For \code{cluster_eval_}, you must
 quote it yourself.}
 }
 \description{
-Evaluate arbitrary code on each node
+Note that you can only evaluate in the global environment: it doesn't
+seem to make much sense to evaluate elsewhere on remote nodes.
 }
 \examples{
-cl <- create_cluster(2)
+cl <- get_default_cluster()
 cl \%>\% cluster_eval(1 + 1)
 cl \%>\% cluster_eval_(quote(1 + 1))
 }

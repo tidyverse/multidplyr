@@ -27,7 +27,7 @@ This is an S3 generic, and is the only method that \pkg{dparty} needs
 in order to use a cluster.
 }
 \examples{
-cl <- create_cluster(2)
+cl <- get_default_cluster()
 
 # When given function object, it's copied to each node:
 f <- function() 0

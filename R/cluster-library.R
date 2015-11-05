@@ -1,7 +1,7 @@
 #' Attach a library on each node.
 #'
 #' @inheritParams objman
-#' @param package A character vector of package names
+#' @param packages A character vector of package names
 #' @export
 #' @examples
 #' cl <- create_cluster(2)

@@ -1,7 +1,7 @@
 #' Cluster management.
 #'
-#' For parallel operations in \code{\link{do}}, dplyr maintains a light-weight
-#' local cluster. Cluster creation is relatively expensive (around a second)
+#' If no cluster is currently active, \code{get_default_cluster()} will create
+#' one.
 #'
 #' @name default_cluster
 #' @examples
@@ -12,6 +12,7 @@ cluster_env <- new.env(parent = emptyenv())
 
 #' @export
 #' @rdname default_cluster
+#' @param x New cluster to use as default.
 set_default_cluster <- function(x) {
   if (!inherits(x, "cluster")) {
     stop("x is not a cluster", call. = FALSE)

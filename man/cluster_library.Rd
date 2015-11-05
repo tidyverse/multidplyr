@@ -9,7 +9,7 @@ cluster_library(cluster, packages)
 \arguments{
 \item{cluster}{Cluster to work on}
 
-\item{package}{A character vector of package names}
+\item{packages}{A character vector of package names}
 }
 \description{
 Attach a library on each node.
