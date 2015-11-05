@@ -10,6 +10,8 @@
 #' s %>% filter(vs == 1)
 #' s %>% summarise(n())
 #' s %>% select(-cyl)
+#'
+#' s %>% do(mod = lm(mpg ~ cyl, data = . ))
 partition <- function(.data, cluster = get_default_cluster()) {
   idx <- parallel::splitIndices(nrow(.data), length(cluster))
   shards <- lapply(idx, function(i) .data[i, , drop = FALSE])
@@ -137,6 +139,14 @@ select_.party_df <- function(.data, ..., .dots = list()) {
 group_by_.party_df <- function(.data, ..., .dots = list()) {
   shard_call(.data, quote(dplyr::group_by), ..., .dots = .dots)
 }
+
+#' @importFrom dplyr do_
+#' @method do_ party_df
+#' @export
+do_.party_df <- function(.data, ..., .dots = list()) {
+  shard_call(.data, quote(dplyr::do), ..., .dots = .dots)
+}
+
 
 shard_call <- function(df, fun, ..., .dots) {
   dots <- lazyeval::all_dots(.dots, ...)

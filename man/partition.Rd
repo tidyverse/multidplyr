@@ -21,5 +21,7 @@ s \%>\% mutate(cyl2 = 2 * cyl)
 s \%>\% filter(vs == 1)
 s \%>\% summarise(n())
 s \%>\% select(-cyl)
+
+s \%>\% do(mod = lm(mpg ~ cyl, data = . ))
 }
 
