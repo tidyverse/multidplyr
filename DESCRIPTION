@@ -1,11 +1,16 @@
 Package: dparty
-Title: What the Package Does (one line, title case)
+Title: Partitioned data frames for 'dplyr'
 Version: 0.0.0.9000
 Authors@R: c(
     person("Hadley", "Wickham", , "hadley@rstudio.com", role = c("aut", "cre")),
     person("RStudio", role = "cph")
   )
-Description: What the package does (one paragraph).
+Description: A dplyr backend that partitions a data frame across multiple nodes
+    in a cluster (e.g. cores on your computer) to make common operations
+    faster.
 Depends: R (>= 3.2.1)
 License: GPL-3
 LazyData: true
+Imports:
+    dplyr,
+    parallel
