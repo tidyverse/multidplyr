@@ -4,10 +4,13 @@
 \alias{partition}
 \title{Partition data across a cluster.}
 \usage{
-partition(.data, cluster = get_default_cluster())
+partition(.data, ..., cluster = get_default_cluster())
 }
 \arguments{
 \item{.data}{Dataset to partition}
+
+\item{...}{Variables to partition by. Make sure you have more groups
+than clusters. This grouping}
 
 \item{cluster}{Cluster to use.}
 }
@@ -22,6 +25,12 @@ s \%>\% filter(vs == 1)
 s \%>\% summarise(n())
 s \%>\% select(-cyl)
 
-s \%>\% do(mod = lm(mpg ~ cyl, data = . ))
+if (require("nycflights13")) {
+planes <- partition(flights, tailnum)
+summarise(planes, n())
+
+month <- partition(flights, month)
+month \%>\% group_by(day) \%>\% summarise(n())
+}
 }
 

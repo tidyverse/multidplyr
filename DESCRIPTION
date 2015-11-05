@@ -17,4 +17,6 @@ Imports:
     lazyeval,
     magrittr,
     parallel
+Suggests:
+    nycflights13
 RoxygenNote: 5.0.0
