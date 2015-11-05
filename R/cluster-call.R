@@ -12,8 +12,17 @@
 #' @return A list, with one element for each node.
 #' @export
 #' @examples
-#' c <- get_default_cluster()
-#' cluster_call(c, "ls", envir = globalenv())
+#' cl <- create_cluster(2)
+#'
+#' # When given function object, it's copied to each node:
+#' f <- function() 0
+#' cl %>% cluster_call(f)
+#'
+#' # When given a string, the function with that name is
+#' # called on each node
+#' cl %>%
+#'   cluster_assign_each("f", list(function() 1, function() 2)) %>%
+#'   cluster_call("f")
 cluster_call <- function(.cl, .fun, ...) {
   UseMethod("cluster_call")
 }
