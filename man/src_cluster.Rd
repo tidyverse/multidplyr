@@ -13,6 +13,12 @@ src_cluster(cluster = get_default_cluster())
 A cluster.
 }
 \examples{
-src_cluster()
+library(dplyr)
+cl <- src_cluster()
+
+# Copying a data frame to a src_cluster copies it once to each node.
+# This isn't usually useful unless you plan on joining it to a data
+# frame created with partition()
+copy_to(cl, mtcars)
 }
 
