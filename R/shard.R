@@ -134,7 +134,7 @@ head.party_df <- function(x, n = 6L, ...) {
 
 #' @export
 print.party_df <- function(x, ..., n = NULL, width = NULL) {
-  cat("Source: sharded data frame ", dplyr::dim_desc(x), "\n", sep = "")
+  cat("Source: party_df ", dplyr::dim_desc(x), "\n", sep = "")
 
   if (length(x$groups) > 0) {
     groups <- vapply(x$groups, as.character, character(1))
