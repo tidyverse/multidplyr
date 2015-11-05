@@ -11,7 +11,6 @@
 #' s %>% summarise(n())
 #' s %>% select(-cyl)
 partition <- function(.data, cluster = get_default_cluster()) {
-
   idx <- parallel::splitIndices(nrow(.data), length(cluster))
   shards <- lapply(idx, function(i) .data[i, , drop = FALSE])
 
