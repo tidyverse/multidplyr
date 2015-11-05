@@ -27,7 +27,7 @@ flights2
 
 # Operations on a partitioned df (or party_df for short) 
 # are executed simultaneously on each node. 
-flights %>% mutate(delta = dep_delay - arr_delay)
+flights3 <- flights2 %>% mutate(delta = dep_delay - arr_delay)
 
 # The data is left on nodes until you explicitly retrieve it
 collect(flights2)
