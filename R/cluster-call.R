@@ -2,7 +2,7 @@
 #'
 #' @section S3:
 #'
-#' This is an S3 generic, and is the only method that \pkg{dparty} needs
+#' This is an S3 generic, and is the only method that \pkg{multidplyr} needs
 #' in order to use a cluster.
 #'
 #' @param .cl A cluster

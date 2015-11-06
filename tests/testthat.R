@@ -1,4 +1,4 @@
 library(testthat)
-library(dparty)
+library(multidplyr)
 
-test_check("dparty")
+test_check("multidplyr")

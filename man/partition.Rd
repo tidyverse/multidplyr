@@ -10,7 +10,8 @@ partition(.data, ..., cluster = get_default_cluster())
 \item{.data}{Dataset to partition}
 
 \item{...}{Variables to partition by. Make sure you have more groups
-than clusters. This grouping}
+than clusters. If omitted, will randomly divide data into one chunk
+per cluster.}
 
 \item{cluster}{Cluster to use.}
 }
