@@ -14,7 +14,7 @@ create_cluster <- function(cores = NA, quiet = FALSE) {
   }
 
   if (!quiet) message("Initialising ", cores, " core cluster.")
-  cluster <- parallel::makePSOCKcluster(cores, timeout = 10)
+  cluster <- parallel::makePSOCKcluster(cores)
   attr(cluster, "finaliser") <- cluster_stop(cluster)
 
   cluster
