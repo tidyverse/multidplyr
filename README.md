@@ -26,7 +26,7 @@ library(nycflights13)
 
 # This creates a local cluster and then evenly shares
 # the dataframe over the nodes
-flights2 <- flights %>% partition()
+flights2 <- flights %>% partition(flight)
 flights2
 
 # Operations on a partitioned df (or party_df for short) 
@@ -34,5 +34,5 @@ flights2
 flights3 <- flights2 %>% mutate(delta = dep_delay - arr_delay)
 
 # The data is left on nodes until you explicitly retrieve it
-collect(flights2)
+collect(flights3)
 ```
