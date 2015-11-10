@@ -9,9 +9,9 @@ partition(.data, ..., cluster = get_default_cluster())
 \arguments{
 \item{.data}{Dataset to partition}
 
-\item{...}{Variables to partition by. Make sure you have more groups
-than clusters. If omitted, will randomly divide data into one chunk
-per cluster.}
+\item{...}{Variables to partition by. Will generally work best when you
+have many more groups than nodes. If omitted, will randomly parition
+rows across nodes.}
 
 \item{cluster}{Cluster to use.}
 }

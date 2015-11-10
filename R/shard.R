@@ -1,9 +1,9 @@
 #' Partition data across a cluster.
 #'
 #' @param .data Dataset to partition
-#' @param ... Variables to partition by. Make sure you have more groups
-#'   than clusters. If omitted, will randomly divide data into one chunk
-#'   per cluster.
+#' @param ... Variables to partition by. Will generally work best when you
+#'   have many more groups than nodes. If omitted, will randomly parition
+#'   rows across nodes.
 #' @param cluster Cluster to use.
 #' @export
 #' @examples
