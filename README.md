@@ -8,6 +8,8 @@ multidplyr is a backend for dplyr that partitions a data frame across multiple c
 
 Due to the overhead associated with communicating between the nodes, you won't expect to see much performance improvement on basic dplyr verbs with less than ~10 million observations. However, you'll see improvements much faster if you're doing more complex operations with `do()`.
 
+To learn more, read the [vignette](vignette/multidplyr.md).
+
 ## Installation
 
 To install from GitHub:
@@ -15,24 +17,4 @@ To install from GitHub:
 ```R
 # install.packages("devtools")
 devtools::install_github("hadley/multidplyr")
-```
-
-## Examples
-
-```R
-library(dplyr)
-library(multidplyr)
-library(nycflights13)
-
-# This creates a local cluster and then evenly shares
-# the dataframe over the nodes
-flights2 <- flights %>% partition(flight)
-flights2
-
-# Operations on a partitioned df (or party_df for short) 
-# are executed simultaneously on each node. 
-flights3 <- flights2 %>% mutate(delta = dep_delay - arr_delay)
-
-# The data is left on nodes until you explicitly retrieve it
-collect(flights3)
 ```
