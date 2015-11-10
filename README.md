@@ -8,7 +8,7 @@ multidplyr is a backend for dplyr that partitions a data frame across multiple c
 
 Due to the overhead associated with communicating between the nodes, you won't expect to see much performance improvement on basic dplyr verbs with less than ~10 million observations. However, you'll see improvements much faster if you're doing more complex operations with `do()`.
 
-To learn more, read the [vignette](vignette/multidplyr.md).
+To learn more, read the [vignette](vignettes/multidplyr.md).
 
 ## Installation
 
