@@ -159,7 +159,7 @@ as.data.frame.party_df <- function(x, row.names, optional, ...) {
 #' @method collect party_df
 #' @export
 collect.party_df <- function(.data, ...) {
-  as.data.frame(.data)
+  group_by_(as.data.frame(.data), .dots = c(.data$partitions, .data$groups))
 }
 
 # Methods passed on to shards ---------------------------------------------
