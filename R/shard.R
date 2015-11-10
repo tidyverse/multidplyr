@@ -142,8 +142,9 @@ print.party_df <- function(x, ..., n = NULL, width = NULL) {
   }
 
   shards <- shard_rows(x)
-  cat("Shards: ", length(shards), " [", min(shards), "--", max(shards),
-    " rows]\n", sep = "")
+  cat("Shards: ", length(shards),
+    " [", big_mark(min(shards)), "--", big_mark(max(shards)), " rows]\n",
+    sep = "")
   cat("\n")
   print(dplyr::trunc_mat(x, n = n, width = width))
 
