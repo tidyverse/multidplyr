@@ -12,7 +12,7 @@ cluster_library(cluster, packages)
 \item{packages}{A character vector of package names}
 }
 \description{
-Attach a library on each node.
+Also attached the library in the current session.
 }
 \examples{
 cl <- create_cluster(2)
