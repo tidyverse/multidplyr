@@ -8,20 +8,21 @@ Authors@R: c(
 Description: A dplyr backend that partitions a data frame across multiple nodes
     in a cluster (e.g. cores on your computer) to make common operations
     faster.
-Depends: 
+Depends:
     R (>= 3.2.1)
 License: GPL-3
 LazyData: true
-Imports: 
+Imports:
     dplyr,
     lazyeval,
     magrittr,
     parallel
-Suggests: 
+Suggests:
     nycflights13,
     testthat,
     knitr,
-    rmarkdown
+    rmarkdown,
+    lubridate
 RoxygenNote: 5.0.0
 URL: https://github.com/hadley/multidplyr
 BugReports: https://github.com/hadley/multidplyr/issues
