@@ -38,5 +38,6 @@ cluster_stop <- function(x) {
 }
 
 in_check <- function() {
-  grepl("Rcheck$", getwd())
+  paths <- strsplit(getwd(), "/", fixed = TRUE)[[1]]
+  any(grepl("Rcheck$", paths))
 }

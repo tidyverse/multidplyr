@@ -47,21 +47,21 @@ The dplyr code looks the same as usual, but behind the scenes things are very di
 ```r
 flights2
 #> Source: party_df [3,844 x 2]
-#> Shards: 7 [514--593 rows]
+#> Shards: 7 [482--603 rows]
 #> 
-#>    flight dep_delay
-#>     (int)     (dbl)
-#> 1       4  7.516624
-#> 2       7 15.652542
-#> 3       8  6.935897
-#> 4      17 13.917431
-#> 5      29 27.710046
-#> 6      37 30.500000
-#> 7      51  4.804688
-#> 8      54 13.800000
-#> 9      57  4.488550
-#> 10     69 -1.250000
-#> ..    ...       ...
+#>    flight  dep_delay
+#>     (int)      (dbl)
+#> 1       1  5.2932761
+#> 2      16 -0.2500000
+#> 3      19 10.0500000
+#> 4      28 13.6000000
+#> 5      32 11.7884615
+#> 6      40 12.5166667
+#> 7      46  0.0000000
+#> 8      49 -0.4827586
+#> 9      59  3.6527197
+#> 10     65  7.6979167
+#> ..    ...        ...
 ```
 
 ## Performance
@@ -77,14 +77,14 @@ system.time({
     collect()
 })
 #>    user  system elapsed 
-#>   0.461   0.067   0.701
+#>   0.471   0.069   0.725
 system.time({
   flights %>% 
     group_by() %>%
     summarise(mean(dep_delay, na.rm = TRUE))
 })
 #>    user  system elapsed 
-#>   0.005   0.001   0.006
+#>   0.007   0.000   0.007
 ```
 
 That's because there's some overhead associated with sending the data to each node and retrieving the results at the end. For basic dplyr verbs, multidplyr is unlikely to give you significant speed ups unless you have 10s or 100s of millions of data points. It might however, if you're doing more complex things with `do()`. Let's see how that plays out.
@@ -109,10 +109,10 @@ This time, instead of allowing multidplyr to create a local cluster, we'll do it
 
 
 ```r
-cluster <- create_cluster(4)
-#> Initialising 4 core cluster.
+cluster <- create_cluster(2)
+#> Initialising 2 core cluster.
 cluster
-#> socket cluster with 4 nodes on host 'localhost'
+#> socket cluster with 2 nodes on host 'localhost'
 ```
 
 If you want, you can use `set_default_cluster()` so that `partition()` will use this cluster by default:
@@ -131,20 +131,20 @@ by_dest <- common_dest %>%
 by_dest
 #> Source: party_df [332,942 x 17]
 #> Groups: dest
-#> Shards: 4 [75,823--90,249 rows]
+#> Shards: 2 [154,965--177,977 rows]
 #> 
 #>     year month   day dep_time dep_delay arr_time arr_delay carrier tailnum
 #>    (int) (int) (int)    (int)     (dbl)    (int)     (dbl)   (chr)   (chr)
-#> 1   2013    10     1     1338       153     1446       121      EV  N713EV
-#> 2   2013    10     1     2308        69       17        50      EV  N754EV
-#> 3   2013    10     2     1133        28     1253         8      EV  N608QX
-#> 4   2013    10     2     2152        -7     2306       -21      EV  N722EV
-#> 5   2013    10     3     1304       119       NA        NA      EV  N612QX
-#> 6   2013    10     3     2211        12     2331         4      EV  N738EV
-#> 7   2013    10     4     1103        -2     1224       -21      EV  N759EV
-#> 8   2013    10     4     2239        40     2356        29      EV  N614QX
-#> 9   2013    10     5     1126        -4     1259        -7      EV  N730EV
-#> 10  2013    10     5     1808        -2     1924       -22      EV  N750EV
+#> 1   2013     1     1      554        -6      812       -25      DL  N668DN
+#> 2   2013     1     1      600         0      837        12      MQ  N542MQ
+#> 3   2013     1     1      606        -4      837        -8      DL  N3739P
+#> 4   2013     1     1      615         0      833        -9      DL  N326NB
+#> 5   2013     1     1      658        -2      944         5      DL  N6703D
+#> 6   2013     1     1      754        -5     1039        -2      DL  N935DL
+#> 7   2013     1     1      807        -3     1043         0      DL  N308DE
+#> 8   2013     1     1      814         4     1047        17      FL  N977AT
+#> 9   2013     1     1      830        -5     1052       -13      MQ  N513MQ
+#> 10  2013     1     1      855        -4     1143        -2      DL  N646DL
 #> ..   ...   ...   ...      ...       ...      ...       ...     ...     ...
 #> Variables not shown: flight (int), origin (chr), dest (chr), air_time
 #>   (dbl), distance (dbl), hour (dbl), minute (dbl), yday (dbl).
@@ -152,7 +152,7 @@ by_dest
 
 It's always a good idea to check the evenness of the partition - you'll get the most benefit when the rows are roughly even across all of the nodes.
 
-Let's fit a smoothed generalised additive model to each destination, estimating how delays vary over the course of the year and within a day. Note that we need to use `cluster_library()` to load the mgcv package on every node. That takes ~2.5s:
+Let's fit a smoothed generalised additive model to each destination, estimating how delays vary over the course of the year and within a day. Note that we need to use `cluster_library()` to load the mgcv package on every node. That takes 3.7s:
 
 
 ```r
@@ -162,10 +162,10 @@ system.time({
     do(mod = gam(dep_delay ~ s(yday) + s(dep_time), data = .))
 })
 #>    user  system elapsed 
-#>   0.002   0.001   2.652
+#>   0.001   0.000   3.973
 ```
 
-Compared with ~5s doing it locally:
+Compared with ~5.6s doing it locally:
 
 
 ```r
@@ -175,10 +175,10 @@ system.time({
     do(mod = gam(dep_delay ~ s(yday) + s(dep_time), data = .))
 })
 #>    user  system elapsed 
-#>   5.001   0.643   5.652
+#>   4.924   0.639   5.565
 ```
 
-That's not a great speed up, but generally you don't care about parallesing things that only take a couple of seconds. The cost of transmitting messages to the nodes is roughly fixed, so the longer the task you're parallelising, the closer to a linear speed up you'll get.
+That's not a great speed up, but generally you don't care about parallesing things that only take a couple of seconds. The cost of transmitting messages to the nodes is roughly fixed, so the longer the task you're parallelising, the closer to a linear speed up you'll get.  It'll also speed up with more nodes, but unfortunately vignettes are only allowed to use 2 nodes max, so I can't show you that here.
 
 ## Limitations
 

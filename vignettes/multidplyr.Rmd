@@ -12,6 +12,7 @@ vignette: >
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+set.seed(1014)
 ```
 
 multidplyr is a new backend for dplyr. You continue to use the dplyr verbs that you're familiar with, but instead of the computation happening on one core it's spread across multiple cores. You effectively create a local cluster on your computer, and then multidplyr takes care of telling each node what to do.
@@ -91,7 +92,7 @@ That leaves us with ~332,000 observations.
 This time, instead of allowing multidplyr to create a local cluster, we'll do it ourselves. The `create_cluster()` function provides a convenient wrapper around `parallel::makePSOCKcluster()`. The main different between the two functions is that `create_cluster()` setups your cluster in such a way that it will automatically close down when no objects refer to it.
 
 ```{r}
-cluster <- create_cluster(4)
+cluster <- create_cluster(2)
 cluster
 ```
 
@@ -111,7 +112,7 @@ by_dest
 
 It's always a good idea to check the evenness of the partition - you'll get the most benefit when the rows are roughly even across all of the nodes.
 
-Let's fit a smoothed generalised additive model to each destination, estimating how delays vary over the course of the year and within a day. Note that we need to use `cluster_library()` to load the mgcv package on every node. That takes ~2.5s:
+Let's fit a smoothed generalised additive model to each destination, estimating how delays vary over the course of the year and within a day. Note that we need to use `cluster_library()` to load the mgcv package on every node. That takes 3.7s:
 
 ```{r, message = FALSE}
 cluster_library(by_dest, "mgcv")
@@ -121,7 +122,7 @@ system.time({
 })
 ```
 
-Compared with ~5s doing it locally:
+Compared with ~5.6s doing it locally:
 
 ```{r}
 system.time({
@@ -131,7 +132,7 @@ system.time({
 })
 ```
 
-That's not a great speed up, but generally you don't care about parallesing things that only take a couple of seconds. The cost of transmitting messages to the nodes is roughly fixed, so the longer the task you're parallelising, the closer to a linear speed up you'll get.
+That's not a great speed up, but generally you don't care about parallesing things that only take a couple of seconds. The cost of transmitting messages to the nodes is roughly fixed, so the longer the task you're parallelising, the closer to a linear speed up you'll get.  It'll also speed up with more nodes, but unfortunately vignettes are only allowed to use 2 nodes max, so I can't show you that here.
 
 ## Limitations
 
