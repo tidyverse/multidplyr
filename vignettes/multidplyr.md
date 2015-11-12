@@ -9,7 +9,7 @@ multidplyr is a new backend for dplyr. You continue to use the dplyr verbs that 
 
 multiplyr is built on the principle that moving data around is expensive so you want to do it as little as possible. The basic sequence of operations is:
 
-1. Call `partition()` to split dataset your dataset across multiple cores.
+1. Call `partition()` to split your dataset across multiple cores.
    This makes a partitioned data frame, or a party df for short.
    
 1. Each dplyr verb applied to a party df performs the operation independently
