@@ -152,7 +152,7 @@ That's not a great speed up, but generally you don't care about parallesing thin
     cluster_assign_each(cluster, "filename",
       list("a.csv", "b.csv", "c.csv", "d.csv")
     )
-    cluster_assign_expr(cluster, "my_data", readr::read_csv(filename))
+    cluster_assign_expr(cluster, "my_data", quote(readr::read_csv(filename)))
     
     my_data <- src_cluster(cluster) %>% tbl("my_data")
     ```
