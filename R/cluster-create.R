@@ -1,11 +1,11 @@
 #' Create a new cluster with sensible defaults.
 #'
 #' Clusters created with this function will automatically clean up after
-#' themselves. will automatically automatically clean up after itself.
+#' themselves.
 #'
 #' @importFrom parallel detectCores makePSOCKcluster
 #' @param cores Number of cores to use. If \code{NA} will uses at least two
-#'   cores, but if yo have extra it leaves one free for other stuff.
+#'   cores, but if you have extra it leaves one free for other stuff.
 #' @param quiet If \code{TRUE}, don't display initialisation message.
 #' @export
 create_cluster <- function(cores = NA, quiet = FALSE) {
