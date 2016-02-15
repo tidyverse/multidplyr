@@ -60,6 +60,7 @@ partition_ <- function(data, groups, cluster = NULL) {
       m <- length(cluster)
     }
 
+    groups <- dplyr::arrange_(groups, ~n)
     groups$part_id <- floor(m * (cumsum(groups$n) - 1) / sum(groups$n) + 1)
     part_id <- groups$part_id[match(group_id, groups$id)]
   }
