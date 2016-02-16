@@ -224,6 +224,12 @@ do_.party_df <- function(.data, ..., .dots = list()) {
   shard_call(.data, quote(dplyr::do), ..., .dots = .dots)
 }
 
+#' @importFrom dplyr rename_
+#' @method rename_ party_df
+#' @export
+rename_.party_df <- function(.data, ..., .dots = list()) {
+  shard_call(.data, quote(dplyr::rename), ..., .dots = .dots)
+}
 
 shard_call <- function(df, fun, ..., .dots, groups = df$partition) {
   dots <- lazyeval::all_dots(.dots, ...)
