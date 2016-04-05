@@ -92,7 +92,7 @@ party_df <- function(name, cluster, partition = list(), groups = partition) {
     list(
       cluster = cluster,
       name = name,
-      partitions = groups,
+      partitions = partition,
       groups = groups,
       deleter = shard_deleter(name, cluster)
     ),
