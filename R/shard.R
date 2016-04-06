@@ -231,6 +231,20 @@ rename_.party_df <- function(.data, ..., .dots = list()) {
   shard_call(.data, quote(dplyr::rename), ..., .dots = .dots)
 }
 
+#' @importFrom dplyr tbl_vars
+#' @method tbl_vars party_df
+#' @export
+tbl_vars.party_df <- function(x) {
+  names(multidplyr::cluster_get(x$cluster, x$name)[[1]])
+}
+
+#' @importFrom dplyr groups
+#' @method groups party_df
+#' @export
+groups.party_df <- function(x) {
+  x$groups
+}
+
 shard_call <- function(df, fun, ..., .dots, groups = df$partition) {
   dots <- lazyeval::all_dots(.dots, ...)
   call <- lazyeval::make_call(fun, c(list(df$name), dots))
