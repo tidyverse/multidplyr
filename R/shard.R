@@ -245,7 +245,7 @@ groups.party_df <- function(x) {
   x$groups
 }
 
-shard_call <- function(df, fun, ..., .dots, groups = df$partition) {
+shard_call <- function(df, fun, ..., .dots, groups = df$groups) {
   dots <- lazyeval::all_dots(.dots, ...)
   call <- lazyeval::make_call(fun, c(list(df$name), dots))
 
