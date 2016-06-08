@@ -13,7 +13,8 @@
 #'   cluster_library("magrittr") %>%
 #'   cluster_eval(search())
 cluster_library <- function(cluster, packages) {
-  library(packages, character.only = TRUE)
-  cluster_call(.cl = cluster, library, package = packages, character.only = TRUE)
+  lapply(packages, library, character.only = TRUE)
+  cluster_call(.cl = cluster, lapply, X = packages, FUN = library,
+               character.only = TRUE)
   invisible(cluster)
 }

@@ -4,16 +4,17 @@
 \alias{partition}
 \title{Partition data across a cluster.}
 \usage{
-partition(.data, ..., cluster = get_default_cluster())
+partition(.data, ..., cluster = NULL)
 }
 \arguments{
 \item{.data}{Dataset to partition}
 
 \item{...}{Variables to partition by. Will generally work best when you
-have many more groups than nodes. If omitted, will randomly parition
+have many more groups than nodes. If omitted, will randomly partition
 rows across nodes.}
 
-\item{cluster}{Cluster to use.}
+\item{cluster}{Cluster to use. If NULL, will choose the number of nodes to be
+the minimum of the number of groups and the number of cores - 1.}
 }
 \description{
 Partition data across a cluster.

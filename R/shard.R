@@ -4,7 +4,8 @@
 #' @param ... Variables to partition by. Will generally work best when you
 #'   have many more groups than nodes. If omitted, will randomly partition
 #'   rows across nodes.
-#' @param cluster Cluster to use.
+#' @param cluster Cluster to use. If NULL, will choose the number of nodes to be
+#'   the minimum of the number of groups and the number of cores - 1.
 #' @export
 #' @examples
 #' library(dplyr)
@@ -21,16 +22,19 @@
 #' month <- partition(flights, month)
 #' month %>% group_by(day) %>% summarise(n())
 #' }
-partition <- function(.data, ..., cluster = get_default_cluster()) {
+partition <- function(.data, ..., cluster = NULL) {
   dots <- lazyeval::lazy_dots(...)
   partition_(.data, dots, cluster)
 }
 
-partition_ <- function(data, groups, cluster = get_default_cluster()) {
+partition_ <- function(data, groups, cluster = NULL) {
   n <- nrow(data)
-  m <- length(cluster)
 
   if (length(groups) == 0) {
+    if (is.null(cluster)) {
+      cluster <- get_default_cluster()
+    }
+    m <- length(cluster)
     part_id <- sample(floor(m * (seq_len(n) - 1) / n + 1))
     n_groups <- m
 
@@ -48,6 +52,18 @@ partition_ <- function(data, groups, cluster = get_default_cluster()) {
       id = seq_len(n_groups),
       n = tabulate(group_id, n_groups)
     ))
+
+    if (is.null(cluster)) {
+      m <- min(guess_cores(), n_groups)
+      cluster <- create_cluster(m)
+    } else {
+      if (n_groups < length(cluster)) {
+        cluster <- cluster[1:n_groups]
+      }
+      m <- length(cluster)
+    }
+
+    groups <- dplyr::arrange_(groups, ~n)
     groups$part_id <- floor(m * (cumsum(groups$n) - 1) / sum(groups$n) + 1)
     part_id <- groups$part_id[match(group_id, groups$id)]
   }
@@ -79,7 +95,7 @@ party_df <- function(name, cluster, partition = list(), groups = partition) {
     list(
       cluster = cluster,
       name = name,
-      partitions = groups,
+      partitions = partition,
       groups = groups,
       deleter = shard_deleter(name, cluster)
     ),
@@ -211,8 +227,28 @@ do_.party_df <- function(.data, ..., .dots = list()) {
   shard_call(.data, quote(dplyr::do), ..., .dots = .dots)
 }
 
+#' @importFrom dplyr rename_
+#' @method rename_ party_df
+#' @export
+rename_.party_df <- function(.data, ..., .dots = list()) {
+  shard_call(.data, quote(dplyr::rename), ..., .dots = .dots)
+}
 
-shard_call <- function(df, fun, ..., .dots, groups = df$partition) {
+#' @importFrom dplyr tbl_vars
+#' @method tbl_vars party_df
+#' @export
+tbl_vars.party_df <- function(x) {
+  names(multidplyr::cluster_get(x$cluster, x$name)[[1]])
+}
+
+#' @importFrom dplyr groups
+#' @method groups party_df
+#' @export
+groups.party_df <- function(x) {
+  x$groups
+}
+
+shard_call <- function(df, fun, ..., .dots, groups = df$groups) {
   dots <- lazyeval::all_dots(.dots, ...)
   call <- lazyeval::make_call(fun, c(list(df$name), dots))
 
