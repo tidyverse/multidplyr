@@ -57,6 +57,9 @@ partition_ <- function(data, groups, cluster = NULL) {
       m <- min(guess_cores(), n_groups)
       cluster <- create_cluster(m)
     } else {
+      if (n_groups < length(cluster)) {
+        cluster <- cluster[1:n_groups]
+      }
       m <- length(cluster)
     }
 
