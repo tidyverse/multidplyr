@@ -105,7 +105,7 @@ dim(common_dest)
 
 That leaves us with ~332,000 observations. 
 
-This time, instead of allowing multidplyr to create a local cluster, we'll do it ourselves. The `create_cluster()` function provides a convenient wrapper around `parallel::makePSOCKcluster()`. The main different between the two functions is that `create_cluster()` setups your cluster in such a way that it will automatically close down when no objects refer to it.
+This time, instead of allowing multidplyr to create a local cluster, we'll do it ourselves. The `create_cluster()` function provides a convenient wrapper around `parallel::makePSOCKcluster()`. The main difference between the two functions is that `create_cluster()` sets up your cluster in such a way that it will automatically close down when no objects refer to it.
 
 
 ```r
