@@ -21,19 +21,20 @@
 #' month <- partition(flights, month)
 #' month %>% group_by(day) %>% summarise(n())
 #' }
-partition <- function(.data, ..., cluster = get_default_cluster()) {
+partition <- function(.data, ..., cluster = get_default_cluster(), .by_row_size = FALSE) {
   dots <- lazyeval::lazy_dots(...)
-  partition_(.data, dots, cluster)
+  partition_(.data = .data, groups = dots,
+             cluster = cluster, .by_row_size = .by_row_size)
 }
 
-partition_ <- function(data, groups, cluster = get_default_cluster()) {
+partition_ <- function(data, groups, cluster = get_default_cluster(), .by_row_size = FALSE) {
   n <- nrow(data)
   m <- length(cluster)
 
   if (length(groups) == 0) {
     part_id <- sample(floor(m * (seq_len(n) - 1) / n + 1))
     n_groups <- m
-
+    data$PARTITION_ID <- part_id
     data <- dplyr::group_by_(data, ~PARTITION_ID)
     group_vars <- list(quote(PARTITION_ID))
   } else {
@@ -58,7 +59,7 @@ partition_ <- function(data, groups, cluster = get_default_cluster()) {
 
     part_id <- groups$part_id[match(group_id, groups$id)]
   }
-  data$PARTITION_ID <- part_id
+
 
   idx <- split(seq_len(n), part_id)
   shards <- lapply(idx, function(i) data[i, , drop = FALSE])
