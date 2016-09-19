@@ -15,6 +15,9 @@ rows across nodes.}
 
 \item{cluster}{Cluster to use.}
 }
+\description{
+Partition data across a cluster.
+}
 \examples{
 library(dplyr)
 s <- partition(mtcars)
