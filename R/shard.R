@@ -1,5 +1,5 @@
-#' Partition data across a cluster.
-#'
+#' @title Partition data across a cluster.
+#' @description Partition data across a cluster.
 #' @param .data Dataset to partition
 #' @param ... Variables to partition by. Will generally work best when you
 #'   have many more groups than nodes. If omitted, will randomly partition
@@ -33,7 +33,6 @@ partition_ <- function(data, groups, cluster = get_default_cluster()) {
   if (length(groups) == 0) {
     part_id <- sample(floor(m * (seq_len(n) - 1) / n + 1))
     n_groups <- m
-
     data$PARTITION_ID <- part_id
     data <- dplyr::group_by_(data, ~PARTITION_ID)
     group_vars <- list(quote(PARTITION_ID))
@@ -43,14 +42,23 @@ partition_ <- function(data, groups, cluster = get_default_cluster()) {
     data <- dplyr::group_by_(data, .dots = groups)
     group_id <- dplyr::group_indices_(data)
     n_groups <- dplyr::n_groups(data)
-
-    groups <- scramble_rows(dplyr::data_frame(
+    if(n_groups < m){
+      stop("Number of groups is less than the number of clusters.")
+    }
+    # Follows this:
+    # http://stackoverflow.com/questions/16588669/spread-objects-evenly-over-multiple-collections
+    groups <- dplyr::data_frame(
       id = seq_len(n_groups),
-      n = tabulate(group_id, n_groups)
-    ))
-    groups$part_id <- floor(m * (cumsum(groups$n) - 1) / sum(groups$n) + 1)
+      n = tabulate(group_id, n_groups),
+      part_id = NA_real_
+    )
+
+    groups <- groups %>%
+      spread_evenly(m)
+
     part_id <- groups$part_id[match(group_id, groups$id)]
   }
+  data$PARTITION_ID <- part_id
 
   idx <- split(seq_len(n), part_id)
   shards <- lapply(idx, function(i) data[i, , drop = FALSE])
