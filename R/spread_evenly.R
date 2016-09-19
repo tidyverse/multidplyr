@@ -12,7 +12,7 @@
 spread_evenly <- function(groups, m){
   orig_names <- names(groups)
   groups <- groups %>%
-    dplyr::arrange(desc(n))
+    dplyr::arrange(dplyr::desc(n))
   # Get an initial spread solution
   # Put the m largest groups in different clusters to guarantee all buckets have at least one element
   groups$part_id[1:m] <- 1:m

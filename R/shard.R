@@ -1,5 +1,5 @@
 #' @title Partition data across a cluster.
-#'
+#' @description Partition data across a cluster.
 #' @param .data Dataset to partition
 #' @param ... Variables to partition by. Will generally work best when you
 #'   have many more groups than nodes. If omitted, will randomly partition
