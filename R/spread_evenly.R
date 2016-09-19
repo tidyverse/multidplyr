@@ -3,11 +3,12 @@
 #' @param m Number of partitions to allocate into.
 #' @description Implements a first fit pass plus a best fit pass heuristic of the bin
 #' packing problem. Inspired by the algorithm here:
-#' \link{http://stackoverflow.com/questions/16588669/spread-objects-evenly-over-multiple-collections}
+#' \url{http://stackoverflow.com/questions/16588669/spread-objects-evenly-over-multiple-collections}
 #' If the number of groups is large, the bin packing algorithm can be expensive.
 #' So, if the ratio of the number of groups to partitions is greater than 300, I simply do the first pass.
 #' If the ratio is greater than 1500, I randomize the groups.
 #' @return A tibble with columns id, n, part_id, spread (approximately) evenly.
+#' @export
 spread_evenly <- function(groups, m){
   orig_names <- names(groups)
   groups <- groups %>%
@@ -35,7 +36,7 @@ spread_evenly <- function(groups, m){
     # Average should be calculated with all small buckets and large eligible buckets
     get_average <- function(groups, m){
       tmp <- groups %>%
-        filter(eligible | !large)
+        dplyr::filter(eligible | !large)
       tmp %>%
         .$n %>%
         sum() / length(unique(tmp$part_id))
@@ -44,34 +45,33 @@ spread_evenly <- function(groups, m){
     average <- get_average(groups, m)
     # Recompute large/small with new average (do just one pass of this)
     groups <- groups %>%
-      dplyr::mutate(large = n_bucket[1] > average)
+      dplyr::mutate(large = n_bucket[1] > average) %>%
+      dplyr::mutate(eligible = length(n_bucket) > 1 & large)
 
     groups <- groups %>%
+      # There can be more than one max element - choose the first one
       dplyr::mutate(max_elem_lgl = dplyr::if_else(large & eligible, n == max(n), NA),
-                    max_elem = n[max_elem_lgl])
+                    max_elem = n[max_elem_lgl][1])
     # Pass 1
     i <- 1
     while(any(groups$large & groups$eligible)){
-      if (i == 10000){
-        warning(paste0("spread_evenly is experimental and currently limited to 10000 iterations. ",
+      if (i == 1000){
+        warning(paste0("spread_evenly is experimental and currently limited to 1000 iterations. ",
                        "You may have found a bug causing an infinite loop - please file an issue ",
                        "at https://github.com/hadley/multidplyr/issues with a reproducible example."))
         break
       }
       i <- i + 1
-      if(NROW(groups %>% group_by(part_id, n_bucket, large, eligible, max_elem) %>% tidyr::nest()) > m){
-        browser()
-      }
-      average <- get_average(groups, m)
-      # Recompute large/small with new average (two passes)
-      groups <- groups %>%
-        dplyr::mutate(large = n_bucket[1] > average)
 
-      # Use the $ to get the whole vector in the min (recall this is a grouped_df)
+      # Use the $ to get the whole vector in the min/max (recall this is a grouped_df)
       groups <- groups %>%
         dplyr::mutate(this_small = dplyr::if_else(!large, n_bucket == min(groups$n_bucket), FALSE),
                       this_large = dplyr::if_else(large & eligible,
-                                                  max_elem == max(groups$max_elem, na.rm = TRUE), FALSE))
+                                                  max_elem == max(groups$max_elem[groups$large & groups$eligible],
+                                                                  na.rm = TRUE), FALSE))
+      # This covers groups that switch from large to small through the algorithm
+      groups$eligible[groups$this_small] <- FALSE
+
       this_large_id <- groups$part_id[groups$this_large][1]
       this_small_id <- groups$part_id[groups$this_small][1]
       # These aren't necessarily one part_id
@@ -100,8 +100,16 @@ spread_evenly <- function(groups, m){
 
         groups$max_elem_lgl[groups$this_large] <- groups$n[groups$this_large] == max(groups$n[groups$this_large])
         groups$max_elem[groups$this_large] <- groups$n[groups$max_elem_lgl & groups$this_large][1]
-        groups <- groups %>% group_by(part_id)
+        groups <- groups %>% dplyr::group_by(part_id)
       }
+      average <- get_average(groups, m)
+      # Recompute large/small and max_elem with new average
+      groups <- groups %>%
+        dplyr::mutate(large = n_bucket[1] > average) %>%
+        # There can be more than one max element - choose the first one
+        dplyr::mutate(max_elem_lgl = dplyr::if_else(large & eligible, n == max(n), NA),
+                      max_elem = n[max_elem_lgl][1])
+
     }
     groups <- groups %>%
       dplyr::mutate(eligible = length(n_bucket) > 1)
@@ -137,12 +145,12 @@ spread_evenly <- function(groups, m){
 
           # Best fit based on making the small one as close to average as possible.
           id_to_move <- groups %>%
-            filter(this_large) %>%
-            filter(n_bucket - n > average) %>%
-            mutate(dist_from_av = n + groups$n_bucket[groups$this_small][1] - average) %>%
+            dplyr::filter(this_large) %>%
+            dplyr::filter(n_bucket - n > average) %>%
+            dplyr::mutate(dist_from_av = n + groups$n_bucket[groups$this_small][1] - average) %>%
             # Keep only those that don't push small over average
-            filter(dist_from_av < 0) %>%
-            slice(which.min(abs(dist_from_av))) %>%
+            dplyr::filter(dist_from_av < 0) %>%
+            dplyr::slice(which.min(abs(dist_from_av))) %>%
             .$id
           # This doesn't check if this is actually an improving move. Is it guaranteed to be?
 
@@ -156,7 +164,7 @@ spread_evenly <- function(groups, m){
             groups$n_bucket[groups$this_small] <- sum(groups$n[groups$this_small])
             groups$n_bucket[groups$this_large] <- sum(groups$n[groups$this_large])
             new_dist <- abs(groups$n_bucket[groups$this_small][1] - average) + abs(groups$n_bucket[groups$this_large][1] - average)
-            groups <- groups %>% group_by(part_id)
+            groups <- groups %>% dplyr::group_by(part_id)
             if(new_dist > old_dist){
               browser()
             }
@@ -175,5 +183,5 @@ spread_evenly <- function(groups, m){
     }
   }
   groups <- groups %>%
-    dplyr::select(one_of(orig_names))
+    dplyr::select(dplyr::one_of(orig_names))
 }

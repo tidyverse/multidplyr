@@ -17,7 +17,7 @@ A tibble with columns id, n, part_id, spread (approximately) evenly.
 \description{
 Implements a first fit pass plus a best fit pass heuristic of the bin
 packing problem. Inspired by the algorithm here:
-\link{http://stackoverflow.com/questions/16588669/spread-objects-evenly-over-multiple-collections}
+\url{http://stackoverflow.com/questions/16588669/spread-objects-evenly-over-multiple-collections}
 If the number of groups is large, the bin packing algorithm can be expensive.
 So, if the ratio of the number of groups to partitions is greater than 300, I simply do the first pass.
 If the ratio is greater than 1500, I randomize the groups.

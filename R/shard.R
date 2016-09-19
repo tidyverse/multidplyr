@@ -1,4 +1,4 @@
-#' Partition data across a cluster.
+#' @title Partition data across a cluster.
 #'
 #' @param .data Dataset to partition
 #' @param ... Variables to partition by. Will generally work best when you
@@ -33,7 +33,7 @@ partition_ <- function(data, groups, cluster = get_default_cluster()) {
   if (length(groups) == 0) {
     part_id <- sample(floor(m * (seq_len(n) - 1) / n + 1))
     n_groups <- m
-
+    data$PARTITION_ID <- part_id
     data <- dplyr::group_by_(data, ~PARTITION_ID)
     group_vars <- list(quote(PARTITION_ID))
   } else {
