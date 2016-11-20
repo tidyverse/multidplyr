@@ -21,5 +21,9 @@ cl \%>\% cluster_eval(search())
 cl \%>\%
   cluster_library("magrittr") \%>\%
   cluster_eval(search())
+
+cl \%>\%
+  cluster_library(c("magrittr", "stats")) \%>\%
+  cluster_eval(search())
 }
 
