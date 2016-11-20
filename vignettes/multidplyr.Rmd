@@ -21,7 +21,7 @@ multidplyr is a new backend for dplyr. You continue to use the dplyr verbs that 
 
 multiplyr is built on the principle that moving data around is expensive so you want to do it as little as possible. The basic sequence of operations is:
 
-1. Call `partition()` to split dataset your dataset across multiple cores.
+1. Call `partition()` to split your dataset across multiple cores.
    This makes a partitioned data frame, or a party df for short.
    
 1. Each dplyr verb applied to a party df performs the operation independently
@@ -30,7 +30,7 @@ multiplyr is built on the principle that moving data around is expensive so you 
    
 1. When you're done with the expensive operations that need to be 
    done on each core, you call `collect()` to retrieve the data and 
-   bring it back to you local computer.
+   bring it back to your local computer.
   
 Let's see a simple example of that using the `nycflights13::flights`. This dataset contains information for about ~300,000 flights departing New York City in 2013.
 
@@ -89,7 +89,7 @@ dim(common_dest)
 
 That leaves us with ~332,000 observations. 
 
-This time, instead of allowing multidplyr to create a local cluster, we'll do it ourselves. The `create_cluster()` function provides a convenient wrapper around `parallel::makePSOCKcluster()`. The main different between the two functions is that `create_cluster()` setups your cluster in such a way that it will automatically close down when no objects refer to it.
+This time, instead of allowing multidplyr to create a local cluster, we'll do it ourselves. The `create_cluster()` function provides a convenient wrapper around `parallel::makePSOCKcluster()`. The main difference between the two functions is that `create_cluster()` sets up your cluster in such a way that it will automatically close down when no objects refer to it.
 
 ```{r}
 cluster <- create_cluster(2)
@@ -132,7 +132,7 @@ system.time({
 })
 ```
 
-That's not a great speed up, but generally you don't care about parallesing things that only take a couple of seconds. The cost of transmitting messages to the nodes is roughly fixed, so the longer the task you're parallelising, the closer to a linear speed up you'll get.  It'll also speed up with more nodes, but unfortunately vignettes are only allowed to use 2 nodes max, so I can't show you that here.
+That's not a great speed up, but generally you don't care about parallelising things that only take a couple of seconds. The cost of transmitting messages to the nodes is roughly fixed, so the longer the task you're parallelising, the closer to a linear speed up you'll get.  It'll also speed up with more nodes, but unfortunately vignettes are only allowed to use 2 nodes max, so I can't show you that here.
 
 ## Limitations
 
@@ -140,7 +140,7 @@ That's not a great speed up, but generally you don't care about parallesing thin
     work. That generally means you want to group by a variable that
     divides the data up into many pieces, so each node can get about the
     same amount of data. If multidplyr's default strategy isn't a good
-    fit for you data, you may need to make your own grouping variable
+    fit for your data, you may need to make your own grouping variable
     which takes values from 1 to the number of nodes.
 
 *   Currently you have to load all the data into memory in one instance, and
@@ -161,4 +161,4 @@ That's not a great speed up, but generally you don't care about parallesing thin
     It is possible to set up these clusters across multiple machines,
     but it is a bit tricky. Hopefully there will soon be a standard API
     for distributed R, and when that happens, multidplyr will be able to
-    work with more types of cluster.
+    work with more types of clusters.
