@@ -194,6 +194,26 @@ select_.party_df <- function(.data, ..., .dots = list()) {
   shard_call(.data, quote(dplyr::select), ..., .dots = .dots)
 }
 
+#' @importFrom dplyr rowwise
+#' @export
+rowwise <- function(.data) {
+  UseMethod("rowwise")
+}
+
+#' @importFrom dplyr rowwise
+#' @method rowwise party_df
+#' @export
+rowwise.party_df <- function(.data) {
+  shard_call(.data, quote(dplyr::rowwise))
+}
+
+#' @importFrom dplyr rowwise
+#' @method rowwise data.frame
+#' @export
+rowwise.data.frame <- function(.data) {
+  dplyr::rowwise(.data)
+}
+
 #' @importFrom dplyr group_by_
 #' @method group_by_ party_df
 #' @export
