@@ -57,6 +57,10 @@ partition_ <- function(data, groups, cluster = get_default_cluster()) {
   idx <- split(seq_len(n), part_id)
   shards <- lapply(idx, function(i) data[i, , drop = FALSE])
 
+  if(length(shards) < length(cluster)) {
+    cluster <- cluster[1:length(shards)]
+  }
+
   name <- random_table_name()
   cluster_assign_each(cluster, name, shards)
 
