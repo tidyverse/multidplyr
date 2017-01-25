@@ -18,7 +18,7 @@
 #'   \code{cluster_ls} and \code{cluster_get} return lists with one element
 #'   for each node.
 #' @examples
-#' cl <- get_default_cluster()
+#' cl <- create_cluster(2)
 #' cl %>%
 #'   cluster_assign_value("x", 10) %>%
 #'   cluster_get("x")
