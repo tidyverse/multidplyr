@@ -49,8 +49,9 @@ flights2
 #> Source: party_df [3,844 x 2]
 #> Shards: 7 [482--603 rows]
 #> 
+#> # S3: party_df
 #>    flight  dep_delay
-#>     (int)      (dbl)
+#>     <int>      <dbl>
 #> 1       1  5.2932761
 #> 2      16 -0.2500000
 #> 3      19 10.0500000
@@ -61,7 +62,7 @@ flights2
 #> 8      49 -0.4827586
 #> 9      59  3.6527197
 #> 10     65  7.6979167
-#> ..    ...        ...
+#> # ... with 3,834 more rows
 ```
 
 ## Performance
@@ -77,14 +78,14 @@ system.time({
     collect()
 })
 #>    user  system elapsed 
-#>   0.471   0.069   0.725
+#>   0.444   0.068   0.934
 system.time({
   flights %>% 
     group_by() %>%
     summarise(mean(dep_delay, na.rm = TRUE))
 })
 #>    user  system elapsed 
-#>   0.007   0.000   0.007
+#>   0.006   0.000   0.012
 ```
 
 That's because there's some overhead associated with sending the data to each node and retrieving the results at the end. For basic dplyr verbs, multidplyr is unlikely to give you significant speed ups unless you have 10s or 100s of millions of data points. It might however, if you're doing more complex things with `do()`. Let's see how that plays out.
@@ -98,9 +99,9 @@ common_dest <- flights %>%
   filter(n >= 365) %>%
   semi_join(flights, .) %>% 
   mutate(yday = lubridate::yday(ISOdate(year, month, day)))
-#> Joining by: "dest"
+#> Joining, by = "dest"
 dim(common_dest)
-#> [1] 332942     17
+#> [1] 332942     20
 ```
 
 That leaves us with ~332,000 observations. 
@@ -129,25 +130,27 @@ Let's partition our restricted flights data across this cluster:
 by_dest <- common_dest %>% 
   partition(dest, cluster = cluster)
 by_dest
-#> Source: party_df [332,942 x 17]
+#> Source: party_df [332,942 x 20]
 #> Groups: dest
 #> Shards: 2 [154,965--177,977 rows]
 #> 
-#>     year month   day dep_time dep_delay arr_time arr_delay carrier tailnum
-#>    (int) (int) (int)    (int)     (dbl)    (int)     (dbl)   (chr)   (chr)
-#> 1   2013     1     1      554        -6      812       -25      DL  N668DN
-#> 2   2013     1     1      600         0      837        12      MQ  N542MQ
-#> 3   2013     1     1      606        -4      837        -8      DL  N3739P
-#> 4   2013     1     1      615         0      833        -9      DL  N326NB
-#> 5   2013     1     1      658        -2      944         5      DL  N6703D
-#> 6   2013     1     1      754        -5     1039        -2      DL  N935DL
-#> 7   2013     1     1      807        -3     1043         0      DL  N308DE
-#> 8   2013     1     1      814         4     1047        17      FL  N977AT
-#> 9   2013     1     1      830        -5     1052       -13      MQ  N513MQ
-#> 10  2013     1     1      855        -4     1143        -2      DL  N646DL
-#> ..   ...   ...   ...      ...       ...      ...       ...     ...     ...
-#> Variables not shown: flight (int), origin (chr), dest (chr), air_time
-#>   (dbl), distance (dbl), hour (dbl), minute (dbl), yday (dbl).
+#> # S3: party_df
+#>     year month   day dep_time sched_dep_time dep_delay arr_time
+#>    <int> <int> <int>    <int>          <int>     <dbl>    <int>
+#> 1   2013     1     1      554            600        -6      812
+#> 2   2013     1     1      600            600         0      837
+#> 3   2013     1     1      606            610        -4      837
+#> 4   2013     1     1      615            615         0      833
+#> 5   2013     1     1      658            700        -2      944
+#> 6   2013     1     1      754            759        -5     1039
+#> 7   2013     1     1      807            810        -3     1043
+#> 8   2013     1     1      814            810         4     1047
+#> 9   2013     1     1      830            835        -5     1052
+#> 10  2013     1     1      855            859        -4     1143
+#> # ... with 332,932 more rows, and 13 more variables: sched_arr_time <int>,
+#> #   arr_delay <dbl>, carrier <chr>, flight <int>, tailnum <chr>,
+#> #   origin <chr>, dest <chr>, air_time <dbl>, distance <dbl>, hour <dbl>,
+#> #   minute <dbl>, time_hour <dttm>, yday <dbl>
 ```
 
 It's always a good idea to check the evenness of the partition - you'll get the most benefit when the rows are roughly even across all of the nodes.
@@ -162,7 +165,7 @@ system.time({
     do(mod = gam(dep_delay ~ s(yday) + s(dep_time), data = .))
 })
 #>    user  system elapsed 
-#>   0.001   0.000   3.973
+#>   0.001   0.000   3.700
 ```
 
 Compared with ~5.6s doing it locally:
@@ -175,7 +178,7 @@ system.time({
     do(mod = gam(dep_delay ~ s(yday) + s(dep_time), data = .))
 })
 #>    user  system elapsed 
-#>   4.924   0.639   5.565
+#>   4.443   0.824   5.325
 ```
 
 That's not a great speed up, but generally you don't care about parallesing things that only take a couple of seconds. The cost of transmitting messages to the nodes is roughly fixed, so the longer the task you're parallelising, the closer to a linear speed up you'll get.  It'll also speed up with more nodes, but unfortunately vignettes are only allowed to use 2 nodes max, so I can't show you that here.
@@ -199,7 +202,7 @@ That's not a great speed up, but generally you don't care about parallesing thin
     cluster_assign_each(cluster, "filename",
       list("a.csv", "b.csv", "c.csv", "d.csv")
     )
-    cluster_assign_expr(cluster, "my_data", readr::read_csv(filename))
+    cluster_assign_expr(cluster, "my_data", quote(readr::read_csv(filename)))
     
     my_data <- src_cluster(cluster) %>% tbl("my_data")
     ```
