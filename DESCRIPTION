@@ -22,7 +22,8 @@ Suggests:
     testthat,
     knitr,
     rmarkdown,
-    lubridate
+    lubridate,
+    covr
 RoxygenNote: 5.0.1.9000
 URL: https://github.com/hadley/multidplyr
 BugReports: https://github.com/hadley/multidplyr/issues
