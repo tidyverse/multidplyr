@@ -201,7 +201,7 @@ select_.party_df <- function(.data, ..., .dots = list()) {
 #' @export
 group_by_.party_df <- function(.data, ..., .dots = list(), add = FALSE) {
   dots <- lazyeval::all_dots(.dots, ...)
-  groups <- c(.data$partition, grouping_vars(dots))
+  groups <- c(.data$partitions, grouping_vars(dots))
 
   shard_call(.data, quote(dplyr::group_by), .dots = groups, groups = groups)
 }
