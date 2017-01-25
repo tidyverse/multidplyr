@@ -9,7 +9,7 @@ multidplyr is a new backend for dplyr. You continue to use the dplyr verbs that 
 
 multiplyr is built on the principle that moving data around is expensive so you want to do it as little as possible. The basic sequence of operations is:
 
-1. Call `partition()` to split dataset your dataset across multiple cores.
+1. Call `partition()` to split your dataset across multiple cores.
    This makes a partitioned data frame, or a party df for short.
    
 1. Each dplyr verb applied to a party df performs the operation independently
@@ -78,14 +78,14 @@ system.time({
     collect()
 })
 #>    user  system elapsed 
-#>   0.444   0.068   0.934
+#>   0.455   0.070   0.952
 system.time({
   flights %>% 
     group_by() %>%
     summarise(mean(dep_delay, na.rm = TRUE))
 })
 #>    user  system elapsed 
-#>   0.006   0.000   0.012
+#>   0.007   0.000   0.007
 ```
 
 That's because there's some overhead associated with sending the data to each node and retrieving the results at the end. For basic dplyr verbs, multidplyr is unlikely to give you significant speed ups unless you have 10s or 100s of millions of data points. It might however, if you're doing more complex things with `do()`. Let's see how that plays out.
@@ -165,7 +165,7 @@ system.time({
     do(mod = gam(dep_delay ~ s(yday) + s(dep_time), data = .))
 })
 #>    user  system elapsed 
-#>   0.001   0.000   3.700
+#>   0.002   0.000   3.245
 ```
 
 Compared with ~5.6s doing it locally:
@@ -178,7 +178,7 @@ system.time({
     do(mod = gam(dep_delay ~ s(yday) + s(dep_time), data = .))
 })
 #>    user  system elapsed 
-#>   4.443   0.824   5.325
+#>   4.556   0.865   5.518
 ```
 
 That's not a great speed up, but generally you don't care about parallesing things that only take a couple of seconds. The cost of transmitting messages to the nodes is roughly fixed, so the longer the task you're parallelising, the closer to a linear speed up you'll get.  It'll also speed up with more nodes, but unfortunately vignettes are only allowed to use 2 nodes max, so I can't show you that here.
