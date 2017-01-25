@@ -26,6 +26,8 @@ partition <- function(.data, ..., cluster = get_default_cluster()) {
   partition_(.data, dots, cluster)
 }
 
+#' @export
+#' @rdname partition
 partition_ <- function(data, groups, cluster = get_default_cluster()) {
   n <- nrow(data)
   m <- length(cluster)
