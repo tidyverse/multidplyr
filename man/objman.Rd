@@ -5,6 +5,7 @@
 \alias{cluster_assign_expr}
 \alias{cluster_assign_value}
 \alias{cluster_assign_each}
+\alias{cluster_copy}
 \alias{cluster_get}
 \alias{cluster_rm}
 \alias{cluster_ls}
@@ -15,6 +16,8 @@ cluster_assign_expr(cluster, name, expr)
 cluster_assign_value(cluster, name, value)
 
 cluster_assign_each(cluster, name, values)
+
+cluster_copy(cluster, obj)
 
 cluster_get(cluster, name)
 
@@ -31,6 +34,8 @@ cluster_ls(cluster)
 you can set \code{name} to the same \code{value} on every node,
 you can set \code{name} to each of \code{values}, or you
 can evaluate \code{expr} once on each code.}
+
+\item{obj}{An existing object to copy to the cluster.}
 }
 \value{
 \code{cluster_assign_value}, \code{cluster_assign_each},
@@ -58,7 +63,12 @@ cl \%>\%
   cluster_assign_each("z", list(3, 4)) \%>\%
   cluster_get("z")
 
+a <- 1:10
+cl \%>\%
+  cluster_copy(a) \%>\%
+  cluster_get("a")
+
 cl \%>\% cluster_ls()
-cl \%>\% cluster_rm(c("x", "y", "z"))
+cl \%>\% cluster_rm(c("a", "x", "y", "z"))
 cl \%>\% cluster_ls()
 }

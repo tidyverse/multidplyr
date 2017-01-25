@@ -9,6 +9,7 @@
 #'   you can set \code{name} to the same \code{value} on every node,
 #'   you can set \code{name} to each of \code{values}, or you
 #'   can evaluate \code{expr} once on each code.
+#' @param obj An existing object to copy to the cluster.
 #' @name objman
 #' @return \code{cluster_assign_value}, \code{cluster_assign_each},
 #'   \code{cluster_assign_expr}, and \code{cluster_rm} all (invisibly) return
@@ -30,8 +31,13 @@
 #'   cluster_assign_each("z", list(3, 4)) %>%
 #'   cluster_get("z")
 #'
+#' a <- 1:10
+#' cl %>%
+#'   cluster_copy(a) %>%
+#'   cluster_get("a")
+#'
 #' cl %>% cluster_ls()
-#' cl %>% cluster_rm(c("x", "y", "z"))
+#' cl %>% cluster_rm(c("a", "x", "y", "z"))
 #' cl %>% cluster_ls()
 NULL
 
@@ -73,6 +79,18 @@ cluster_assign_each <- function(cluster, name, values) {
   }
 
   invisible(cluster)
+}
+
+#' @rdname objman
+#' @export
+cluster_copy <- function(cluster, obj) {
+  name <- substitute(obj)
+  if (!is.name(name)) {
+    stop("`obj` must be a single existing object", call. = FALSE)
+  }
+
+  cluster_assign_value(cluster, as.character(name), obj)
+
 }
 
 # Wrapper for assign that doesn't return value
