@@ -110,6 +110,18 @@ shard_cols <- function(x) {
 }
 
 #' @export
+tbl_vars.party_df <- function(x) {
+  call <- substitute(dplyr::tbl_vars(x), list(x = as.name(x$name)))
+  cluster_eval_(x$cluster[1], call)[[1]]
+}
+
+#' @export
+groups.party_df <- function(x) {
+  call <- substitute(dplyr::groups(x), list(x = as.name(x$name)))
+  cluster_eval_(x$cluster[1], call)[[1]]
+}
+
+#' @export
 dim.party_df <- function(x) {
   c(sum(shard_rows(x)), shard_cols(x))
 }
