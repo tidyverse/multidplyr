@@ -21,4 +21,3 @@ cl <- src_cluster()
 # frame created with partition()
 copy_to(cl, mtcars)
 }
-

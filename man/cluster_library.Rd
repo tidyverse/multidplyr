@@ -22,4 +22,3 @@ cl \%>\%
   cluster_library("magrittr") \%>\%
   cluster_eval(search())
 }
-

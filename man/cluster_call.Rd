@@ -26,6 +26,7 @@ Call a function on each node of a cluster
 This is an S3 generic, and is the only method that \pkg{multidplyr} needs
 in order to use a cluster.
 }
+
 \examples{
 cl <- get_default_cluster()
 
@@ -39,4 +40,3 @@ cl \%>\%
   cluster_assign_each("f", list(function() 1, function() 2)) \%>\%
   cluster_call("f")
 }
-

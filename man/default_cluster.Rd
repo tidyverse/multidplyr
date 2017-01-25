@@ -2,8 +2,8 @@
 % Please edit documentation in R/clusterman.R
 \name{default_cluster}
 \alias{default_cluster}
-\alias{get_default_cluster}
 \alias{set_default_cluster}
+\alias{get_default_cluster}
 \title{Cluster management.}
 \usage{
 set_default_cluster(x)
@@ -20,4 +20,3 @@ one.
 \examples{
 get_default_cluster()
 }
-

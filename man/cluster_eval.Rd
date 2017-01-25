@@ -25,4 +25,3 @@ cl <- get_default_cluster()
 cl \%>\% cluster_eval(1 + 1)
 cl \%>\% cluster_eval_(quote(1 + 1))
 }
-

@@ -10,7 +10,7 @@ partition(.data, ..., cluster = get_default_cluster())
 \item{.data}{Dataset to partition}
 
 \item{...}{Variables to partition by. Will generally work best when you
-have many more groups than nodes. If omitted, will randomly parition
+have many more groups than nodes. If omitted, will randomly partition
 rows across nodes.}
 
 \item{cluster}{Cluster to use.}
@@ -34,4 +34,3 @@ month <- partition(flights, month)
 month \%>\% group_by(day) \%>\% summarise(n())
 }
 }
-
