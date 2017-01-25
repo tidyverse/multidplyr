@@ -78,14 +78,14 @@ system.time({
     collect()
 })
 #>    user  system elapsed 
-#>   0.455   0.070   0.952
+#>   0.434   0.057   0.967
 system.time({
   flights %>% 
     group_by() %>%
     summarise(mean(dep_delay, na.rm = TRUE))
 })
 #>    user  system elapsed 
-#>   0.007   0.000   0.007
+#>   0.005   0.000   0.005
 ```
 
 That's because there's some overhead associated with sending the data to each node and retrieving the results at the end. For basic dplyr verbs, multidplyr is unlikely to give you significant speed ups unless you have 10s or 100s of millions of data points. It might however, if you're doing more complex things with `do()`. Let's see how that plays out.
@@ -165,7 +165,7 @@ system.time({
     do(mod = gam(dep_delay ~ s(yday) + s(dep_time), data = .))
 })
 #>    user  system elapsed 
-#>   0.002   0.000   3.245
+#>   0.002   0.000   3.448
 ```
 
 Compared with ~5.6s doing it locally:
@@ -178,7 +178,7 @@ system.time({
     do(mod = gam(dep_delay ~ s(yday) + s(dep_time), data = .))
 })
 #>    user  system elapsed 
-#>   4.556   0.865   5.518
+#>   4.472   0.629   5.122
 ```
 
 That's not a great speed up, but generally you don't care about parallelising things that only take a couple of seconds. The cost of transmitting messages to the nodes is roughly fixed, so the longer the task you're parallelising, the closer to a linear speed up you'll get.  It'll also speed up with more nodes, but unfortunately vignettes are only allowed to use 2 nodes max, so I can't show you that here.

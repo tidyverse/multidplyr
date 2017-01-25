@@ -2,9 +2,12 @@
 % Please edit documentation in R/shard.R
 \name{partition}
 \alias{partition}
+\alias{partition_}
 \title{Partition data across a cluster.}
 \usage{
 partition(.data, ..., cluster = get_default_cluster())
+
+partition_(data, groups, cluster = get_default_cluster())
 }
 \arguments{
 \item{.data}{Dataset to partition}
