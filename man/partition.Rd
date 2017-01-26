@@ -10,13 +10,15 @@ partition(.data, ..., cluster = get_default_cluster())
 partition_(data, groups, cluster = get_default_cluster())
 }
 \arguments{
-\item{.data}{Dataset to partition}
+\item{.data, data}{Dataset to partition}
 
 \item{...}{Variables to partition by. Will generally work best when you
 have many more groups than nodes. If omitted, will randomly partition
 rows across nodes.}
 
 \item{cluster}{Cluster to use.}
+
+\item{groups}{The equivalent of \code{...} for the SE \code{partition_()}.}
 }
 \description{
 Partition data across a cluster.

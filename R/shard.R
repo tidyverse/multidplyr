@@ -1,9 +1,10 @@
 #' Partition data across a cluster.
 #'
-#' @param .data Dataset to partition
+#' @param .data,data Dataset to partition
 #' @param ... Variables to partition by. Will generally work best when you
 #'   have many more groups than nodes. If omitted, will randomly partition
 #'   rows across nodes.
+#' @param groups The equivalent of \code{...} for the SE \code{partition_()}.
 #' @param cluster Cluster to use.
 #' @export
 #' @examples
@@ -113,12 +114,14 @@ shard_cols <- function(x) {
   cluster_eval_(x$cluster[1], call)[[1]]
 }
 
+#' @importFrom dplyr tbl_vars
 #' @export
 tbl_vars.party_df <- function(x) {
   call <- substitute(dplyr::tbl_vars(x), list(x = as.name(x$name)))
   cluster_eval_(x$cluster[1], call)[[1]]
 }
 
+#' @importFrom dplyr groups
 #' @export
 groups.party_df <- function(x) {
   call <- substitute(dplyr::groups(x), list(x = as.name(x$name)))
