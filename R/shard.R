@@ -63,6 +63,11 @@ partition_ <- function(data, groups, cluster = get_default_cluster()) {
   }
 
   name <- random_table_name()
+
+  if(n_groups < length(cluster)) {
+    cluster <- cluster[1:n_groups]
+  }
+
   cluster_assign_each(cluster, name, shards)
 
   party_df(name, cluster, group_vars)
