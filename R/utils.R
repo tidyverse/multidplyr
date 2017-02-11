@@ -22,13 +22,18 @@ big_mark <- function(x, ...) {
 
 grouping_part <- function(cluster_id, groups_n) {
 
-  if (length(cluster_id) >= length(groups_n)) {
+  m <- length(cluster_id)
+  g <- length(groups_n)
+
+  if (m == 1L) return(rep(cluster_id, times = length(groups_n)))
+
+  if (m == g) return(cluster_id)
+
+  if (m > g) {
+    warning('groups are less than clusters: not all cluster contains data.')
     return(cluster_id[seq_along(groups_n)])
   }
 
-  if(length(cluster_id) == 1L) return(rep(cluster_id, times = length(groups_n)))
-
-  m <- length(cluster_id)
   sorted_group_n <- sort(groups_n, decreasing = TRUE, index.return = TRUE)
   sorted_group_n <- setNames(sorted_group_n$x, sorted_group_n$ix)
 
