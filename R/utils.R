@@ -35,7 +35,7 @@ grouping_part <- function(cluster_id, groups_n) {
   mean_load <- sum(sorted_group_n) / m
   nodes <- setNames(vector('list', m), cluster_id)
 
-  nodes[] <- purrr::map(seq_len(m), ~sorted_group_n[.])
+  nodes[] <- lapply(seq_len(m), function(.x) sorted_group_n[.x])
   nodes[[1]] <- c(nodes[[1]], sorted_group_n[-seq_along(nodes)])
 
   for (i in seq_along(nodes)) {
@@ -59,20 +59,16 @@ grouping_part <- function(cluster_id, groups_n) {
     }
   }
 
-  nodes[] <- purrr::map(names(nodes),
-                ~ setNames(rep(., length(nodes[[.]])), names(nodes[[.]]))
+  nodes[] <- lapply(names(nodes),
+                    function(.x) {
+                      setNames(rep(.x, length(nodes[[.x]])), names(nodes[[.x]]))
+                    }
   )
   nodes <- unlist(nodes)
   idx <- names(nodes) %>%
-          purrr::map_chr(~strsplit(.,'\\.')[[1]][[2]]) %>%
+          vapply(function(.x) strsplit(.x,'\\.')[[1]][[2]],
+                 FUN.VALUE = 'character'
+          ) %>%
           as.integer
   nodes[idx] %>% as.integer
-#
-#   c(cluster_id[sorted_group_n$x > mean_n_per_cluster])
-#   c(cluster_id,
-#     grouping_part(
-#       rev(cluster_id),
-#       sorted_group_n$x[-seq_along(cluster_id)]
-#     )
-#   )[sorted_group_n$ix]
 }
