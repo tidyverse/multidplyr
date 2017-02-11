@@ -51,10 +51,7 @@ partition_ <- function(data, groups, cluster = get_default_cluster()) {
       id = seq_len(n_groups),
       n = tabulate(group_id, n_groups)
     ))
-    sorted_group_n <- sort(groups$n, index.return = TRUE)
-    groups$part_id <- floor(
-      m * (cumsum(sorted_group_n$x) - 1) / sum(groups$n) + 1
-    )[sorted_group_n$ix]
+    groups$part_id <- grouping_part(m, groups$n)
     part_id <- groups$part_id[match(group_id, groups$id)]
   }
 
