@@ -20,7 +20,8 @@ test_that("cluster usage is optimized", {
     seq_len(3),    c(1, 1, 1, 5),
     seq_len(4),    c(1, 1, 1, 4, 2),
     seq_len(5),    c(1, 1, 1, 4, 2),
-    c(3, 4, 5, 6), c(1, 1, 1, 4, 2)
+    c(3, 4, 5, 6), c(1, 1, 1, 4, 2),
+    seq_len(2)   , sample(1e2, 1e4, replace = TRUE)
   )
 
   for (i in seq_along(comb$clusters)){
