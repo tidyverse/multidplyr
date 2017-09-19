@@ -25,9 +25,10 @@ set_default_cluster <- function(x) {
 
 #' @export
 #' @rdname default_cluster
-get_default_cluster <- function() {
+#' @param ... Arguments passed on to \code{create_cluster()}.
+get_default_cluster <- function(...) {
   if (!cluster_exists()) {
-    x <- create_cluster()
+    x <- create_cluster(...)
     set_default_cluster(x)
   }
 

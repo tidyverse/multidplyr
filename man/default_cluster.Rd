@@ -8,10 +8,12 @@
 \usage{
 set_default_cluster(x)
 
-get_default_cluster()
+get_default_cluster(...)
 }
 \arguments{
 \item{x}{New cluster to use as default.}
+
+\item{...}{Arguments passed on to \code{create_cluster()}.}
 }
 \description{
 If no cluster is currently active, \code{get_default_cluster()} will create
