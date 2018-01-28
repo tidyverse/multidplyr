@@ -134,6 +134,26 @@ system.time({
 
 That's not a great speed up, but generally you don't care about parallelising things that only take a couple of seconds. The cost of transmitting messages to the nodes is roughly fixed, so the longer the task you're parallelising, the closer to a linear speed up you'll get.  It'll also speed up with more nodes, but unfortunately vignettes are only allowed to use 2 nodes max, so I can't show you that here.
 
+## Using MPI clusters
+
+A simple script to detect node names in the cluster
+
+```{r}
+library(Rmpi)
+library(parallel)
+library('tidyverse')
+library("multidplyr")
+np <- max(1, mpi.universe.size() - 1)
+cl <- create_cluster(np, type="MPI")
+data <- tibble(group=rep(1:np,
+                         length.out=1000)) %>%
+    partition(group, cluster=cl) %>%
+    cluster_library('tidyverse') %>%
+    mutate(info=Sys.info()[c("nodename")]) %>%
+    collect() %>% as_tibble()
+data %>% select(info) %>% pull() %>% unique()
+```
+
 ## Limitations
 
 *   For optimal speedup, each node needs to do about the same amount of
