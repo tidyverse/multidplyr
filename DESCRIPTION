@@ -24,7 +24,7 @@ Suggests:
     rmarkdown,
     lubridate,
     covr
-RoxygenNote: 5.0.1.9000
+RoxygenNote: 6.0.1
 URL: https://github.com/hadley/multidplyr
 BugReports: https://github.com/hadley/multidplyr/issues
 VignetteBuilder: knitr

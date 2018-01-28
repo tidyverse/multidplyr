@@ -208,7 +208,4 @@ That's not a great speed up, but generally you don't care about parallelising th
     ```
 
 *   Currently you can only use clusters created by the parallel package.
-    It is possible to set up these clusters across multiple machines,
-    but it is a bit tricky. Hopefully there will soon be a standard API
-    for distributed R, and when that happens, multidplyr will be able to
-    work with more types of clusters.
+    If Rmpi is available, MPI clusters are supported.

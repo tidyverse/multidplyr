@@ -4,13 +4,20 @@
 \alias{create_cluster}
 \title{Create a new cluster with sensible defaults.}
 \usage{
-create_cluster(cores = NA, quiet = FALSE)
+create_cluster(cores = NA, quiet = FALSE, type = "PSOCK")
 }
 \arguments{
 \item{cores}{Number of cores to use. If \code{NA} will uses at least two
-cores, but if you have extra it leaves one free for other stuff.}
+cores, but if you have extra it leaves one free for other stuff.
+For clusters other than \code{'PSOCK'} this parameter can be used to
+set up cluster description}
 
 \item{quiet}{If \code{TRUE}, don't display initialisation message.}
+
+\item{type}{Type of the cluster;  by default \code{'PSOCK'},
+which calls \code{makPSOCKcluster}, but other types supported by
+parallel package are possible, including \code{'MPI'} for MPI-based
+environments.}
 }
 \description{
 Clusters created with this function will automatically clean up after
