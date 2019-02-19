@@ -44,7 +44,7 @@ partition_ <- function(data, groups, cluster = get_default_cluster()) {
     group_vars <- grouping_vars(groups)
 
     data <- dplyr::group_by_(data, .dots = groups)
-    group_id <- dplyr::group_indices_(data)
+    group_id <- dplyr::group_indices(data)
     n_groups <- dplyr::n_groups(data)
 
     groups <- scramble_rows(dplyr::data_frame(
