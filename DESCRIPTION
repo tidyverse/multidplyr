@@ -1,30 +1,35 @@
 Package: multidplyr
 Title: Partitioned data frames for 'dplyr'
 Version: 0.0.0.9000
-Authors@R: c(
-    person("Hadley", "Wickham", , "hadley@rstudio.com", role = c("aut", "cre")),
-    person("RStudio", role = "cph")
-  )
-Description: A dplyr backend that partitions a data frame across multiple nodes
-    in a cluster (e.g. cores on your computer) to make common operations
-    faster.
+Authors@R: 
+    c(person(given = "Hadley",
+             family = "Wickham",
+             role = c("aut", "cre"),
+             email = "hadley@rstudio.com"),
+      person(given = "RStudio",
+             role = "cph"))
+Description: A dplyr backend that partitions a data frame across
+    multiple nodes in a cluster (e.g. cores on your computer) to make
+    common operations faster.
+License: GPL-3
+URL: https://github.com/hadley/multidplyr
+BugReports: https://github.com/hadley/multidplyr/issues
 Depends:
     R (>= 3.2.1)
-License: GPL-3
-LazyData: true
 Imports:
     dplyr,
     lazyeval,
     magrittr,
     parallel
 Suggests:
-    nycflights13,
-    testthat,
+    covr,
     knitr,
-    rmarkdown,
     lubridate,
-    covr
+    nycflights13,
+    rmarkdown,
+    testthat
+VignetteBuilder: 
+    knitr
+Encoding: UTF-8
+LazyData: true
 RoxygenNote: 6.1.1
-URL: https://github.com/hadley/multidplyr
-BugReports: https://github.com/hadley/multidplyr/issues
-VignetteBuilder: knitr
