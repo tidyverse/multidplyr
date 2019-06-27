@@ -25,6 +25,7 @@ Suggests:
     covr,
     knitr,
     lubridate,
+    mgcv,
     nycflights13,
     rmarkdown,
     testthat
