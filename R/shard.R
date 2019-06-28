@@ -19,46 +19,28 @@ partition <- function(.data, ..., .cluster = get_default_cluster()) {
   n <- nrow(.data)
   m <- length(.cluster)
 
-  .data$PARTITION_ID <- sample(seq_len(n) %% m) + 1
+  if (missing(...) && !dplyr::is_grouped_df(.data)) {
+    # Randomly assign
+    worker_id <- sample(seq_len(n) %% m) + 1
+  } else {
+    # Assign each new group to the session with fewest rows
+    group_id <- dplyr::group_indices(.data, ...)
+    counts <- tabulate(group_id)
 
-  # if (!missing(...)) {
-  #
-  #
-  # }
+    rows <- integer(m)
+    group_worker_id <- integer(length(counts))
 
-  # if (is_grouped_df(.data)) {
-  #   if (!missing(...)) {
-  #     abort("Must use `group_by()` to change grouping of existing `grouped_df`")
-  #   }
-  #   group_vars <- group_vars(.data)
-  # } else {
-  #   .data <- group_by(...)
-  # }
-  #
-  # groups <- c(ensyms(...), groups(.data))
-  #
-  # if (length(groups) == 0) {
-  # } else {
-  #   # Ensure all clusters get a data frame, even if it's zero row
-  #   #
-  # if (length(shards) < length(cluster)) {
-  #   cluster <- cluster[1:length(shards)]
-  # }
-  #   group_vars <- grouping_vars(groups)
-  #
-  #   data <- dplyr::group_by_(data, .dots = groups)
-  #   group_id <- dplyr::group_indices_(data)
-  #   n_groups <- dplyr::n_groups(data)
-  #
-  #   groups <- scramble_rows(dplyr::data_frame(
-  #     id = seq_len(n_groups),
-  #     n = tabulate(group_id, n_groups)
-  #   ))
-  #   groups$part_id <- floor(m * (cumsum(groups$n) - 1) / sum(groups$n) + 1)
-  #   part_id <- groups$part_id[match(group_id, groups$id)]
-  # }
+    for (i in seq_along(counts)) {
+      j <- which.min(rows)
+      group_worker_id[[i]] <- j
+      rows[[j]] <- rows[[j]] + counts[[i]]
+    }
 
-  shards <- dplyr::group_split(.data, .data$PARTITION_ID)
+    worker_id <- group_worker_id[group_id]
+  }
+
+  worker_rows <- split(seq_along(worker_id), worker_id)
+  shards <- lapply(worker_rows, function(i) .data[i, ])
 
   name <- table_name()
   cluster_assign_each(.cluster, name, shards)
