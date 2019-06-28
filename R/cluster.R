@@ -3,7 +3,7 @@
 #' Clusters created with this function will automatically clean up after
 #' themselves.
 #'
-#' @param cores Number of sessions to create. If `NULL`, it will use at least
+#' @param n Number of workers to create. If `NULL`, it will use at least
 #'   two, but no more than the number of cores on your computer - 2.
 #' @export
 #' @examples
@@ -20,7 +20,7 @@ new_cluster <- function(n = NULL) {
 }
 
 #' @export
-print.multidplyr_cluster <- function(x) {
+print.multidplyr_cluster <- function(x, ...) {
   n <- length(x)
 
   state <- vapply(x, function(x) x$get_state(), character(1))
@@ -33,6 +33,8 @@ print.multidplyr_cluster <- function(x) {
 
   cat_line(n, " session cluster [", paste(state_abbr, collapse = ""), "]")
 }
+
+is_cluster <- function(x) inherits(x, "multidplyr_cluster")
 
 #' @export
 `[.multidplyr_cluster` <- function(x, i, ...) {
@@ -52,7 +54,6 @@ in_check <- function() {
   any(grepl("Rcheck$", paths))
 }
 
-
 #' Cluster management.
 #'
 #' This manages a default cluster for the session, creating one the first
@@ -70,9 +71,7 @@ cluster_env <- env()
 #' @rdname default_cluster
 #' @param x New cluster to use as default.
 set_default_cluster <- function(x) {
-  if (!inherits(x, "multidplyr_cluster")) {
-    abort("`x` must be a <multidplyr_cluster>")
-  }
+  stopifnot(is_cluster(x))
 
   cluster_env$cluster <- x
   invisible(x)

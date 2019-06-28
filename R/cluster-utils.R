@@ -6,6 +6,7 @@
 #' @param name,names Name of variable or variables, as strings.
 #' @param expr An expression to evaluate.
 #' @param values A list of values, one for each worker.
+#' @param packages Character vector of packages to load
 #' @name cluster_utils
 #' @return All functions that modify the worker environment invisibly return
 #'   the cluster so they can chain them together. The other functions return
@@ -42,7 +43,8 @@ cluster_assign <- function(cluster, name, expr) {
   stopifnot(is_string(name))
   expr <- enexpr(expr)
 
-  cluster_call(cluster, {!!sym(name) <- !!expr; NULL})
+  assign_call <- call2("<-", sym(name), expr)
+  cluster_call(cluster, {!!assign_call; NULL})
   invisible(cluster)
 }
 

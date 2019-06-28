@@ -17,11 +17,13 @@ BugReports: https://github.com/hadley/multidplyr/issues
 Depends:
     R (>= 3.2.1)
 Imports:
+    callr,
+    crayon,
     dplyr,
-    lazyeval,
     magrittr,
     ps,
     rlang,
+    tibble,
     vctrs
 Suggests:
     covr,

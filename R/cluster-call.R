@@ -4,7 +4,7 @@
 #' the input and then re-calls. Jobs are submitted to workers in parallel, and
 #' then we wait until they're complete.
 #'
-#' @param .x A cluster
+#' @param x,.x A cluster
 #' @param .f Function to call. Must be a function, string, or formula.
 #'    * If a **function**, it will be copied to each worke. Must be
 #'      self-contained because its environment will be set to the global
@@ -36,6 +36,7 @@
 #' invisible(cl %>% cluster_call(x <- runif(1)))
 #' cl %>% cluster_call(x)
 cluster_map <- function(.x, .f, ...) {
+  stopifnot(is_cluster(.x))
   .f <- as_function(.f)
   args <- list(...)
 

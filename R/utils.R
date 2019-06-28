@@ -2,9 +2,14 @@
 #' @export
 magrittr::`%>%`
 
-random_table_name <- function(n = 10) {
-  paste0(sample(letters, n, replace = TRUE), collapse = "")
-}
+
+table_name <- local({
+  i <- 0
+  function() {
+    i <<- i + 1
+    paste0("_DF", i)
+  }
+})
 
 wrap <- function(..., indent = 0) {
   x <- paste0(..., collapse = "")
@@ -21,4 +26,12 @@ big_mark <- function(x, ...) {
 
 cat_line <- function(...) {
   cat(paste(..., "\n", collapse = "", sep = ""))
+}
+
+drop_last <- function(x) {
+  if (length(x) == 0) {
+    x
+  } else {
+    x[-length(x)]
+  }
 }

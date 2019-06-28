@@ -1,9 +1,6 @@
 ---
 title: "An introduction to multidplyr"
-author: "Hadley Wickham"
-output: 
-  rmarkdown::html_vignette:
-    keep_md: true
+output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{An introduction to multidplyr}
   %\VignetteEngine{knitr::rmarkdown}
@@ -36,9 +33,9 @@ Let's see a simple example of that using the `nycflights13::flights`. This datas
 
 We start by loading the packages we need:
 
-```{r, message = FALSE}
-library(dplyr)
+```{r}
 library(multidplyr)
+library(dplyr, warn.conflicts = FALSE)
 library(nycflights13)
 ```
   
@@ -89,10 +86,10 @@ dim(common_dest)
 
 That leaves us with ~332,000 observations. 
 
-This time, instead of allowing multidplyr to create a local cluster, we'll do it ourselves. The `create_cluster()` function provides a convenient wrapper around `parallel::makePSOCKcluster()`. The main difference between the two functions is that `create_cluster()` sets up your cluster in such a way that it will automatically close down when no objects refer to it.
+This time, instead of allowing multidplyr to create a local cluster, we'll do it ourselves. The `new_cluster()` function creates a number of workers.
 
 ```{r}
-cluster <- create_cluster(2)
+cluster <- new_cluster(2)
 cluster
 ```
 
@@ -115,7 +112,7 @@ It's always a good idea to check the evenness of the partition - you'll get the 
 Let's fit a smoothed generalised additive model to each destination, estimating how delays vary over the course of the year and within a day. Note that we need to use `cluster_library()` to load the mgcv package on every node. That takes 3.7s:
 
 ```{r, message = FALSE}
-cluster_library(by_dest, "mgcv")
+cluster_library(cluster, "mgcv")
 system.time({
   models <- by_dest %>% 
     do(mod = gam(dep_delay ~ s(yday) + s(dep_time), data = .))

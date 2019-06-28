@@ -10,8 +10,6 @@ cluster_map(.x, .f, ...)
 cluster_call(x, code)
 }
 \arguments{
-\item{.x}{A cluster}
-
 \item{.f}{Function to call. Must be a function, string, or formula.
    * If a **function**, it will be copied to each worke. Must be
      self-contained because its environment will be set to the global
@@ -23,6 +21,8 @@ cluster_call(x, code)
    * If a **formula**, e.g. `~ .x + 2`, it is converted to a function.}
 
 \item{...}{Arguments to .f. Eagerly evaluated before distribution.}
+
+\item{x, .x}{A cluster}
 
 \item{code}{An expression to execute on each worker.}
 }

@@ -30,6 +30,8 @@ cluster_library(cluster, packages)
 \item{expr}{An expression to evaluate.}
 
 \item{values}{A list of values, one for each worker.}
+
+\item{packages}{Character vector of packages to load}
 }
 \value{
 All functions that modify the worker environment invisibly return

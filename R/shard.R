@@ -4,128 +4,109 @@
 #' @param ... Variables to partition by. Will generally work best when you
 #'   have many more groups than nodes. If omitted, will randomly partition
 #'   rows across nodes.
-#' @param groups The equivalent of \code{...} for the SE \code{partition_()}.
-#' @param cluster Cluster to use.
+#' @param .cluster Cluster to use.
 #' @export
 #' @examples
 #' library(dplyr)
-#' s <- partition(mtcars)
-#' s %>% mutate(cyl2 = 2 * cyl)
-#' s %>% filter(vs == 1)
-#' s %>% summarise(n())
-#' s %>% select(-cyl)
+#' cl <- new_cluster(2)
 #'
-#' if (require("nycflights13")) {
-#' planes <- partition(flights, tailnum)
-#' summarise(planes, n())
-#'
-#' month <- partition(flights, month)
-#' month %>% group_by(day) %>% summarise(n())
-#' }
-partition <- function(.data, ..., cluster = get_default_cluster()) {
-  dots <- lazyeval::lazy_dots(...)
-  partition_(.data, dots, cluster)
+#' mtcars2 <- partition(mtcars, .cluster = cl)
+#' mtcars2 %>% mutate(cyl2 = 2 * cyl)
+#' mtcars2 %>% filter(vs == 1)
+#' mtcars2 %>% group_by(cyl) %>% summarise(n())
+#' mtcars2 %>% select(-cyl)
+partition <- function(.data, ..., .cluster = get_default_cluster()) {
+  n <- nrow(.data)
+  m <- length(.cluster)
+
+  .data$PARTITION_ID <- sample(seq_len(n) %% m) + 1
+
+  # if (!missing(...)) {
+  #
+  #
+  # }
+
+  # if (is_grouped_df(.data)) {
+  #   if (!missing(...)) {
+  #     abort("Must use `group_by()` to change grouping of existing `grouped_df`")
+  #   }
+  #   group_vars <- group_vars(.data)
+  # } else {
+  #   .data <- group_by(...)
+  # }
+  #
+  # groups <- c(ensyms(...), groups(.data))
+  #
+  # if (length(groups) == 0) {
+  # } else {
+  #   # Ensure all clusters get a data frame, even if it's zero row
+  #   #
+  # if (length(shards) < length(cluster)) {
+  #   cluster <- cluster[1:length(shards)]
+  # }
+  #   group_vars <- grouping_vars(groups)
+  #
+  #   data <- dplyr::group_by_(data, .dots = groups)
+  #   group_id <- dplyr::group_indices_(data)
+  #   n_groups <- dplyr::n_groups(data)
+  #
+  #   groups <- scramble_rows(dplyr::data_frame(
+  #     id = seq_len(n_groups),
+  #     n = tabulate(group_id, n_groups)
+  #   ))
+  #   groups$part_id <- floor(m * (cumsum(groups$n) - 1) / sum(groups$n) + 1)
+  #   part_id <- groups$part_id[match(group_id, groups$id)]
+  # }
+
+  shards <- dplyr::group_split(.data, .data$PARTITION_ID)
+
+  name <- table_name()
+  cluster_assign_each(.cluster, name, shards)
+  party_df(name, .cluster)
 }
 
-#' @export
-#' @rdname partition
-partition_ <- function(data, groups, cluster = get_default_cluster()) {
-  n <- nrow(data)
-  m <- length(cluster)
-
-  if (length(groups) == 0) {
-    part_id <- sample(floor(m * (seq_len(n) - 1) / n + 1))
-    n_groups <- m
-
-    data$PARTITION_ID <- part_id
-    data <- dplyr::group_by_(data, ~PARTITION_ID)
-    group_vars <- list(quote(PARTITION_ID))
-  } else {
-    group_vars <- grouping_vars(groups)
-
-    data <- dplyr::group_by_(data, .dots = groups)
-    group_id <- dplyr::group_indices_(data)
-    n_groups <- dplyr::n_groups(data)
-
-    groups <- scramble_rows(dplyr::data_frame(
-      id = seq_len(n_groups),
-      n = tabulate(group_id, n_groups)
-    ))
-    groups$part_id <- floor(m * (cumsum(groups$n) - 1) / sum(groups$n) + 1)
-    part_id <- groups$part_id[match(group_id, groups$id)]
-  }
-
-  idx <- split(seq_len(n), part_id)
-  shards <- lapply(idx, function(i) data[i, , drop = FALSE])
-
-  if(length(shards) < length(cluster)) {
-    cluster <- cluster[1:length(shards)]
-  }
-
-  name <- random_table_name()
-  cluster_assign_each(cluster, name, shards)
-
-  party_df(name, cluster, group_vars)
-}
-
-grouping_vars <- function(vars) {
-
-  is_name <- vapply(vars, function(x) is.name(x$expr), logical(1))
-  if (any(!is_name)) {
-    stop("All partition vars must already exist", call. = FALSE)
-  }
-
-  lapply(vars, `[[`, "expr")
-}
-
-party_df <- function(name, cluster, partition = list(), groups = partition) {
+party_df <- function(name, cluster, partition_vars = "PARTITION_ID") {
   stopifnot(is.character(name), length(name) == 1)
-  stopifnot(is.list(groups))
 
   structure(
     list(
       cluster = cluster,
-      name = name,
-      partitions = groups,
-      groups = groups,
-      deleter = shard_deleter(name, cluster)
+      name = sym(name),
+      partition_vars = partition_vars,
+      .auto_clean = shard_deleter(name, cluster)
     ),
     class = "party_df"
   )
 }
 
 shard_deleter <- function(name, cluster) {
-  reg.finalizer(environment(), function(...) {
+  env <- env()
+  reg.finalizer(env, function(...) {
     cluster_rm(cluster, name)
   })
-  environment()
+  env
 }
 
 
 shard_rows <- function(x) {
-  call <- substitute(nrow(x), list(x = as.name(x$name)))
-  nrows <- cluster_eval_(x, call)
-
+  nrows <- cluster_call(x$cluster, nrow(!!x$name))
   unlist(nrows)
 }
 
 shard_cols <- function(x) {
-  call <- substitute(ncol(x), list(x = as.name(x$name)))
-  cluster_eval_(x$cluster[1], call)[[1]]
+  cluster_call(x$cluster[1], ncol(!!x$name))[[1]]
 }
 
 #' @importFrom dplyr tbl_vars
 #' @export
 tbl_vars.party_df <- function(x) {
-  call <- substitute(dplyr::tbl_vars(x), list(x = as.name(x$name)))
-  cluster_eval_(x$cluster[1], call)[[1]]
+  cluster_call(x$cluster[1], tbl_vars(!!x$name))[[1]]
 }
 
 #' @importFrom dplyr groups
 #' @export
 groups.party_df <- function(x) {
-  call <- substitute(dplyr::groups(x), list(x = as.name(x$name)))
-  cluster_eval_(x$cluster[1], call)[[1]]
+  cluster_call(x$cluster[1], dplyr::groups(!!x$name))[[1]]
 }
 
 #' @export
@@ -141,8 +122,7 @@ head.party_df <- function(x, n = 6L, ...) {
 
   # Work cluster by cluster until we have enough rows
   for (i in seq_along(x$cluster)) {
-    call <- substitute(head(x, n), list(x = as.name(x$name), n = left))
-    head_i <- cluster_eval_(x$cluster[i], call)[[1]]
+    head_i <- cluster_call(x$cluster[i], head(!!x$name, n = !!left))[[1]]
 
     pieces[[i]] <- head_i
     left <- left - nrow(head_i)
@@ -157,8 +137,9 @@ head.party_df <- function(x, n = 6L, ...) {
 print.party_df <- function(x, ..., n = NULL, width = NULL) {
   cat("Source: party_df ", dplyr::dim_desc(x), "\n", sep = "")
 
-  if (length(x$groups) > 0) {
-    groups <- vapply(x$groups, as.character, character(1))
+  groups <- groups(x)
+  if (length(groups) > 0) {
+    groups <- vapply(groups, as.character, character(1))
     cat("Groups: ", paste0(groups, collapse = ", "), "\n", sep = "")
   }
 
@@ -167,81 +148,77 @@ print.party_df <- function(x, ..., n = NULL, width = NULL) {
     " [", big_mark(min(shards)), "--", big_mark(max(shards)), " rows]\n",
     sep = "")
   cat("\n")
-  print(dplyr::trunc_mat(x, n = n, width = width))
+  print(tibble::trunc_mat(x, n = 6, width = width))
 
   invisible(x)
 }
 
 #' @export
 as.data.frame.party_df <- function(x, row.names, optional, ...) {
-  dplyr::bind_rows(cluster_get(x, x$name))
+  dplyr::bind_rows(cluster_get(x$cluster, as.character(x$name)))
 }
 
 #' @importFrom dplyr collect
-#' @method collect party_df
 #' @export
 collect.party_df <- function(.data, ...) {
-  group_by_(as.data.frame(.data), .dots = c(.data$partitions, .data$groups))
+  out <- as.data.frame(.data)
+  group_by(out, !!!groups(.data))
 }
 
 # Methods passed on to shards ---------------------------------------------
 
-#' @importFrom dplyr mutate_
-#' @method mutate_ party_df
+#' @importFrom dplyr arrange
 #' @export
-mutate_.party_df <- function(.data, ..., .dots = list()) {
-  shard_call(.data, quote(dplyr::mutate), ..., .dots = .dots)
+arrange.party_df <- function(.data, ..., .by_group = FALSE) {
+  shard_call(.data, "arrange", enquos(...), .by_group = .by_group)
 }
 
-#' @importFrom dplyr filter_
-#' @method filter_ party_df
+#' @importFrom dplyr filter
+# exported on load
+filter.party_df <- function(.data, ...) {
+  shard_call(.data, "filter", enquos(...))
+}
+
+#' @importFrom dplyr group_by
 #' @export
-filter_.party_df <- function(.data, ..., .dots = list()) {
-  shard_call(.data, quote(dplyr::filter), ..., .dots = .dots)
+group_by.party_df <- function(.data, ..., add = FALSE) {
+  shard_call(.data, "group_by", enquos(...), add = add)
 }
 
-#' @importFrom dplyr summarise_
-#' @method summarise_ party_df
+#' @importFrom dplyr mutate
 #' @export
-summarise_.party_df <- function(.data, ..., .dots = list()) {
-  shard_call(.data, quote(dplyr::summarise), ..., .dots = .dots,
-    groups = .data$groups[-length(.data$groups)])
+mutate.party_df <- function(.data, ...) {
+  shard_call(.data, "mutate", enquos(...))
 }
 
-#' @importFrom dplyr select_
-#' @method select_ party_df
+#' @importFrom dplyr select
 #' @export
-select_.party_df <- function(.data, ..., .dots = list()) {
-  shard_call(.data, quote(dplyr::select), ..., .dots = .dots)
+select.party_df <- function(.data, ...) {
+  shard_call(.data, "select", enquos(...))
 }
 
-#' @importFrom dplyr group_by_
-#' @method group_by_ party_df
+#' @importFrom dplyr slice
 #' @export
-group_by_.party_df <- function(.data, ..., .dots = list(), add = FALSE) {
-  dots <- lazyeval::all_dots(.dots, ...)
-  groups <- c(.data$partitions, grouping_vars(dots))
-
-  shard_call(.data, quote(dplyr::group_by), .dots = groups, groups = groups)
+slice.party_df <- function(.data, ...) {
+  shard_call(.data, "slice", enquos(...))
 }
 
-#' @importFrom dplyr do_
-#' @method do_ party_df
+#' @importFrom dplyr summarise
 #' @export
-do_.party_df <- function(.data, ..., .dots = list()) {
-  shard_call(.data, quote(dplyr::do), ..., .dots = .dots)
+summarise.party_df <- function(.data, ...) {
+  shard_call(.data, "summarise", enquos(...))
 }
 
-
-shard_call <- function(df, fun, ..., .dots, groups = df$partition) {
-  dots <- lazyeval::all_dots(.dots, ...)
-  call <- lazyeval::make_call(fun, c(list(df$name), dots))
-
-  new_name <- random_table_name()
-  cluster_assign_expr(df, new_name, call$expr)
-  party_df(new_name, df$cluster, df$partition, groups)
+#' @importFrom dplyr do
+#' @export
+do.party_df <- function(.data, ...) {
+  shard_call(.data, "do", enquos(...))
 }
 
-scramble_rows <- function(df) {
-  df[sample(nrow(df)), , drop = FALSE]
+shard_call <- function(.data, .verb, dots, ...) {
+  call <- call2(.verb, .data$name, !!!dots, ..., .ns = "dplyr")
+
+  new_name <- table_name()
+  cluster_assign(.data$cluster, new_name, !!call)
+  party_df(new_name, .data$cluster)
 }

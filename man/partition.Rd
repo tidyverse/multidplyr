@@ -2,12 +2,9 @@
 % Please edit documentation in R/shard.R
 \name{partition}
 \alias{partition}
-\alias{partition_}
 \title{Partition data across a cluster.}
 \usage{
-partition(.data, ..., cluster = get_default_cluster())
-
-partition_(data, groups, cluster = get_default_cluster())
+partition(.data, ..., .cluster = get_default_cluster())
 }
 \arguments{
 \item{.data, data}{Dataset to partition}
@@ -16,26 +13,18 @@ partition_(data, groups, cluster = get_default_cluster())
 have many more groups than nodes. If omitted, will randomly partition
 rows across nodes.}
 
-\item{cluster}{Cluster to use.}
-
-\item{groups}{The equivalent of \code{...} for the SE \code{partition_()}.}
+\item{.cluster}{Cluster to use.}
 }
 \description{
 Partition data across a cluster.
 }
 \examples{
 library(dplyr)
-s <- partition(mtcars)
-s \%>\% mutate(cyl2 = 2 * cyl)
-s \%>\% filter(vs == 1)
-s \%>\% summarise(n())
-s \%>\% select(-cyl)
+cl <- new_cluster(2)
 
-if (require("nycflights13")) {
-planes <- partition(flights, tailnum)
-summarise(planes, n())
-
-month <- partition(flights, month)
-month \%>\% group_by(day) \%>\% summarise(n())
-}
+mtcars2 <- partition(mtcars, .cluster = cl)
+mtcars2 \%>\% mutate(cyl2 = 2 * cyl)
+mtcars2 \%>\% filter(vs == 1)
+mtcars2 \%>\% group_by(cyl) \%>\% summarise(n())
+mtcars2 \%>\% select(-cyl)
 }

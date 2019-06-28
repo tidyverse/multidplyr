@@ -7,7 +7,7 @@
 new_cluster(n = NULL)
 }
 \arguments{
-\item{cores}{Number of sessions to create. If `NULL`, it will use at least
+\item{n}{Number of workers to create. If `NULL`, it will use at least
 two, but no more than the number of cores on your computer - 2.}
 }
 \description{
