@@ -20,7 +20,9 @@ Imports:
     dplyr,
     lazyeval,
     magrittr,
-    parallel
+    ps,
+    rlang,
+    vctrs
 Suggests:
     covr,
     knitr,
@@ -28,7 +30,7 @@ Suggests:
     mgcv,
     nycflights13,
     rmarkdown,
-    testthat
+    testthat (>= 2.1.0)
 VignetteBuilder: 
     knitr
 Encoding: UTF-8
