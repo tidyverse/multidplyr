@@ -39,15 +39,15 @@ library(dplyr, warn.conflicts = FALSE)
 library(nycflights13)
 ```
   
-Next, we partition the flights data by flight number, compute the average delay per flight, and then collect the results:
+Next, we partition the flights data by destination, compute the average delay per flight, and then collect the results:
 
 ```{r}
-flights1 <- partition(flights, flight)
-flights2 <- summarise(flights1, dep_delay = mean(dep_delay, na.rm = TRUE))
-flights3 <- collect(flights2)
+flights1 <- flights %>% group_by(dest) %>% partition()
+flights2 <- flights1 %>% summarise(dep_delay = mean(dep_delay, na.rm = TRUE))
+flights3 <- flights2 %>% collect()
 ```
 
-The dplyr code looks the same as usual, but behind the scenes things are very different. `flights1` and `flights2` are party dfs. These look like normal data frames, but have an additional attribute: the number of shards. In this example, it tells us that `flights2` is spread across seven nodes, and the size on each node varies from 503 to 609 rows. `partition()` always makes sure a group is kept together on one node.
+The dplyr code looks the same as usual, but behind the scenes things are very different. `flights1` and `flights2` are party dfs. These look like normal data frames, but have an additional attribute: the number of shards. In this example, it tells us that `flights2` is spread across seven nodes, and the size on each node varies from 12 to 25 rows. `partition()` always makes sure a group is kept together on one node.
 
 ```{r}
 flights2
@@ -55,20 +55,20 @@ flights2
 
 ## Performance
 
-For this size of data, using a local cluster actually makes performance much slower!
+For this size of data, with a simple transformation, using a local cluster actually makes performance much slower!
 
 ```{r}
-system.time({
-  flights %>% 
-    partition() %>%
-    summarise(mean(dep_delay, na.rm = TRUE)) %>% 
-    collect()
-})
-system.time({
-  flights %>% 
-    group_by() %>%
-    summarise(mean(dep_delay, na.rm = TRUE))
-})
+by_dest <- flights %>% group_by(dest)
+
+# Local computation
+system.time(by_dest %>% summarise(mean(dep_delay, na.rm = TRUE)))
+
+# Remote: partitioning
+system.time(flights2 <- flights %>% partition())
+# Remote: computation
+system.time(flights3 <- flights2 %>% summarise(mean(dep_delay, na.rm = TRUE)))
+# Remote: retrieve results
+system.time(flights3 %>% collect())
 ```
 
 That's because there's some overhead associated with sending the data to each node and retrieving the results at the end. For basic dplyr verbs, multidplyr is unlikely to give you significant speed ups unless you have 10s or 100s of millions of data points. It might however, if you're doing more complex things with `do()`. Let's see how that plays out.
