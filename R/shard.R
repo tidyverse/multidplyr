@@ -167,6 +167,12 @@ group_by.party_df <- function(.data, ..., add = FALSE) {
   shard_call(.data, "group_by", enquos(...), add = add)
 }
 
+#' @importFrom dplyr group_by
+#' @export
+ungroup.party_df <- function(.data, ..., add = FALSE) {
+  shard_call(.data, "ungroup", enquos(...), add = add)
+}
+
 #' @importFrom dplyr mutate
 #' @export
 mutate.party_df <- function(.data, ...) {
