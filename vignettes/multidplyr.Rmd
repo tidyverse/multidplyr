@@ -130,6 +130,22 @@ system.time({
 
 That's not a great speed up, but generally you don't care about parallelising things that only take a couple of seconds. The cost of transmitting messages to the nodes is roughly fixed, so the longer the task you're parallelising, the closer to a linear speed up you'll get.  It'll also speed up with more nodes, but unfortunately vignettes are only allowed to use 2 nodes max, so I can't show you that here.
 
+## Efficiency
+
+For the best performance, you'll want to avoid loading all the data in the host process, and then sending it to individual workers. Instead, it's more efficient (but harder!) for each worker to load the data directly. 
+
+For example, if you were reading in many csv files, your code might look something like this:
+
+```{r, eval = FALSE}
+cluster <- new_cluster(4)
+cluster_assign_each(cluster, "filename",
+  list("a.csv", "b.csv", "c.csv", "d.csv")
+)
+cluster_assign(cluster, "my_data", vroom::vroom(filename))
+
+my_data <- party_df(cluster, "my_data")
+```
+
 ## Limitations
 
 *   For optimal speedup, each node needs to do about the same amount of
@@ -138,24 +154,3 @@ That's not a great speed up, but generally you don't care about parallelising th
     same amount of data. If multidplyr's default strategy isn't a good
     fit for your data, you may need to make your own grouping variable
     which takes values from 1 to the number of nodes.
-
-*   Typically, you'll want to avoid loading all the data into memory on one
-    instance. Instead, if possible, a better approach is to load the different
-    data on each node. If you were reading in many csv files, you code might 
-    look something like this:
-
-    ```{r, eval = FALSE}
-    cluster <- new_cluster(4)
-    cluster_assign_each(cluster, "filename",
-      list("a.csv", "b.csv", "c.csv", "d.csv")
-    )
-    cluster_assign(cluster, "my_data", vroom::vroom(filename))
-    
-    my_data <- party_df(cluster, "my_data")
-    ```
-
-*   Currently you can only use clusters created by the parallel package.
-    It is possible to set up these clusters across multiple machines,
-    but it is a bit tricky. Hopefully there will soon be a standard API
-    for distributed R, and when that happens, multidplyr will be able to
-    work with more types of clusters.
