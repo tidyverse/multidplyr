@@ -12,6 +12,14 @@ test_that("calls submitted to each node", {
   expect_equal(length(unique(pid)), length(cl))
 })
 
+test_that("errors are propagated", {
+  cl <- get_default_cluster()
+  cnd <- capture_condition(cluster_call(cl, stop("!")))
+
+  expect_s3_class(cnd, "rlang_error")
+  expect_equal(cnd$parent$message, "!")
+})
+
 test_that("string function executed on nodes", {
   cl <- get_default_cluster()
   identity <- function(x) 10

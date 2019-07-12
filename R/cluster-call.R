@@ -49,7 +49,7 @@ cluster_map <- function(.x, .f, ...) {
   failed <- !vapply(errs, is.null, logical(1))
   if (any(failed)) {
     err <- errs[failed][[1]]
-    stop(err$parent)
+    abort("Computation failed", parent = err)
   }
 
   lapply(results, "[[", "result")
