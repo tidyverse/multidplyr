@@ -139,18 +139,19 @@ That's not a great speed up, but generally you don't care about parallelising th
     fit for your data, you may need to make your own grouping variable
     which takes values from 1 to the number of nodes.
 
-*   Currently you have to load all the data into memory in one instance, and
-    then it gets partitioned to the individual nodes. If you want to avoid 
-    that, you'll need to split the data up yourself, and load it by "hand":
+*   Typically, you'll want to avoid loading all the data into memory on one
+    instance. Instead, if possible, a better approach is to load the different
+    data on each node. If you were reading in many csv files, you code might 
+    look something like this:
 
     ```{r, eval = FALSE}
-    cluster <- create_cluster(4)
+    cluster <- new_cluster(4)
     cluster_assign_each(cluster, "filename",
       list("a.csv", "b.csv", "c.csv", "d.csv")
     )
     cluster_assign(cluster, "my_data", vroom::vroom(filename))
     
-    my_data <- tbl(cluster, "my_data")
+    my_data <- party_df(cluster, "my_data")
     ```
 
 *   Currently you can only use clusters created by the parallel package.

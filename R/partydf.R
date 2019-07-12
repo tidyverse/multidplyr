@@ -57,6 +57,48 @@ worker_id <- function(.data, .cluster, ...) {
 
 # Constructor -------------------------------------------------------------
 
+#' Create party_df "by hand"
+#'
+#' Use this function to create a partitioned data frame from existing
+#' data frames spread across a cluster
+#'
+#' @export
+#' @param cluster A cluster
+#' @param name Name of data frame variable. Must exist on every worker,
+#'   be a data frame, and have the same names.
+#' @export
+#' @examples
+#' # If a real example, you might spread file names across the clusters
+#' # and read in using data.table::fread()/vroom::vroom()/qs::qread().
+#' cl <- get_default_cluster()[1:2]
+#' cluster_assign_each(cl, "n", list(10, 15))
+#' cluster_assign(cl, "df", data.frame(x = runif(n)))
+#'
+#' df <- party_df(cl, "df")
+#' df
+party_df <- function(cluster, name) {
+  stopifnot(is_cluster(cluster))
+  stopifnot(is_string(name))
+
+  # Check that variable exists, is data frame, and has same names
+  exists <- unlist(cluster_call(cluster, exists(!!name)))
+  if (!all(exists)) {
+    abort(paste0("`", name, "` does not exist on all workers"))
+  }
+
+  is_df <- unlist(cluster_call(cluster, is.data.frame(!!sym(name))))
+  if (!all(is_df)) {
+    abort(paste0("`", name, "` is not a data frame on all workers"))
+  }
+
+  names <- cluster_call(cluster, names(!!sym(name)))
+  if (length(unique(names)) != 1) {
+    abort(paste0("`", name, "` does not have the same name on all workers"))
+  }
+
+  new_party_df(cluster, name)
+}
+
 new_party_df <- function(cluster, name) {
   stopifnot(is_cluster(cluster))
   stopifnot(is_string(name))
