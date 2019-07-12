@@ -14,10 +14,10 @@ test_that("calls submitted to each node", {
 
 test_that("errors are propagated", {
   cl <- get_default_cluster()
-  cnd <- capture_condition(cluster_call(cl, stop("!")))
+  cnd <- capture_condition(cluster_call(cl, stop("!!")))
 
   expect_s3_class(cnd, "rlang_error")
-  expect_equal(cnd$parent$message, "!")
+  expect_match(cnd$parent$message, "!!", fixed = TRUE)
 })
 
 test_that("string function executed on nodes", {
