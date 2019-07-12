@@ -4,6 +4,7 @@
 \alias{cluster_utils}
 \alias{cluster_assign}
 \alias{cluster_assign_each}
+\alias{cluster_copy}
 \alias{cluster_get}
 \alias{cluster_rm}
 \alias{cluster_ls}
@@ -13,6 +14,8 @@
 cluster_assign(cluster, name, expr)
 
 cluster_assign_each(cluster, name, values)
+
+cluster_copy(cluster, names, env = caller_env())
 
 cluster_get(cluster, name)
 
@@ -30,6 +33,8 @@ cluster_library(cluster, packages)
 \item{expr}{An expression to evaluate.}
 
 \item{values}{A list of values, one for each worker.}
+
+\item{env}{Environment in which to look for varibles to copy.}
 
 \item{packages}{Character vector of packages to load}
 }
@@ -57,7 +62,11 @@ cl \%>\%
   cluster_get("z")
 
 cl \%>\% cluster_ls()
-cl \%>\% cluster_rm(c("x", "y", "z"))
+
+w <- 10
+cluster_copy(cl, "w")
+
+cl \%>\% cluster_rm(c("w", "x", "y", "z"))
 cl \%>\% cluster_ls()
 
 cl \%>\% cluster_call(search())

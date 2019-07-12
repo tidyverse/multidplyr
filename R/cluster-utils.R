@@ -27,7 +27,11 @@
 #'   cluster_get("z")
 #'
 #' cl %>% cluster_ls()
-#' cl %>% cluster_rm(c("x", "y", "z"))
+#'
+#' w <- 10
+#' cluster_copy(cl, "w")
+#'
+#' cl %>% cluster_rm(c("w", "x", "y", "z"))
 #' cl %>% cluster_ls()
 #'
 #' cl %>% cluster_call(search())
@@ -65,6 +69,26 @@ cluster_assign_each <- function(cluster, name, values) {
 
     cluster_call(cluster[i], !!call2("{", assign_call, NULL))
   }
+
+  invisible(cluster)
+}
+
+#' @rdname cluster_utils
+#' @param env Environment in which to look for varibles to copy.
+#' @export
+cluster_copy <- function(cluster, names, env = caller_env()) {
+  stopifnot(is_cluster(cluster))
+  stopifnot(is.character(names))
+
+  path <- tempfile()
+  on.exit(unlink(path), add = TRUE)
+
+  values <- lapply(names, env_get, env = env, inherit = TRUE)
+  names(values) <- names
+  qs::qsave(values, path, preset = "fast", check_hash = FALSE, nthreads = 2)
+
+  assign_call <- expr(list2env(qs::qread(!!path), globalenv()))
+  cluster_call(cluster, !!call2("{", assign_call, NULL))
 
   invisible(cluster)
 }

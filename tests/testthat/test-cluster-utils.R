@@ -18,6 +18,18 @@ test_that("can assign different values to different clusters", {
   cluster_rm(cl, "x")
 })
 
+test_that("can copy from objects to cluster", {
+  cl <- get_default_cluster()[1]
+  x <- 1
+  y <- 2
+
+  cluster_copy(cl, c("x", "y"))
+  expect_equal(cluster_get(cl, "x")[[1]], x)
+  expect_equal(cluster_get(cl, "y")[[1]], y)
+
+  cluster_rm(cl, c("x", "y"))
+})
+
 test_that("can load package", {
   cl <- new_cluster(1)
 
