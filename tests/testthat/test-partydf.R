@@ -29,3 +29,14 @@ test_that("can partition by group", {
   dfs <- cluster_get(cl, as.character(df2$name))
   expect_equal(dfs, list(tibble(x = c(1, 1)), tibble(x = c(2, 3))))
 })
+
+test_that("reduce cluster size if needed", {
+  cl <- get_default_cluster()[1:2]
+  df1 <- tibble(x = c(rep(1, 2)))
+  expect_message(
+    df2 <- partition(df1, x, .cluster = cl),
+    "partial cluster"
+  )
+
+  expect_equal(length(df2$cluster), 1)
+})
