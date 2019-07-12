@@ -1,0 +1,7 @@
+url: https://multidplyr.tidyverse.org
+
+home:
+  strip_header: true
+
+template:
+  package: tidytemplate
