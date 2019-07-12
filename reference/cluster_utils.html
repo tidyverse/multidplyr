@@ -170,19 +170,19 @@
 <span class='no'>cl</span> <span class='kw'>%&gt;%</span>
   <span class='fu'>cluster_assign</span>(<span class='st'>"x"</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/Uniform'>runif</a></span>(<span class='fl'>1</span>)) <span class='kw'>%&gt;%</span>
   <span class='fu'>cluster_get</span>(<span class='st'>"x"</span>)</div><div class='output co'>#&gt; [[1]]
-#&gt; [1] 0.725582
+#&gt; [1] 0.3860963
 #&gt; 
 #&gt; [[2]]
-#&gt; [1] 0.865975
+#&gt; [1] 0.9320325
 #&gt; </div><div class='input'>
 <span class='co'># Inline the expression using !! if you want to compute it locally</span>
 <span class='no'>cl</span> <span class='kw'>%&gt;%</span>
   <span class='fu'>cluster_assign</span>(<span class='st'>"y"</span>, !!<span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/Uniform'>runif</a></span>(<span class='fl'>1</span>)) <span class='kw'>%&gt;%</span>
   <span class='fu'>cluster_get</span>(<span class='st'>"x"</span>)</div><div class='output co'>#&gt; [[1]]
-#&gt; [1] 0.725582
+#&gt; [1] 0.3860963
 #&gt; 
 #&gt; [[2]]
-#&gt; [1] 0.865975
+#&gt; [1] 0.9320325
 #&gt; </div><div class='input'>
 <span class='no'>cl</span> <span class='kw'>%&gt;%</span>
   <span class='fu'>cluster_assign_each</span>(<span class='st'>"z"</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(<span class='fl'>3</span>, <span class='fl'>4</span>)) <span class='kw'>%&gt;%</span>
