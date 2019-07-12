@@ -20,3 +20,12 @@ test_that("can partition and re-collect", {
 
   expect_equal(collect(df2), df1)
 })
+
+test_that("can partition by group", {
+  cl <- get_default_cluster()[1:2]
+  df1 <- tibble(x = c(rep(1, 2), rep(2, 1), rep(3, 1)))
+  df2 <- partition(df1, x, .cluster = cl)
+
+  dfs <- cluster_get(cl, as.character(df2$name))
+  expect_equal(dfs, list(tibble(x = c(1, 1)), tibble(x = c(2, 3))))
+})
