@@ -13,8 +13,8 @@ A dplyr backend that partitions a data frame across
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://github.com/hadley/multidplyr}
-  \item Report bugs at \url{https://github.com/hadley/multidplyr/issues}
+  \item \url{https://github.com/tidyverse/multidplyr}
+  \item Report bugs at \url{https://github.com/tidyverse/multidplyr/issues}
 }
 
 }

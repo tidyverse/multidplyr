@@ -1,8 +1,8 @@
 # multidplyr
 
 <!-- badges: start -->
-[![Travis build status](https://travis-ci.org/hadley/multidplyr.svg?branch=master)](https://travis-ci.org/hadley/multidplyr)
-[![Codecov test coverage](https://codecov.io/gh/hadley/multidplyr/branch/master/graph/badge.svg)](https://codecov.io/gh/hadley/multidplyr?branch=master)
+[![Travis build status](https://travis-ci.org/tidyverse/multidplyr.svg?branch=master)](https://travis-ci.org/tidyverse/multidplyr)
+[![Codecov test coverage](https://codecov.io/gh/tidyverse/multidplyr/branch/master/graph/badge.svg)](https://codecov.io/gh/tidyverse/multidplyr?branch=master)
 [![CRAN status](https://www.r-pkg.org/badges/version/multidplyr)](https://cran.r-project.org/package=multidplyr)
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 <!-- badges: end -->
@@ -21,5 +21,5 @@ To install from GitHub:
 
 ```R
 # install.packages("devtools")
-devtools::install_github("hadley/multidplyr")
+devtools::install_github("tidyverse/multidplyr")
 ```
