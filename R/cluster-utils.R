@@ -54,8 +54,14 @@ cluster_assign_each <- function(cluster, name, values) {
   stopifnot(is_string(name))
   stopifnot(is.list(values), length(values) == length(cluster))
 
+  path <- tempfile()
+  on.exit(unlink(path), add = TRUE)
+
   for (i in seq_along(values)) {
-    cluster_assign(cluster[i], name, !!values[[i]])
+    qs::qsave(values[[i]], path, preset = "fast", check_hash = FALSE, nthreads = 2)
+    assign_call <- call2("<-", sym(name), expr(qs::qread(!!path, nthreads = 2)))
+
+    cluster_call(cluster[i], {!!assign_call; NULL})
   }
 
   invisible(cluster)
