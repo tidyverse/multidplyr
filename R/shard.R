@@ -175,7 +175,7 @@ group_by.party_df <- function(.data, ..., add = FALSE) {
   shard_call(.data, "group_by", enquos(...), add = add)
 }
 
-#' @importFrom dplyr group_by
+#' @importFrom dplyr ungroup
 #' @export
 ungroup.party_df <- function(.data, ..., add = FALSE) {
   shard_call(.data, "ungroup", enquos(...), add = add)
