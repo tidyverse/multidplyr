@@ -23,11 +23,11 @@ partition <- function(.data, ..., .cluster = get_default_cluster()) {
     message("Using partial cluster of size ", length(worker_rows))
     .cluster <- .cluster[seq_along(worker_rows)]
   }
-  shards <- lapply(worker_rows, function(i) .data[i, ])
+  shards <- lapply(worker_rows, function(i) .data[i, , drop = FALSE])
 
   name <- table_name()
   cluster_assign_each(.cluster, name, shards)
-  party_df(name, .cluster)
+  new_party_df(name, .cluster)
 }
 
 worker_id <- function(.data, .cluster, ...) {
@@ -35,8 +35,8 @@ worker_id <- function(.data, .cluster, ...) {
   m <- length(.cluster)
 
   if (missing(...) && !dplyr::is_grouped_df(.data)) {
-    # Randomly assign
-    sample(seq_len(n) %% m) + 1
+    # Assign sequentially
+    (seq_len(n) - 1) %% m + 1
   } else {
     # Assign each new group to the session with fewest rows
     group_id <- dplyr::group_indices(.data, ...)
@@ -55,14 +55,14 @@ worker_id <- function(.data, .cluster, ...) {
   }
 }
 
-party_df <- function(name, cluster, partition_vars = "PARTITION_ID") {
-  stopifnot(is.character(name), length(name) == 1)
+new_party_df <- function(name, cluster) {
+  stopifnot(is_string(name))
+  stopifnot(is_cluster(cluster))
 
   structure(
     list(
       cluster = cluster,
       name = sym(name),
-      partition_vars = partition_vars,
       .auto_clean = shard_deleter(name, cluster)
     ),
     class = "party_df"
