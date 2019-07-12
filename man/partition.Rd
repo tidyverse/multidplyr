@@ -10,8 +10,8 @@ partition(.data, ..., .cluster = get_default_cluster())
 \item{.data, data}{Dataset to partition}
 
 \item{...}{Variables to partition by. Will generally work best when you
-have many more groups than nodes. If omitted, will randomly partition
-rows across nodes.}
+have many more groups than workers. If omitted, will randomly partition
+rows across workers.}
 
 \item{.cluster}{Cluster to use.}
 }

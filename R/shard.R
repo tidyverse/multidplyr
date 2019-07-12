@@ -2,8 +2,8 @@
 #'
 #' @param .data,data Dataset to partition
 #' @param ... Variables to partition by. Will generally work best when you
-#'   have many more groups than nodes. If omitted, will randomly partition
-#'   rows across nodes.
+#'   have many more groups than workers. If omitted, will randomly partition
+#'   rows across workers.
 #' @param .cluster Cluster to use.
 #' @export
 #' @examples
@@ -16,12 +16,27 @@
 #' mtcars2 %>% group_by(cyl) %>% summarise(n())
 #' mtcars2 %>% select(-cyl)
 partition <- function(.data, ..., .cluster = get_default_cluster()) {
+  worker_id <- worker_id(.data, .cluster, ...)
+  worker_rows <- split(seq_along(worker_id), worker_id)
+
+  if (length(worker_rows) < length(.cluster)) {
+    message("Using partial cluster of size ", length(worker_rows))
+    .cluster <- .cluster[seq_along(worker_rows)]
+  }
+  shards <- lapply(worker_rows, function(i) .data[i, ])
+
+  name <- table_name()
+  cluster_assign_each(.cluster, name, shards)
+  party_df(name, .cluster)
+}
+
+worker_id <- function(.data, .cluster, ...) {
   n <- nrow(.data)
   m <- length(.cluster)
 
   if (missing(...) && !dplyr::is_grouped_df(.data)) {
     # Randomly assign
-    worker_id <- sample(seq_len(n) %% m) + 1
+    sample(seq_len(n) %% m) + 1
   } else {
     # Assign each new group to the session with fewest rows
     group_id <- dplyr::group_indices(.data, ...)
@@ -36,15 +51,8 @@ partition <- function(.data, ..., .cluster = get_default_cluster()) {
       rows[[j]] <- rows[[j]] + counts[[i]]
     }
 
-    worker_id <- group_worker_id[group_id]
+    group_worker_id[group_id]
   }
-
-  worker_rows <- split(seq_along(worker_id), worker_id)
-  shards <- lapply(worker_rows, function(i) .data[i, ])
-
-  name <- table_name()
-  cluster_assign_each(.cluster, name, shards)
-  party_df(name, .cluster)
 }
 
 party_df <- function(name, cluster, partition_vars = "PARTITION_ID") {
