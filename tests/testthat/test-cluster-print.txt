@@ -1,1 +1,1 @@
-6 session cluster [......]
+1 session cluster [.]

@@ -8,3 +8,8 @@ test_that("default cluster only creates once", {
 test_that("subsetting cluster returns cluster", {
   expect_s3_class(get_default_cluster()[1], "multidplyr_cluster")
 })
+
+test_that("cluster has useful print method", {
+  cl <- new_cluster(1)
+  expect_known_output(print(cl), test_path("test-cluster-print.txt"))
+})
