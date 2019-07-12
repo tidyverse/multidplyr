@@ -33,7 +33,7 @@ Let's see a simple example of that using the `nycflights13::flights`. This datas
 
 We start by loading the packages we need:
 
-```{r}
+```{r setup}
 library(multidplyr)
 library(dplyr, warn.conflicts = FALSE)
 library(nycflights13)
@@ -102,8 +102,7 @@ set_default_cluster(cluster)
 Let's partition our restricted flights data across this cluster:
 
 ```{r}
-by_dest <- common_dest %>% 
-  partition(dest, cluster = cluster)
+by_dest <- common_dest %>% partition(dest)
 by_dest
 ```
 
