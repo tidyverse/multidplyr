@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Function reference • multidplyr</title>
+<title>Create party_df "by hand" — party_df • multidplyr</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -31,7 +31,11 @@
 
 
 
-<meta property="og:title" content="Function reference" />
+<meta property="og:title" content="Create party_df "by hand" — party_df" />
+
+<meta property="og:description" content="Use this function to create a partitioned data frame from existing
+data frames spread across a cluster" />
+<meta name="twitter:card" content="summary" />
 
 
 
@@ -55,7 +59,7 @@
   </head>
 
   <body>
-    <div class="container template-reference-index">
+    <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -105,66 +109,67 @@
       </header>
 
 <div class="row">
-  <div class="contents col-md-9">
+  <div class="col-md-9 contents">
     <div class="page-header">
-      <h1>Reference</h1>
+    <h1>Create party_df "by hand"</h1>
+    <small class="dont-index">Source: <a href='https://github.com/tidyverse/multidplyr/blob/master/R/partydf.R'><code>R/partydf.R</code></a></small>
+    <div class="hidden name"><code>party_df.Rd</code></div>
     </div>
 
-    <table class="ref-index">
+    <div class="ref-description">
+    
+    <p>Use this function to create a partitioned data frame from existing
+data frames spread across a cluster</p>
+    
+    </div>
 
-    <colgroup>
-      
-      <col class="alias" />
-      <col class="title" />
-    </colgroup>
-
-    <tbody>
-      <tr>
-        <th colspan="2">
-          <h2 id="section-all-functions" class="hasAnchor"><a href="#section-all-functions" class="anchor"></a>All functions</h2>
-          <p class="section-desc"></p>
-        </th>
-      </tr>
-      <tr>
-        
-        <td>
-          <p><code><a href="cluster_map.html">cluster_map()</a></code> <code><a href="cluster_map.html">cluster_call()</a></code> </p>
-        </td>
-        <td><p>Call a function on each node of a cluster</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="cluster_utils.html">cluster_assign()</a></code> <code><a href="cluster_utils.html">cluster_assign_each()</a></code> <code><a href="cluster_utils.html">cluster_get()</a></code> <code><a href="cluster_utils.html">cluster_rm()</a></code> <code><a href="cluster_utils.html">cluster_ls()</a></code> <code><a href="cluster_utils.html">cluster_library()</a></code> </p>
-        </td>
-        <td><p>Cluster utitility functions</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="new_cluster.html">new_cluster()</a></code> </p>
-        </td>
-        <td><p>Create a new cluster with sensible defaults.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="partition.html">partition()</a></code> </p>
-        </td>
-        <td><p>Partition data across a cluster.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="party_df.html">party_df()</a></code> </p>
-        </td>
-        <td><p>Create party_df "by hand"</p></td>
-      </tr>
-    </tbody>
+    <pre class="usage"><span class='fu'>party_df</span>(<span class='no'>cluster</span>, <span class='no'>name</span>)</pre>
+    
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>cluster</th>
+      <td><p>A cluster</p></td>
+    </tr>
+    <tr>
+      <th>name</th>
+      <td><p>Name of data frame variable. Must exist on every worker,
+be a data frame, and have the same names.</p></td>
+    </tr>
     </table>
-  </div>
+    
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='co'># If a real example, you might spread file names across the clusters</span>
+<span class='co'># and read in using data.table::fread()/vroom::vroom()/qs::qread().</span>
+<span class='no'>cl</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='default_cluster.html'>get_default_cluster</a></span>()[<span class='fl'>1</span>:<span class='fl'>2</span>]
+<span class='fu'><a href='cluster_utils.html'>cluster_assign_each</a></span>(<span class='no'>cl</span>, <span class='st'>"n"</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(<span class='fl'>10</span>, <span class='fl'>15</span>))
+<span class='fu'><a href='cluster_utils.html'>cluster_assign</a></span>(<span class='no'>cl</span>, <span class='st'>"df"</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/data.frame'>data.frame</a></span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/Uniform'>runif</a></span>(<span class='no'>n</span>)))
+
+<span class='no'>df</span> <span class='kw'>&lt;-</span> <span class='fu'>party_df</span>(<span class='no'>cl</span>, <span class='st'>"df"</span>)
+<span class='no'>df</span></div><div class='output co'>#&gt; Source: party_df [25 x 1]
+#&gt; Shards: 2 [10--15 rows]
+#&gt; 
+#&gt; # Description: party_df
+#&gt;       x
+#&gt;   &lt;dbl&gt;
+#&gt; 1 0.917
+#&gt; 2 0.919
+#&gt; 3 0.396
+#&gt; 4 0.933
+#&gt; 5 0.496
+#&gt; 6 0.116
+#&gt; # … with 19 more rows</div></pre>
+  </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      <li><a href="#section-all-functions">All functions</a></li>
+      <li><a href="#arguments">Arguments</a></li>
+            
+      <li><a href="#examples">Examples</a></li>
     </ul>
+
   </div>
 </div>
 
