@@ -13,6 +13,8 @@ Due to the overhead associated with communicating between the nodes, you won't e
 
 To learn more, read the [vignette](vignettes/multidplyr.md).
 
+(Note that unlike other packages in the tidyverse, multidplyr requires R 3.5 or greater. We hope to relax this requirement [in the future](https://github.com/traversc/qs/issues/11).)
+
 ## Installation
 
 To install from GitHub:
