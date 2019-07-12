@@ -40,6 +40,7 @@ NULL
 #' @rdname cluster_utils
 #' @export
 cluster_assign <- function(cluster, name, expr) {
+  stopifnot(is_cluster(cluster))
   stopifnot(is_string(name))
   expr <- enexpr(expr)
 
@@ -51,6 +52,7 @@ cluster_assign <- function(cluster, name, expr) {
 #' @rdname cluster_utils
 #' @export
 cluster_assign_each <- function(cluster, name, values) {
+  stopifnot(is_cluster(cluster))
   stopifnot(is_string(name))
   stopifnot(is.list(values), length(values) == length(cluster))
 
@@ -70,6 +72,7 @@ cluster_assign_each <- function(cluster, name, values) {
 #' @rdname cluster_utils
 #' @export
 cluster_get <- function(cluster, name) {
+  stopifnot(is_cluster(cluster))
   stopifnot(is_string(name))
   cluster_call(cluster, !!sym(name))
 }
@@ -80,6 +83,7 @@ cluster_get <- function(cluster, name) {
 #' @rdname cluster_utils
 #' @export
 cluster_rm <- function(cluster, names) {
+  stopifnot(is_cluster(cluster))
   stopifnot(is.character(names))
 
   cluster_call(cluster, rm(list = !!names, envir = globalenv()))
