@@ -44,7 +44,7 @@ cluster_assign <- function(cluster, name, expr) {
   expr <- enexpr(expr)
 
   assign_call <- call2("<-", sym(name), expr)
-  cluster_call(cluster, {!!assign_call; NULL})
+  cluster_call(cluster, !!call2("{", assign_call, NULL))
   invisible(cluster)
 }
 
@@ -61,7 +61,7 @@ cluster_assign_each <- function(cluster, name, values) {
     qs::qsave(values[[i]], path, preset = "fast", check_hash = FALSE, nthreads = 2)
     assign_call <- call2("<-", sym(name), expr(qs::qread(!!path, nthreads = 2)))
 
-    cluster_call(cluster[i], {!!assign_call; NULL})
+    cluster_call(cluster[i], !!call2("{", assign_call, NULL))
   }
 
   invisible(cluster)
