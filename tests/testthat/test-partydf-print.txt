@@ -1,0 +1,8 @@
+Source: party_df [2 x 1]
+Shards: 2 [1--1 rows]
+
+# Description: party_df
+      y
+  <dbl>
+1     1
+2     1

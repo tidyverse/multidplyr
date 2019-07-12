@@ -27,7 +27,7 @@ partition <- function(.data, ..., .cluster = get_default_cluster()) {
 
   name <- table_name()
   cluster_assign_each(.cluster, name, shards)
-  new_party_df(name, .cluster)
+  new_party_df(.cluster, name)
 }
 
 worker_id <- function(.data, .cluster, ...) {
@@ -55,9 +55,11 @@ worker_id <- function(.data, .cluster, ...) {
   }
 }
 
-new_party_df <- function(name, cluster) {
-  stopifnot(is_string(name))
+# Constructor -------------------------------------------------------------
+
+new_party_df <- function(cluster, name) {
   stopifnot(is_cluster(cluster))
+  stopifnot(is_string(name))
 
   structure(
     list(
@@ -153,62 +155,6 @@ as.data.frame.party_df <- function(x, row.names, optional, ...) {
 collect.party_df <- function(.data, ...) {
   out <- as.data.frame(.data)
   group_by(out, !!!groups(.data))
-}
-
-# Methods passed on to shards ---------------------------------------------
-
-#' @importFrom dplyr arrange
-#' @export
-arrange.party_df <- function(.data, ..., .by_group = FALSE) {
-  shard_call(.data, "arrange", enquos(...), .by_group = .by_group)
-}
-
-#' @importFrom dplyr filter
-# exported on load
-filter.party_df <- function(.data, ...) {
-  shard_call(.data, "filter", enquos(...))
-}
-
-#' @importFrom dplyr group_by
-#' @export
-group_by.party_df <- function(.data, ..., add = FALSE) {
-  shard_call(.data, "group_by", enquos(...), add = add)
-}
-
-#' @importFrom dplyr ungroup
-#' @export
-ungroup.party_df <- function(.data, ..., add = FALSE) {
-  shard_call(.data, "ungroup", enquos(...), add = add)
-}
-
-#' @importFrom dplyr mutate
-#' @export
-mutate.party_df <- function(.data, ...) {
-  shard_call(.data, "mutate", enquos(...))
-}
-
-#' @importFrom dplyr select
-#' @export
-select.party_df <- function(.data, ...) {
-  shard_call(.data, "select", enquos(...))
-}
-
-#' @importFrom dplyr slice
-#' @export
-slice.party_df <- function(.data, ...) {
-  shard_call(.data, "slice", enquos(...))
-}
-
-#' @importFrom dplyr summarise
-#' @export
-summarise.party_df <- function(.data, ...) {
-  shard_call(.data, "summarise", enquos(...))
-}
-
-#' @importFrom dplyr do
-#' @export
-do.party_df <- function(.data, ...) {
-  shard_call(.data, "do", enquos(...))
 }
 
 shard_call <- function(.data, .verb, dots, ...) {
