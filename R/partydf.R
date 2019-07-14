@@ -136,7 +136,7 @@ shard_cols <- function(x) {
 #' @importFrom dplyr tbl_vars
 #' @export
 tbl_vars.party_df <- function(x) {
-  cluster_call(x$cluster[1], tbl_vars(!!x$name))[[1]]
+  cluster_call(x$cluster[1], dplyr::tbl_vars(!!x$name))[[1]]
 }
 
 #' @importFrom dplyr groups
@@ -200,6 +200,19 @@ collect.party_df <- function(.data, ...) {
   out <- as.data.frame(.data)
   group_by(out, !!!groups(.data))
 }
+
+#' @importFrom dplyr collect
+#' @export
+pull.party_df <- function(.data, var = -1) {
+  expr <- enquo(var)
+  var <- dplyr:::find_var(expr, tbl_vars(.data))
+
+  .data <- ungroup(.data)
+  .data <- select(.data, !!sym(var))
+  .data <- collect(.data)
+  .data[[1]]
+}
+
 
 shard_call <- function(.data, .verb, dots, ...) {
   call <- call2(.verb, .data$name, !!!dots, ..., .ns = "dplyr")

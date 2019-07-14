@@ -5,3 +5,36 @@ test_that("joining data frame requires explicit copy", {
   expect_error(left_join(pf, df), "same src")
   expect_error(left_join(pf, df, copy = TRUE), NA)
 })
+
+test_that("joins match local results", {
+  pf1 <- partition(tibble(x = c(1, 2)))
+  pf2 <- partition(tibble(x = c(1, 3)))
+
+  # primarily testing that basic infrastructure works and that
+  # I haven't accidentally typed the wrong verb name somewhere
+  expect_equal(
+    pf1 %>% inner_join(pf2, by = "x") %>% pull(x),
+    c(1)
+  )
+  expect_equal(
+    pf1 %>% left_join(pf2, by = "x") %>% pull(x),
+    c(1, 2)
+  )
+  expect_equal(
+    pf1 %>% right_join(pf2, by = "x") %>% pull(x),
+    c(1, 3)
+  )
+  expect_equal(
+    pf1 %>% full_join(pf2, by = "x") %>% pull(x),
+    c(1, 2, 3)
+  )
+
+  expect_equal(
+    pf1 %>% semi_join(pf2, by = "x") %>% pull(x),
+    c(1)
+  )
+  expect_equal(
+    pf1 %>% anti_join(pf2, by = "x") %>% pull(x),
+    c(2)
+  )
+})
