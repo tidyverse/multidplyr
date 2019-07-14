@@ -1,6 +1,6 @@
 test_that("can construct and print partydf", {
   cl <- default_cluster()
-  cl <- cluster_assign(cl, "x", data.frame(y = 1:10))
+  cl <- cluster_assign(cl, x = data.frame(y = 1:10))
 
   df <- party_df(cl, "x")
   on.exit(cluster_rm(cl, "x"))
@@ -14,11 +14,11 @@ test_that("name must be data frame with same names", {
   cl <- default_cluster()
   expect_error(party_df(cl, "x"), "does not exist")
 
-  cluster_assign(cl, "x", 1)
+  cluster_assign(cl, x = 1)
   on.exit(cluster_rm(cl, "x"))
   expect_error(party_df(cl, "x"), "not a data frame")
 
-  cluster_assign_each(cl, "x", list(tibble(x = 1), tibble(y = 2)))
+  cluster_assign_each(cl, x = list(tibble(x = 1), tibble(y = 2)))
   expect_error(party_df(cl, "x"), "same names")
 })
 
@@ -42,7 +42,7 @@ test_that("can partition by group", {
   df1 <- tibble(x = c(rep(1, 2), rep(2, 1), rep(3, 1)))
   df2 <- df1 %>% group_by(x) %>% partition(cl)
 
-  dfs <- cluster_get(cl, as.character(df2$name))
+  dfs <- cluster_call(cl, !!df2$name)
   expect_equal(dfs, list(tibble(x = c(1, 1)), tibble(x = c(2, 3))))
 })
 

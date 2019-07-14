@@ -1,9 +1,9 @@
 test_that("can set/get/remove/list", {
   cl <- default_cluster()
-  cluster_assign(cl, "x", 1)
+  cluster_assign(cl, x = 1)
 
   expect_true("x" %in% cluster_ls(cl[1])[[1]])
-  expect_equal(cluster_get(cl[1], "x")[[1]], 1)
+  expect_equal(cluster_call(cl[1], x)[[1]], 1)
 
   cluster_rm(cl, "x")
   expect_false("x" %in% cluster_ls(cl[1])[[1]])
@@ -11,10 +11,9 @@ test_that("can set/get/remove/list", {
 
 test_that("can assign different values to different clusters", {
   cl <- default_cluster()
-  vals <- as.list(seq_along(cl))
 
-  cluster_assign_each(cl, "x", vals)
-  expect_equal(cluster_get(cl, "x"), vals)
+  cluster_assign_each(cl, x = 1:2)
+  expect_equal(cluster_call(cl, x), list(1L, 2L))
   cluster_rm(cl, "x")
 })
 
@@ -24,8 +23,8 @@ test_that("can copy from objects to cluster", {
   y <- 2
 
   cluster_copy(cl, c("x", "y"))
-  expect_equal(cluster_get(cl, "x")[[1]], x)
-  expect_equal(cluster_get(cl, "y")[[1]], y)
+  expect_equal(cluster_call(cl, x)[[1]], x)
+  expect_equal(cluster_call(cl, y)[[1]], y)
 
   cluster_rm(cl, c("x", "y"))
 })

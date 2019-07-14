@@ -3,11 +3,14 @@
 \name{cluster_map}
 \alias{cluster_map}
 \alias{cluster_call}
+\alias{cluster_walk}
 \title{Call a function on each node of a cluster}
 \usage{
 cluster_map(.x, .f, ...)
 
 cluster_call(x, code)
+
+cluster_walk(x, code)
 }
 \arguments{
 \item{.f}{Function to call. Must be a function, string, or formula.
@@ -31,8 +34,9 @@ A list, with one element for each worker.
 }
 \description{
 `cluster_map()` passes a function and arguments; `cluster_call()` quotes
-the input and then re-calls. Jobs are submitted to workers in parallel, and
-then we wait until they're complete.
+the input and then re-calls; `cluster_walk()` is a version of
+`cluster_call()` that doesn't return values. Jobs are submitted to workers
+in parallel, and then we wait until they're complete.
 }
 \examples{
 cl <- new_cluster(2)

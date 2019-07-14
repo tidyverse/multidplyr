@@ -29,7 +29,7 @@ partition <- function(data, cluster) {
   shards <- lapply(worker_rows, function(i) data[i, , drop = FALSE])
 
   name <- table_name()
-  cluster_assign_each(cluster, name, shards)
+  cluster_assign_each(cluster, !!name := shards)
   new_party_df(cluster, name)
 }
 
@@ -74,8 +74,8 @@ worker_id <- function(data, cluster) {
 #' # If a real example, you might spread file names across the clusters
 #' # and read in using data.table::fread()/vroom::vroom()/qs::qread().
 #' cl <- default_cluster()
-#' cluster_assign_each(cl, "n", list(10, 15))
-#' cluster_assign(cl, "df", data.frame(x = runif(n)))
+#' cluster_assign_each(cl, n = list(10, 15))
+#' cluster_walk(cl, df <- data.frame(x = runif(n)))
 #'
 #' df <- party_df(cl, "df")
 #' df
@@ -194,7 +194,7 @@ print.party_df <- function(x, ..., n = NULL, width = NULL) {
 
 #' @export
 as.data.frame.party_df <- function(x, row.names, optional, ...) {
-  dplyr::bind_rows(cluster_get(x$cluster, as.character(x$name)))
+  dplyr::bind_rows(cluster_call(x$cluster, !!x$name))
 }
 
 #' @importFrom dplyr collect

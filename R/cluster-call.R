@@ -1,8 +1,9 @@
 #' Call a function on each node of a cluster
 #'
 #' `cluster_map()` passes a function and arguments; `cluster_call()` quotes
-#' the input and then re-calls. Jobs are submitted to workers in parallel, and
-#' then we wait until they're complete.
+#' the input and then re-calls; `cluster_walk()` is a version of
+#' `cluster_call()` that doesn't return values. Jobs are submitted to workers
+#' in parallel, and then we wait until they're complete.
 #'
 #' @param x,.x A cluster
 #' @param .f Function to call. Must be a function, string, or formula.
@@ -42,6 +43,7 @@ cluster_map <- function(.x, .f, ...) {
 
   lapply(.x, function(x) x$call(.f, args))
   lapply(.x, function(x) x$poll_process(-1))
+  lapply(.x, function(x) x$poll_process(-1))
 
   results <- lapply(.x, function(x) x$read())
 
@@ -60,6 +62,18 @@ cluster_map <- function(.x, .f, ...) {
 cluster_call <- function(x, code) {
   code <- enexpr(code)
   cluster_map(x, function(x) eval(x, globalenv()), code)
+}
+
+#' @rdname cluster_map
+#' @export
+cluster_walk <- function(x, code) {
+  code <- enexpr(code)
+  cluster_map(x, function(x) {
+    eval(x, globalenv())
+    NULL
+  }, code)
+
+  invisible(x)
 }
 
 # helpers -----------------------------------------------------------------

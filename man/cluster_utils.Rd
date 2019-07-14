@@ -5,19 +5,16 @@
 \alias{cluster_assign}
 \alias{cluster_assign_each}
 \alias{cluster_copy}
-\alias{cluster_get}
 \alias{cluster_rm}
 \alias{cluster_ls}
 \alias{cluster_library}
 \title{Cluster utitility functions}
 \usage{
-cluster_assign(cluster, name, expr)
+cluster_assign(cluster, ...)
 
-cluster_assign_each(cluster, name, values)
+cluster_assign_each(cluster, ...)
 
 cluster_copy(cluster, names, env = caller_env())
-
-cluster_get(cluster, name)
 
 cluster_rm(cluster, names)
 
@@ -28,11 +25,9 @@ cluster_library(cluster, packages)
 \arguments{
 \item{cluster}{Cluster to work on}
 
-\item{name, names}{Name of variable or variables, as strings.}
+\item{...}{Name-value pairs}
 
-\item{expr}{An expression to evaluate.}
-
-\item{values}{A list of values, one for each worker.}
+\item{names}{Name of variables to copy.}
 
 \item{env}{Environment in which to look for varibles to copy.}
 
@@ -47,31 +42,29 @@ All functions that modify the worker environment invisibly return
 These functions provide useful helpers for performaning common operations.
 }
 \examples{
-cl <- default_cluster(2)
-cl \%>\%
-  cluster_assign("x", runif(1)) \%>\%
-  cluster_get("x")
+cl <- default_cluster()
+cluster_assign(cl, a = runif(1))
+cluster_call(cl, a)
 
-# Inline the expression using !! if you want to compute it locally
-cl \%>\%
-  cluster_assign("y", !!runif(1)) \%>\%
-  cluster_get("x")
+# Assign different values on each cluster
+cluster_assign_each(cl, b = c(1, 10))
+cluster_call(cl, b)
 
-cl \%>\%
-  cluster_assign_each("z", list(3, 4)) \%>\%
-  cluster_get("z")
+# If you want different to compute different values on each
+# worker, use `cluster_call()` directly:
+cluster_call(cl, c <- runif(1))
+cluster_call(cl, c)
 
-cl \%>\% cluster_ls()
+# cluster_copy() is a useful shortcut
+d <- 10
+cluster_copy(cl, "d")
 
-w <- 10
-cluster_copy(cl, "w")
+cluster_ls(cl)
+cluster_rm(cl, letters[1:4])
+cluster_ls(cl)
 
-cl \%>\% cluster_rm(c("w", "x", "y", "z"))
-cl \%>\% cluster_ls()
-
-cl \%>\% cluster_call(search())
-
-cl \%>\%
-  cluster_library("magrittr") \%>\%
-  cluster_call(search())
+# Use cluster_library() to load packages
+cluster_call(cl, search())
+cluster_library(cl, "magrittr")
+cluster_call(cl, search())
 }

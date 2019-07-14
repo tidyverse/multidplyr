@@ -8,7 +8,7 @@ same_src.party_df <- function(x, y) {
 #' @export
 auto_copy.party_df <- function(x, y, copy = FALSE, ...) {
   name <- table_name()
-  cluster_assign(x$cluster, name, !!y)
+  cluster_assign(x$cluster, !!name := y)
   party_df(x$cluster, name)
 }
 
@@ -90,9 +90,9 @@ setdiff.party_df <- function(x, y, ..., copy = FALSE) {
 # helpers -----------------------------------------------------------------
 
 shard_call_dual <- function(.verb, .x, .y, ...) {
+  new_name <- table_name()
   call <- call2(.verb, .x$name, .y$name, ..., .ns = "dplyr")
 
-  new_name <- table_name()
-  cluster_assign(.x$cluster, new_name, !!call)
+  cluster_walk(.x$cluster, !!call2("<-", new_name, call))
   new_party_df(.x$cluster, new_name)
 }
