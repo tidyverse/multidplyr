@@ -38,3 +38,48 @@ To install from GitHub:
 # install.packages("devtools")
 devtools::install_github("tidyverse/multidplyr")
 ```
+
+## Usage
+
+To use multidplyr, you first create a cluster of the desired number of workers. Each one of these workers is a separate R process, and the operating system will spread their execution across multiple cores:
+
+```{r setup}
+library(multidplyr)
+library(dplyr, warn.conflicts = FALSE)
+
+cluster <- new_cluster(4)
+```
+
+There are two primary ways to use multidplyr. The first, and most, efficient is to load a different data on each worker:
+
+```{r, eval = FALSE}
+# Create a filename vector containing different values on each worker
+cluster_assign_each(cluster, "filename",
+  list("a.csv", "b.csv", "c.csv", "d.csv")
+)
+
+# Use vroom to quickly load the csvs
+cluster_assign(cluster, "my_data", vroom::vroom(filename))
+
+# Create a party_df usingt the my_data variable on each worker
+my_data <- party_df(cluster, "my_data")
+```
+
+Alternatively, if you already have the data loaded in the main session, you can use `partition()` to automatically spread it across groups. Specify one or more partitioning variables to ensure all of the observations belonging to that group end up on the same worker. This will happen automatically on grouped data:
+
+```{r}
+library(nycflights13)
+
+flight_dest <- flights %>% group_by(dest) %>% partition(dest, .cluster = cluster)
+flight_dest
+```
+
+Now you can work with it like a regular data frame, but the computations will be spread across multiple cores. Once you've finished computation, use `collect()` to bring the data back to the host session:
+
+```{r}
+flight_dest %>% 
+  summarise(delay = mean(dep_delay, na.rm = TRUE), n = n()) %>% 
+  collect()
+```
+
+Note that there is some overhead associated with copying data from the worker nodes back to the host node (and vice versa), so you're best off using multidplyr with more complex operations. See `vignette("multidplyr")` for more details.
