@@ -19,7 +19,7 @@ data frames spread across a cluster
 \examples{
 # If a real example, you might spread file names across the clusters
 # and read in using data.table::fread()/vroom::vroom()/qs::qread().
-cl <- get_default_cluster()[1:2]
+cl <- get_default_cluster()
 cluster_assign_each(cl, "n", list(10, 15))
 cluster_assign(cl, "df", data.frame(x = runif(n)))
 

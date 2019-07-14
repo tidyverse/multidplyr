@@ -11,14 +11,14 @@
 #' @export
 #' @examples
 #' library(dplyr)
-#' cl <- new_cluster(2)
+#' cl <- get_default_cluster()
 #'
 #' mtcars2 <- partition(mtcars, cl)
 #' mtcars2 %>% mutate(cyl2 = 2 * cyl)
 #' mtcars2 %>% filter(vs == 1)
 #' mtcars2 %>% group_by(cyl) %>% summarise(n())
 #' mtcars2 %>% select(-cyl)
-partition <- function(data, cluster = get_default_cluster()) {
+partition <- function(data, cluster) {
   worker_id <- worker_id(data, cluster)
   worker_rows <- split(seq_along(worker_id), worker_id)
 
@@ -73,7 +73,7 @@ worker_id <- function(data, cluster) {
 #' @examples
 #' # If a real example, you might spread file names across the clusters
 #' # and read in using data.table::fread()/vroom::vroom()/qs::qread().
-#' cl <- get_default_cluster()[1:2]
+#' cl <- get_default_cluster()
 #' cluster_assign_each(cl, "n", list(10, 15))
 #' cluster_assign(cl, "df", data.frame(x = runif(n)))
 #'

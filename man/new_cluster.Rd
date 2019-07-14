@@ -4,11 +4,11 @@
 \alias{new_cluster}
 \title{Create a new cluster with sensible defaults.}
 \usage{
-new_cluster(n = NULL)
+new_cluster(n)
 }
 \arguments{
-\item{n}{Number of workers to create. If `NULL`, it will use at least
-two, but no more than the number of cores on your computer - 2.}
+\item{n}{Number of workers to create. Avoid setting this higher than the
+number of cores in your computer as it will degrade performance.}
 }
 \description{
 Clusters created with this function will automatically clean up after

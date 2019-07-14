@@ -47,7 +47,7 @@ All functions that modify the worker environment invisibly return
 These functions provide useful helpers for performaning common operations.
 }
 \examples{
-cl <- new_cluster(2)
+cl <- get_default_cluster(2)
 cl \%>\%
   cluster_assign("x", runif(1)) \%>\%
   cluster_get("x")

@@ -1,5 +1,5 @@
 test_that("test that pass through workds", {
-  cl <- get_default_cluster()[1:2]
+  cl <- get_default_cluster()
   cluster_assign_each(cl, "x", list(
     tibble(g = 1, x = 1:2),
     tibble(g = 2, x = 3:4))

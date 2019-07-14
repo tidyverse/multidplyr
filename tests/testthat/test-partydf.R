@@ -1,5 +1,5 @@
 test_that("can construct and print partydf", {
-  cl <- get_default_cluster()[1:2]
+  cl <- get_default_cluster()
   cl <- cluster_assign(cl, "x", data.frame(y = 1:10))
 
   df <- party_df(cl, "x")
@@ -11,7 +11,7 @@ test_that("can construct and print partydf", {
 })
 
 test_that("name must be data frame with same names", {
-  cl <- get_default_cluster()[1:2]
+  cl <- get_default_cluster()
   expect_error(party_df(cl, "x"), "does not exist")
 
   cluster_assign(cl, "x", 1)
@@ -25,7 +25,7 @@ test_that("name must be data frame with same names", {
 # partitioning ------------------------------------------------------------
 
 test_that("can partition and re-collect", {
-  cl <- get_default_cluster()[1:2]
+  cl <- get_default_cluster()
 
   df1 <- data.frame(x = 1:2)
   df2 <- partition(df1, cl)
@@ -38,7 +38,7 @@ test_that("can partition and re-collect", {
 })
 
 test_that("can partition by group", {
-  cl <- get_default_cluster()[1:2]
+  cl <- get_default_cluster()
   df1 <- tibble(x = c(rep(1, 2), rep(2, 1), rep(3, 1)))
   df2 <- df1 %>% group_by(x) %>% partition(cl)
 
@@ -47,7 +47,7 @@ test_that("can partition by group", {
 })
 
 test_that("reduce cluster size if needed", {
-  cl <- get_default_cluster()[1:2]
+  cl <- get_default_cluster()
   df1 <- tibble(x = c(rep(1, 2)))
   expect_message(
     df2 <- df1 %>% group_by(x) %>% partition(cl),

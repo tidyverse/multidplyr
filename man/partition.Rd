@@ -4,7 +4,7 @@
 \alias{partition}
 \title{Partition data across a cluster.}
 \usage{
-partition(data, cluster = get_default_cluster())
+partition(data, cluster)
 }
 \arguments{
 \item{data}{Dataset to partition, typically grouped. When grouped, all
@@ -20,7 +20,7 @@ the worker with the fewest observations.
 }
 \examples{
 library(dplyr)
-cl <- new_cluster(2)
+cl <- get_default_cluster()
 
 mtcars2 <- partition(mtcars, cl)
 mtcars2 \%>\% mutate(cyl2 = 2 * cyl)

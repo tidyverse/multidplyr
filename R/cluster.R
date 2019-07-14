@@ -3,18 +3,13 @@
 #' Clusters created with this function will automatically clean up after
 #' themselves.
 #'
-#' @param n Number of workers to create. If `NULL`, it will use at least
-#'   two, but no more than the number of cores on your computer - 2.
+#' @param n Number of workers to create. Avoid setting this higher than the
+#'   number of cores in your computer as it will degrade performance.
 #' @export
 #' @examples
 #' cluster <- new_cluster(2)
 #' cluster
-new_cluster <- function(n = NULL) {
-  if (is.null(n)) {
-    n <- guess_cores()
-    message("Initialising ", n, " core cluster.")
-  }
-
+new_cluster <- function(n) {
   sessions <- replicate(n, callr::r_session$new())
   structure(sessions, class = "multidplyr_cluster")
 }
@@ -41,25 +36,15 @@ is_cluster <- function(x) inherits(x, "multidplyr_cluster")
   structure(NextMethod(), class = "multidplyr_cluster")
 }
 
-guess_cores <- function() {
-  if (in_check()) {
-    return(2L)
-  }
-
-  pmax(2L, ps::ps_cpu_count() - 2L)
-}
-
-in_check <- function() {
-  paths <- strsplit(getwd(), "/", fixed = TRUE)[[1]]
-  any(grepl("Rcheck$", paths))
-}
-
 #' Cluster management.
 #'
-#' This manages a default cluster for the session, creating one the first
-#' time it is called.
+#' Setting up a cluster is relatively expensive, so it's best to use a single
+#' cluster throughout a session. These functions maintain a default for the
+#' session and are used in examples and tests.
 #'
 #' @name default_cluster
+#' @param n Number of workers to use; defaults to 2 because this is the maximum
+#'   allowed by CRAN.
 #' @keywords internal
 #' @examples
 #' get_default_cluster()
@@ -79,9 +64,14 @@ set_default_cluster <- function(x) {
 
 #' @export
 #' @rdname default_cluster
-get_default_cluster <- function(...) {
+get_default_cluster <- function(n = 2) {
   if (!env_has(cluster_env, "cluster")) {
-    set_default_cluster(new_cluster(...))
+    message("Initiating default cluster of size ", n)
+    set_default_cluster(new_cluster(n))
+  } else {
+    if (!missing(n)) {
+      abort("`n` ignored; cluster has already been initiated")
+    }
   }
 
   cluster_env$cluster

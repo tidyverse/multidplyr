@@ -8,14 +8,18 @@
 \usage{
 set_default_cluster(x)
 
-get_default_cluster(...)
+get_default_cluster(n = 2)
 }
 \arguments{
 \item{x}{New cluster to use as default.}
+
+\item{n}{Number of workers to use; defaults to 2 because this is the maximum
+allowed by CRAN.}
 }
 \description{
-This manages a default cluster for the session, creating one the first
-time it is called.
+Setting up a cluster is relatively expensive, so it's best to use a single
+cluster throughout a session. These functions maintain a default for the
+session and are used in examples and tests.
 }
 \examples{
 get_default_cluster()
