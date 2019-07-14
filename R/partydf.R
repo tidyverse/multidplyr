@@ -113,6 +113,8 @@ new_party_df <- function(cluster, name) {
   )
 }
 
+is_party_df <- function(x) inherits(x, "party_df")
+
 shard_deleter <- function(name, cluster) {
   env <- env()
   reg.finalizer(env, function(...) {

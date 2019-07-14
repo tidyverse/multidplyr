@@ -1,6 +1,8 @@
 # nocov start
 .onLoad <- function(...) {
   register_s3_method("dplyr", "filter", "party_df")
+  register_s3_method("dplyr", "intersect", "party_df")
+  register_s3_method("dplyr", "union", "party_df")
 }
 
 register_s3_method <- function(pkg, generic, class, fun = NULL) {
