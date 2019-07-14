@@ -1,5 +1,5 @@
 test_that("joining data frame requires explicit copy", {
-  pf <- partition(data.frame(x = 1:6), get_default_cluster())
+  pf <- partition(data.frame(x = 1:6), default_cluster())
   df <- data.frame(x = 1:3, y = 3:1)
 
   expect_error(left_join(pf, df), "same src")
@@ -7,8 +7,8 @@ test_that("joining data frame requires explicit copy", {
 })
 
 test_that("joins match local results", {
-  pf1 <- partition(tibble(x = c(1, 2)), get_default_cluster())
-  pf2 <- partition(tibble(x = c(1, 3)), get_default_cluster())
+  pf1 <- partition(tibble(x = c(1, 2)), default_cluster())
+  pf2 <- partition(tibble(x = c(1, 3)), default_cluster())
 
   # primarily testing that basic infrastructure works and that
   # I haven't accidentally typed the wrong verb name somewhere

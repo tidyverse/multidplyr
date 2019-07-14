@@ -12,7 +12,7 @@
 #'   the cluster so they can chain them together. The other functions return
 #'   lists with with one element for each worker.
 #' @examples
-#' cl <- get_default_cluster(2)
+#' cl <- default_cluster(2)
 #' cl %>%
 #'   cluster_assign("x", runif(1)) %>%
 #'   cluster_get("x")

@@ -36,43 +36,30 @@ is_cluster <- function(x) inherits(x, "multidplyr_cluster")
   structure(NextMethod(), class = "multidplyr_cluster")
 }
 
-#' Cluster management.
+#' Default cluster
 #'
 #' Setting up a cluster is relatively expensive, so it's best to use a single
-#' cluster throughout a session. These functions maintain a default for the
-#' session and are used in examples and tests.
+#' cluster throughout a session. This funcdtion lazily creates a 2-worker
+#' cluster for use in examples and test.
 #'
-#' @name default_cluster
 #' @param n Number of workers to use; defaults to 2 because this is the maximum
 #'   allowed by CRAN.
 #' @keywords internal
+#' @export
 #' @examples
-#' get_default_cluster()
-NULL
-
-cluster_env <- env()
-
-#' @export
-#' @rdname default_cluster
-#' @param x New cluster to use as default.
-set_default_cluster <- function(x) {
-  stopifnot(is_cluster(x))
-
-  cluster_env$cluster <- x
-  invisible(x)
-}
-
-#' @export
-#' @rdname default_cluster
-get_default_cluster <- function(n = 2) {
+#' default_cluster()
+default_cluster <- function(n = 2) {
   if (!env_has(cluster_env, "cluster")) {
-    message("Initiating default cluster of size ", n)
-    set_default_cluster(new_cluster(n))
+    message("Initialising default cluster of size ", n)
+    env_bind(cluster_env, cluster = new_cluster(n))
   } else {
     if (!missing(n)) {
       abort("`n` ignored; cluster has already been initiated")
     }
   }
 
-  cluster_env$cluster
+  env_get(cluster_env, "cluster")
 }
+
+cluster_env <- env()
+

@@ -20,7 +20,7 @@ the worker with the fewest observations.
 }
 \examples{
 library(dplyr)
-cl <- get_default_cluster()
+cl <- default_cluster()
 
 mtcars2 <- partition(mtcars, cl)
 mtcars2 \%>\% mutate(cyl2 = 2 * cyl)

@@ -2,26 +2,20 @@
 % Please edit documentation in R/cluster.R
 \name{default_cluster}
 \alias{default_cluster}
-\alias{set_default_cluster}
-\alias{get_default_cluster}
-\title{Cluster management.}
+\title{Default cluster}
 \usage{
-set_default_cluster(x)
-
-get_default_cluster(n = 2)
+default_cluster(n = 2)
 }
 \arguments{
-\item{x}{New cluster to use as default.}
-
 \item{n}{Number of workers to use; defaults to 2 because this is the maximum
 allowed by CRAN.}
 }
 \description{
 Setting up a cluster is relatively expensive, so it's best to use a single
-cluster throughout a session. These functions maintain a default for the
-session and are used in examples and tests.
+cluster throughout a session. This funcdtion lazily creates a 2-worker
+cluster for use in examples and test.
 }
 \examples{
-get_default_cluster()
+default_cluster()
 }
 \keyword{internal}
