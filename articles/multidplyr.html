@@ -131,20 +131,20 @@
 <a class="sourceLine" id="cb4-3" data-line-number="3"><span class="co"># Local computation</span></a>
 <a class="sourceLine" id="cb4-4" data-line-number="4"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/system.time">system.time</a></span>(by_dest <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarise</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/mean">mean</a></span>(dep_delay, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>)))</a>
 <a class="sourceLine" id="cb4-5" data-line-number="5"><span class="co">#&gt;    user  system elapsed </span></a>
-<a class="sourceLine" id="cb4-6" data-line-number="6"><span class="co">#&gt;   0.006   0.001   0.007</span></a>
+<a class="sourceLine" id="cb4-6" data-line-number="6"><span class="co">#&gt;   0.007   0.000   0.006</span></a>
 <a class="sourceLine" id="cb4-7" data-line-number="7"></a>
 <a class="sourceLine" id="cb4-8" data-line-number="8"><span class="co"># Remote: partitioning</span></a>
 <a class="sourceLine" id="cb4-9" data-line-number="9"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/system.time">system.time</a></span>(flights2 &lt;-<span class="st"> </span>flights <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/partition.html">partition</a></span>())</a>
 <a class="sourceLine" id="cb4-10" data-line-number="10"><span class="co">#&gt;    user  system elapsed </span></a>
-<a class="sourceLine" id="cb4-11" data-line-number="11"><span class="co">#&gt;   0.433   0.116   0.616</span></a>
+<a class="sourceLine" id="cb4-11" data-line-number="11"><span class="co">#&gt;   0.449   0.100   0.625</span></a>
 <a class="sourceLine" id="cb4-12" data-line-number="12"><span class="co"># Remote: computation</span></a>
 <a class="sourceLine" id="cb4-13" data-line-number="13"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/system.time">system.time</a></span>(flights3 &lt;-<span class="st"> </span>flights2 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarise</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/mean">mean</a></span>(dep_delay, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>)))</a>
 <a class="sourceLine" id="cb4-14" data-line-number="14"><span class="co">#&gt;    user  system elapsed </span></a>
-<a class="sourceLine" id="cb4-15" data-line-number="15"><span class="co">#&gt;   0.016   0.001   0.074</span></a>
+<a class="sourceLine" id="cb4-15" data-line-number="15"><span class="co">#&gt;   0.012   0.004   0.075</span></a>
 <a class="sourceLine" id="cb4-16" data-line-number="16"><span class="co"># Remote: retrieve results</span></a>
 <a class="sourceLine" id="cb4-17" data-line-number="17"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/system.time">system.time</a></span>(flights3 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/compute.html">collect</a></span>())</a>
 <a class="sourceLine" id="cb4-18" data-line-number="18"><span class="co">#&gt;    user  system elapsed </span></a>
-<a class="sourceLine" id="cb4-19" data-line-number="19"><span class="co">#&gt;   0.009   0.000   0.092</span></a></code></pre></div>
+<a class="sourceLine" id="cb4-19" data-line-number="19"><span class="co">#&gt;   0.010   0.000   0.091</span></a></code></pre></div>
 <p>That’s because there’s some overhead associated with sending the data to each node and retrieving the results at the end. For basic dplyr verbs, multidplyr is unlikely to give you significant speed ups unless you have 10s or 100s of millions of data points. It might however, if you’re doing more complex things with <code><a href="https://dplyr.tidyverse.org/reference/do.html">do()</a></code>. Let’s see how that plays out.</p>
 <p>We’ll start by selecting a subset of flights that have at least 50 occurences, and we’ll compute the day of the year from the date:</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">common_dest &lt;-<span class="st"> </span>flights <span class="op">%&gt;%</span></a>
@@ -189,7 +189,7 @@
 <a class="sourceLine" id="cb9-4" data-line-number="4"><span class="st">    </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/do.html">do</a></span>(<span class="dt">mod =</span> <span class="kw">gam</span>(dep_delay <span class="op">~</span><span class="st"> </span><span class="kw">s</span>(yday) <span class="op">+</span><span class="st"> </span><span class="kw">s</span>(dep_time), <span class="dt">data =</span> .))</a>
 <a class="sourceLine" id="cb9-5" data-line-number="5">})</a>
 <a class="sourceLine" id="cb9-6" data-line-number="6"><span class="co">#&gt;    user  system elapsed </span></a>
-<a class="sourceLine" id="cb9-7" data-line-number="7"><span class="co">#&gt;   0.017   0.001   3.694</span></a></code></pre></div>
+<a class="sourceLine" id="cb9-7" data-line-number="7"><span class="co">#&gt;   0.018   0.000   3.721</span></a></code></pre></div>
 <p>Compared with ~5.6s doing it locally:</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/system.time">system.time</a></span>({</a>
 <a class="sourceLine" id="cb10-2" data-line-number="2">  models &lt;-<span class="st"> </span>common_dest <span class="op">%&gt;%</span><span class="st"> </span></a>
@@ -197,7 +197,7 @@
 <a class="sourceLine" id="cb10-4" data-line-number="4"><span class="st">    </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/do.html">do</a></span>(<span class="dt">mod =</span> <span class="kw">gam</span>(dep_delay <span class="op">~</span><span class="st"> </span><span class="kw">s</span>(yday) <span class="op">+</span><span class="st"> </span><span class="kw">s</span>(dep_time), <span class="dt">data =</span> .))</a>
 <a class="sourceLine" id="cb10-5" data-line-number="5">})</a>
 <a class="sourceLine" id="cb10-6" data-line-number="6"><span class="co">#&gt;    user  system elapsed </span></a>
-<a class="sourceLine" id="cb10-7" data-line-number="7"><span class="co">#&gt;   5.336   0.203   5.539</span></a></code></pre></div>
+<a class="sourceLine" id="cb10-7" data-line-number="7"><span class="co">#&gt;   5.367   0.140   5.510</span></a></code></pre></div>
 <p>That’s not a great speed up, but generally you don’t care about parallelising things that only take a couple of seconds. The cost of transmitting messages to the nodes is roughly fixed, so the longer the task you’re parallelising, the closer to a linear speed up you’ll get. It’ll also speed up with more nodes, but unfortunately vignettes are only allowed to use 2 nodes max, so I can’t show you that here.</p>
 </div>
 <div id="efficiency" class="section level2">

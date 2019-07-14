@@ -27,7 +27,7 @@
 </script>
 </head>
 <body>
-    <div class="container template-home">
+    <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
@@ -76,7 +76,12 @@
 
       
       </header><div class="row">
-  <div class="contents col-md-9">
+  <div class="col-md-9 contents">
+    
+
+    
+    
+<!-- README.md is generated from README.Rmd. Please edit that file -->
 <div id="multidplyr" class="section level1">
 
 <!-- badges: start -->
@@ -84,8 +89,8 @@
 <div id="overview" class="section level2">
 <h2 class="hasAnchor">
 <a href="#overview" class="anchor"></a>Overview</h2>
-<p>multidplyr is a backend for dplyr that partitions a data frame across multiple cores. You tell multidplyr how to split the data up with <code><a href="reference/partition.html">partition()</a></code> and then the data stays on each node until you explicitly retrieve it with <code>collect()</code>. This minimises the amount of time spent moving data around, and maximises parallel performance. This idea is inspired by <a href="http://bit.ly/1Nve8v5">partools</a> by Norm Matloff and <a href="http://bit.ly/1KZVAwK">distributedR</a> by the Vertica Analytics team.</p>
-<p>Due to the overhead associated with communicating between the nodes, you won’t expect to see much performance improvement on basic dplyr verbs with less than ~10 million observations. However, you’ll see improvements much faster if you’re doing more complex operations with <code>do()</code>.</p>
+<p>multidplyr is a backend for dplyr that partitions a data frame across multiple cores. You tell multidplyr how to split the data up with <code><a href="reference/partition.html">partition()</a></code> and then the data stays on each node until you explicitly retrieve it with <code><a href="https://dplyr.tidyverse.org/reference/compute.html">collect()</a></code>. This minimises the amount of time spent moving data around, and maximises parallel performance. This idea is inspired by <a href="http://bit.ly/1Nve8v5">partools</a> by Norm Matloff and <a href="http://bit.ly/1KZVAwK">distributedR</a> by the Vertica Analytics team.</p>
+<p>Due to the overhead associated with communicating between the nodes, you won’t expect to see much performance improvement on basic dplyr verbs with less than ~10 million observations. However, you’ll see improvements much faster if you’re doing more complex operations with <code><a href="https://dplyr.tidyverse.org/reference/do.html">do()</a></code>.</p>
 <p>(Note that unlike other packages in the tidyverse, multidplyr requires R 3.5 or greater. We hope to relax this requirement <a href="https://github.com/traversc/qs/issues/11">in the future</a>.)</p>
 </div>
 <div id="installation" class="section level2">
@@ -94,6 +99,68 @@
 <p>To install from GitHub:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="co"># install.packages("devtools")</span></a>
 <a class="sourceLine" id="cb1-2" data-line-number="2">devtools<span class="op">::</span><span class="kw">install_github</span>(<span class="st">"tidyverse/multidplyr"</span>)</a></code></pre></div>
+</div>
+<div id="usage" class="section level2">
+<h2 class="hasAnchor">
+<a href="#usage" class="anchor"></a>Usage</h2>
+<p>To use multidplyr, you first create a cluster of the desired number of workers. Each one of these workers is a separate R process, and the operating system will spread their execution across multiple cores:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(multidplyr)</a>
+<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(dplyr, <span class="dt">warn.conflicts =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb2-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb2-4" data-line-number="4">cluster &lt;-<span class="st"> </span><span class="kw"><a href="reference/new_cluster.html">new_cluster</a></span>(<span class="dv">4</span>)</a></code></pre></div>
+<p>There are two primary ways to use multidplyr. The first, and most, efficient is to load a different data on each worker:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="co"># Create a filename vector containing different values on each worker</span></a>
+<a class="sourceLine" id="cb3-2" data-line-number="2"><span class="kw"><a href="reference/cluster_utils.html">cluster_assign_each</a></span>(cluster, <span class="st">"filename"</span>,</a>
+<a class="sourceLine" id="cb3-3" data-line-number="3">  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="st">"a.csv"</span>, <span class="st">"b.csv"</span>, <span class="st">"c.csv"</span>, <span class="st">"d.csv"</span>)</a>
+<a class="sourceLine" id="cb3-4" data-line-number="4">)</a>
+<a class="sourceLine" id="cb3-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb3-6" data-line-number="6"><span class="co"># Use vroom to quickly load the csvs</span></a>
+<a class="sourceLine" id="cb3-7" data-line-number="7"><span class="kw"><a href="reference/cluster_utils.html">cluster_assign</a></span>(cluster, <span class="st">"my_data"</span>, vroom<span class="op">::</span><span class="kw">vroom</span>(filename))</a>
+<a class="sourceLine" id="cb3-8" data-line-number="8"></a>
+<a class="sourceLine" id="cb3-9" data-line-number="9"><span class="co"># Create a party_df usingt the my_data variable on each worker</span></a>
+<a class="sourceLine" id="cb3-10" data-line-number="10">my_data &lt;-<span class="st"> </span><span class="kw"><a href="reference/party_df.html">party_df</a></span>(cluster, <span class="st">"my_data"</span>)</a></code></pre></div>
+<p>Alternatively, if you already have the data loaded in the main session, you can use <code><a href="reference/partition.html">partition()</a></code> to automatically spread it across groups. Specify one or more partitioning variables to ensure all of the observations belonging to that group end up on the same worker. This will happen automatically on grouped data:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(nycflights13)</a>
+<a class="sourceLine" id="cb4-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb4-3" data-line-number="3">flight_dest &lt;-<span class="st"> </span>flights <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span>(dest) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="reference/partition.html">partition</a></span>(dest, <span class="dt">.cluster =</span> cluster)</a>
+<a class="sourceLine" id="cb4-4" data-line-number="4"><span class="co">#&gt; Warning: group_indices_.grouped_df ignores extra arguments</span></a>
+<a class="sourceLine" id="cb4-5" data-line-number="5">flight_dest</a>
+<a class="sourceLine" id="cb4-6" data-line-number="6"><span class="co">#&gt; Source: party_df [336,776 x 19]</span></a>
+<a class="sourceLine" id="cb4-7" data-line-number="7"><span class="co">#&gt; Groups: dest</span></a>
+<a class="sourceLine" id="cb4-8" data-line-number="8"><span class="co">#&gt; Shards: 4 [81,594--86,548 rows]</span></a>
+<a class="sourceLine" id="cb4-9" data-line-number="9"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb4-10" data-line-number="10"><span class="co">#&gt; # Description: party_df</span></a>
+<a class="sourceLine" id="cb4-11" data-line-number="11"><span class="co">#&gt;    year month   day dep_time sched_dep_time dep_delay arr_time</span></a>
+<a class="sourceLine" id="cb4-12" data-line-number="12"><span class="co">#&gt;   &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;</span></a>
+<a class="sourceLine" id="cb4-13" data-line-number="13"><span class="co">#&gt; 1  2013     1     1      544            545        -1     1004</span></a>
+<a class="sourceLine" id="cb4-14" data-line-number="14"><span class="co">#&gt; 2  2013     1     1      558            600        -2      923</span></a>
+<a class="sourceLine" id="cb4-15" data-line-number="15"><span class="co">#&gt; 3  2013     1     1      559            600        -1      854</span></a>
+<a class="sourceLine" id="cb4-16" data-line-number="16"><span class="co">#&gt; 4  2013     1     1      602            610        -8      812</span></a>
+<a class="sourceLine" id="cb4-17" data-line-number="17"><span class="co">#&gt; 5  2013     1     1      602            605        -3      821</span></a>
+<a class="sourceLine" id="cb4-18" data-line-number="18"><span class="co">#&gt; 6  2013     1     1      611            600        11      945</span></a>
+<a class="sourceLine" id="cb4-19" data-line-number="19"><span class="co">#&gt; # … with 3.368e+05 more rows, and 12 more variables: sched_arr_time &lt;int&gt;,</span></a>
+<a class="sourceLine" id="cb4-20" data-line-number="20"><span class="co">#&gt; #   arr_delay &lt;dbl&gt;, carrier &lt;chr&gt;, flight &lt;int&gt;, tailnum &lt;chr&gt;,</span></a>
+<a class="sourceLine" id="cb4-21" data-line-number="21"><span class="co">#&gt; #   origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;,</span></a>
+<a class="sourceLine" id="cb4-22" data-line-number="22"><span class="co">#&gt; #   minute &lt;dbl&gt;, time_hour &lt;dttm&gt;</span></a></code></pre></div>
+<p>Now you can work with it like a regular data frame, but the computations will be spread across multiple cores. Once you’ve finished computation, use <code><a href="https://dplyr.tidyverse.org/reference/compute.html">collect()</a></code> to bring the data back to the host session:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">flight_dest <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb5-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarise</a></span>(<span class="dt">delay =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/mean">mean</a></span>(dep_delay, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>), <span class="dt">n =</span> <span class="kw"><a href="https://dplyr.tidyverse.org/reference/n.html">n</a></span>()) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb5-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/compute.html">collect</a></span>()</a>
+<a class="sourceLine" id="cb5-4" data-line-number="4"><span class="co">#&gt; # A tibble: 105 x 3</span></a>
+<a class="sourceLine" id="cb5-5" data-line-number="5"><span class="co">#&gt;    dest  delay     n</span></a>
+<a class="sourceLine" id="cb5-6" data-line-number="6"><span class="co">#&gt;    &lt;chr&gt; &lt;dbl&gt; &lt;int&gt;</span></a>
+<a class="sourceLine" id="cb5-7" data-line-number="7"><span class="co">#&gt;  1 ABQ    13.7   254</span></a>
+<a class="sourceLine" id="cb5-8" data-line-number="8"><span class="co">#&gt;  2 AUS    13.0  2439</span></a>
+<a class="sourceLine" id="cb5-9" data-line-number="9"><span class="co">#&gt;  3 BQN    12.4   896</span></a>
+<a class="sourceLine" id="cb5-10" data-line-number="10"><span class="co">#&gt;  4 BTV    13.6  2589</span></a>
+<a class="sourceLine" id="cb5-11" data-line-number="11"><span class="co">#&gt;  5 BUF    13.4  4681</span></a>
+<a class="sourceLine" id="cb5-12" data-line-number="12"><span class="co">#&gt;  6 CLE    13.4  4573</span></a>
+<a class="sourceLine" id="cb5-13" data-line-number="13"><span class="co">#&gt;  7 CMH    12.2  3524</span></a>
+<a class="sourceLine" id="cb5-14" data-line-number="14"><span class="co">#&gt;  8 DEN    15.2  7266</span></a>
+<a class="sourceLine" id="cb5-15" data-line-number="15"><span class="co">#&gt;  9 DSM    26.2   569</span></a>
+<a class="sourceLine" id="cb5-16" data-line-number="16"><span class="co">#&gt; 10 DTW    11.8  9384</span></a>
+<a class="sourceLine" id="cb5-17" data-line-number="17"><span class="co">#&gt; # … with 95 more rows</span></a></code></pre></div>
+<p>Note that there is some overhead associated with copying data from the worker nodes back to the host node (and vice versa), so you’re best off using multidplyr with more complex operations. See <code><a href="articles/multidplyr.html">vignette("multidplyr")</a></code> for more details.</p>
 </div>
 </div>
   </div>
@@ -123,7 +190,7 @@
 </ul>
 </div>
 
-  <div class="dev-status">
+      <div class="dev-status">
 <h2>Dev status</h2>
 <ul class="list-unstyled">
 <li><a href="https://travis-ci.org/tidyverse/multidplyr"><img src="https://travis-ci.org/tidyverse/multidplyr.svg?branch=master" alt="Travis build status"></a></li>
@@ -133,7 +200,9 @@
 </ul>
 </div>
 </div>
+
 </div>
+
 
       <footer><div class="tidyverse">
   <p>multidplyr is a part of the <strong>tidyverse</strong>, an ecosystem of packages designed with common APIs and a shared philosophy. Learn more at <a href="https://tidyverse.org">tidyverse.org</a>.</p>

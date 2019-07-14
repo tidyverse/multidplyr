@@ -174,10 +174,10 @@ then we wait until they're complete.</p>
 #&gt; </div><div class='input'>
 <span class='co'># The function will be called on each node</span>
 <span class='no'>cl</span> <span class='kw'>%&gt;%</span> <span class='fu'>cluster_map</span>(<span class='st'>"Sys.getpid"</span>)</div><div class='output co'>#&gt; [[1]]
-#&gt; [1] 13238
+#&gt; [1] 13280
 #&gt; 
 #&gt; [[2]]
-#&gt; [1] 13244
+#&gt; [1] 13286
 #&gt; </div><div class='input'>
 <span class='co'># cluster_call() provides a slightly simpler sytanx where you just</span>
 <span class='co'># provide an expression to be executed on each worke</span>
@@ -187,17 +187,17 @@ then we wait until they're complete.</p>
 #&gt; [[2]]
 #&gt; [1] 2
 #&gt; </div><div class='input'><span class='no'>cl</span> <span class='kw'>%&gt;%</span> <span class='fu'>cluster_call</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Sys.getpid'>Sys.getpid</a></span>())</div><div class='output co'>#&gt; [[1]]
-#&gt; [1] 13238
+#&gt; [1] 13280
 #&gt; 
 #&gt; [[2]]
-#&gt; [1] 13244
+#&gt; [1] 13286
 #&gt; </div><div class='input'>
 <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/invisible'>invisible</a></span>(<span class='no'>cl</span> <span class='kw'>%&gt;%</span> <span class='fu'>cluster_call</span>(<span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/Uniform'>runif</a></span>(<span class='fl'>1</span>)))
 <span class='no'>cl</span> <span class='kw'>%&gt;%</span> <span class='fu'>cluster_call</span>(<span class='no'>x</span>)</div><div class='output co'>#&gt; [[1]]
-#&gt; [1] 0.1841815
+#&gt; [1] 0.6562952
 #&gt; 
 #&gt; [[2]]
-#&gt; [1] 0.4532597
+#&gt; [1] 0.1675933
 #&gt; </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

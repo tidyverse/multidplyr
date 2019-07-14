@@ -125,6 +125,8 @@
 
 <span class='fu'>cluster_assign_each</span>(<span class='no'>cluster</span>, <span class='no'>name</span>, <span class='no'>values</span>)
 
+<span class='fu'>cluster_copy</span>(<span class='no'>cluster</span>, <span class='no'>names</span>, <span class='kw'>env</span> <span class='kw'>=</span> <span class='fu'>caller_env</span>())
+
 <span class='fu'>cluster_get</span>(<span class='no'>cluster</span>, <span class='no'>name</span>)
 
 <span class='fu'>cluster_rm</span>(<span class='no'>cluster</span>, <span class='no'>names</span>)
@@ -153,6 +155,10 @@
       <td><p>A list of values, one for each worker.</p></td>
     </tr>
     <tr>
+      <th>env</th>
+      <td><p>Environment in which to look for varibles to copy.</p></td>
+    </tr>
+    <tr>
       <th>packages</th>
       <td><p>Character vector of packages to load</p></td>
     </tr>
@@ -170,19 +176,19 @@
 <span class='no'>cl</span> <span class='kw'>%&gt;%</span>
   <span class='fu'>cluster_assign</span>(<span class='st'>"x"</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/Uniform'>runif</a></span>(<span class='fl'>1</span>)) <span class='kw'>%&gt;%</span>
   <span class='fu'>cluster_get</span>(<span class='st'>"x"</span>)</div><div class='output co'>#&gt; [[1]]
-#&gt; [1] 0.04674116
+#&gt; [1] 0.9167678
 #&gt; 
 #&gt; [[2]]
-#&gt; [1] 0.3752808
+#&gt; [1] 0.2200362
 #&gt; </div><div class='input'>
 <span class='co'># Inline the expression using !! if you want to compute it locally</span>
 <span class='no'>cl</span> <span class='kw'>%&gt;%</span>
   <span class='fu'>cluster_assign</span>(<span class='st'>"y"</span>, !!<span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/Uniform'>runif</a></span>(<span class='fl'>1</span>)) <span class='kw'>%&gt;%</span>
   <span class='fu'>cluster_get</span>(<span class='st'>"x"</span>)</div><div class='output co'>#&gt; [[1]]
-#&gt; [1] 0.04674116
+#&gt; [1] 0.9167678
 #&gt; 
 #&gt; [[2]]
-#&gt; [1] 0.3752808
+#&gt; [1] 0.2200362
 #&gt; </div><div class='input'>
 <span class='no'>cl</span> <span class='kw'>%&gt;%</span>
   <span class='fu'>cluster_assign_each</span>(<span class='st'>"z"</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(<span class='fl'>3</span>, <span class='fl'>4</span>)) <span class='kw'>%&gt;%</span>
@@ -197,7 +203,11 @@
 #&gt; 
 #&gt; [[2]]
 #&gt; [1] "data" "env"  "x"    "y"    "z"   
-#&gt; </div><div class='input'><span class='no'>cl</span> <span class='kw'>%&gt;%</span> <span class='fu'>cluster_rm</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"x"</span>, <span class='st'>"y"</span>, <span class='st'>"z"</span>))
+#&gt; </div><div class='input'>
+<span class='no'>w</span> <span class='kw'>&lt;-</span> <span class='fl'>10</span>
+<span class='fu'>cluster_copy</span>(<span class='no'>cl</span>, <span class='st'>"w"</span>)
+
+<span class='no'>cl</span> <span class='kw'>%&gt;%</span> <span class='fu'>cluster_rm</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"w"</span>, <span class='st'>"x"</span>, <span class='st'>"y"</span>, <span class='st'>"z"</span>))
 <span class='no'>cl</span> <span class='kw'>%&gt;%</span> <span class='fu'>cluster_ls</span>()</div><div class='output co'>#&gt; [[1]]
 #&gt; [1] "data" "env" 
 #&gt; 
