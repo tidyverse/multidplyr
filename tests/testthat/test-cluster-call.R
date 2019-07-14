@@ -20,13 +20,7 @@ test_that("errors are propagated", {
   expect_match(cnd$parent$message, "!!", fixed = TRUE)
 })
 
-test_that("string function executed on nodes", {
+test_that("call_send() returns cluster", {
   cl <- default_cluster()
-  identity <- function(x) 10
-
-  local <- cluster_map(cl[1], identity, 1)
-  expect_equal(local, list(10))
-
-  remote <- cluster_map(cl[1], "identity", 1)
-  expect_equal(remote, list(1))
+  expect_equal(cluster_send(cl, 10), cl)
 })

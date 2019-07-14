@@ -1,12 +1,12 @@
 test_that("can set/get/remove/list", {
-  cl <- default_cluster()
+  cl <- default_cluster()[1]
   cluster_assign(cl, x = 1)
 
-  expect_true("x" %in% cluster_ls(cl[1])[[1]])
-  expect_equal(cluster_call(cl[1], x)[[1]], 1)
+  expect_true("x" %in% cluster_ls(cl)[[1]])
+  expect_equal(cluster_call(cl, x), list(1))
 
   cluster_rm(cl, "x")
-  expect_false("x" %in% cluster_ls(cl[1])[[1]])
+  expect_false("x" %in% cluster_ls(cl)[[1]])
 })
 
 test_that("can assign different values to different clusters", {

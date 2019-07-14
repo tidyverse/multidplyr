@@ -48,7 +48,7 @@ cluster_assign <- function(cluster, ...) {
   on.exit(unlink(path))
 
   qs::qsave(values, path, preset = "fast", check_hash = FALSE, nthreads = 2)
-  cluster_walk(cluster, list2env(qs::qread(!!path), globalenv()))
+  cluster_send(cluster, list2env(qs::qread(!!path), globalenv()))
 
   invisible(cluster)
 }
@@ -85,7 +85,7 @@ cluster_rm <- function(cluster, names) {
   stopifnot(is_cluster(cluster))
   stopifnot(is.character(names))
 
-  cluster_call(cluster, rm(list = !!names, envir = globalenv()))
+  cluster_send(cluster, rm(list = !!names, envir = globalenv()))
   invisible(cluster)
 }
 
@@ -100,6 +100,6 @@ cluster_ls <- function(cluster) {
 cluster_library <- function(cluster, packages) {
   lapply(packages, library, character.only = TRUE)
 
-  cluster_call(cluster, lapply(!!packages, library, character.only = TRUE))
+  cluster_send(cluster, lapply(!!packages, library, character.only = TRUE))
   invisible(cluster)
 }

@@ -93,6 +93,6 @@ shard_call_dual <- function(.verb, .x, .y, ...) {
   new_name <- table_name()
   call <- call2(.verb, .x$name, .y$name, ..., .ns = "dplyr")
 
-  cluster_walk(.x$cluster, !!call2("<-", new_name, call))
+  cluster_send(.x$cluster, !!call2("<-", new_name, call))
   new_party_df(.x$cluster, new_name)
 }
