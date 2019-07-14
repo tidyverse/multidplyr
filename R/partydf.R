@@ -201,7 +201,7 @@ collect.party_df <- function(.data, ...) {
   group_by(out, !!!groups(.data))
 }
 
-#' @importFrom dplyr collect
+#' @importFrom dplyr pull
 #' @export
 pull.party_df <- function(.data, var = -1) {
   expr <- enquo(var)

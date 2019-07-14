@@ -29,6 +29,12 @@ mutate.party_df <- function(.data, ...) {
   shard_call(.data, "mutate", enquos(...))
 }
 
+#' @importFrom dplyr rename
+#' @export
+rename.party_df <- function(.data, ...) {
+  shard_call(.data, "rename", enquos(...))
+}
+
 #' @importFrom dplyr select
 #' @export
 select.party_df <- function(.data, ...) {
