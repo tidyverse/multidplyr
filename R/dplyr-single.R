@@ -52,3 +52,15 @@ summarise.party_df <- function(.data, ...) {
 do.party_df <- function(.data, ...) {
   shard_call(.data, "do", enquos(...))
 }
+
+
+# helpers -----------------------------------------------------------------
+
+shard_call <- function(.data, .verb, dots, ...) {
+  call <- call2(.verb, .data$name, !!!dots, ..., .ns = "dplyr")
+
+  new_name <- table_name()
+  cluster_assign(.data$cluster, new_name, !!call)
+  new_party_df(.data$cluster, new_name)
+}
+

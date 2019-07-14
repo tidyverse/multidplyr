@@ -93,7 +93,7 @@ party_df <- function(cluster, name) {
 
   names <- cluster_call(cluster, names(!!sym(name)))
   if (length(unique(names)) != 1) {
-    abort(paste0("`", name, "` does not have the same name on all workers"))
+    abort(paste0("`", name, "` does not have the same names on all workers"))
   }
 
   new_party_df(cluster, name)
@@ -211,13 +211,4 @@ pull.party_df <- function(.data, var = -1) {
   .data <- select(.data, !!sym(var))
   .data <- collect(.data)
   .data[[1]]
-}
-
-
-shard_call <- function(.data, .verb, dots, ...) {
-  call <- call2(.verb, .data$name, !!!dots, ..., .ns = "dplyr")
-
-  new_name <- table_name()
-  cluster_assign(.data$cluster, new_name, !!call)
-  new_party_df(.data$cluster, new_name)
 }
