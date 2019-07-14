@@ -27,9 +27,9 @@
 #' d <- 10
 #' cluster_copy(cl, "d")
 #'
-#' cluster_ls(cl)
+#' cluster_call(cl, ls())
 #' cluster_rm(cl, letters[1:4])
-#' cluster_ls(cl)
+#' cluster_call(cl, ls())
 #'
 #' # Use cluster_library() to load packages
 #' cluster_call(cl, search())
@@ -87,12 +87,6 @@ cluster_rm <- function(cluster, names) {
 
   cluster_send(cluster, rm(list = !!names, envir = globalenv()))
   invisible(cluster)
-}
-
-#' @rdname cluster_utils
-#' @export
-cluster_ls <- function(cluster) {
-  cluster_call(cluster, ls(envir = globalenv()))
 }
 
 #' @rdname cluster_utils

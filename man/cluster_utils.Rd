@@ -6,7 +6,6 @@
 \alias{cluster_assign_each}
 \alias{cluster_copy}
 \alias{cluster_rm}
-\alias{cluster_ls}
 \alias{cluster_library}
 \title{Cluster utitility functions}
 \usage{
@@ -17,8 +16,6 @@ cluster_assign_each(cluster, ...)
 cluster_copy(cluster, names, env = caller_env())
 
 cluster_rm(cluster, names)
-
-cluster_ls(cluster)
 
 cluster_library(cluster, packages)
 }
@@ -59,9 +56,9 @@ cluster_call(cl, c)
 d <- 10
 cluster_copy(cl, "d")
 
-cluster_ls(cl)
+cluster_call(cl, ls())
 cluster_rm(cl, letters[1:4])
-cluster_ls(cl)
+cluster_call(cl, ls())
 
 # Use cluster_library() to load packages
 cluster_call(cl, search())
