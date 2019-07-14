@@ -93,16 +93,10 @@ cluster <- new_cluster(2)
 cluster
 ```
 
-If you want, you can use `set_default_cluster()` so that `partition()` will use this cluster by default:
-
-```{r}
-set_default_cluster(cluster)
-```
-
 Let's partition our restricted flights data across this cluster:
 
 ```{r}
-by_dest <- common_dest %>% partition(dest)
+by_dest <- common_dest %>% group_by(dest) %>% partition(cluster)
 by_dest
 ```
 

@@ -28,7 +28,7 @@ test_that("can partition and re-collect", {
   cl <- get_default_cluster()[1:2]
 
   df1 <- data.frame(x = 1:2)
-  df2 <- partition(df1, .cluster = cl)
+  df2 <- partition(df1, cl)
 
   expect_s3_class(df2, "party_df")
   expect_equal(df2$cluster, cl)
@@ -37,11 +37,10 @@ test_that("can partition and re-collect", {
   expect_equal(pull(df2, x), df1$x)
 })
 
-
 test_that("can partition by group", {
   cl <- get_default_cluster()[1:2]
   df1 <- tibble(x = c(rep(1, 2), rep(2, 1), rep(3, 1)))
-  df2 <- partition(df1, x, .cluster = cl)
+  df2 <- df1 %>% group_by(x) %>% partition(cl)
 
   dfs <- cluster_get(cl, as.character(df2$name))
   expect_equal(dfs, list(tibble(x = c(1, 1)), tibble(x = c(2, 3))))
@@ -51,7 +50,7 @@ test_that("reduce cluster size if needed", {
   cl <- get_default_cluster()[1:2]
   df1 <- tibble(x = c(rep(1, 2)))
   expect_message(
-    df2 <- partition(df1, x, .cluster = cl),
+    df2 <- df1 %>% group_by(x) %>% partition(cl),
     "partial cluster"
   )
 

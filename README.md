@@ -74,16 +74,14 @@ my_data <- party_df(cluster, "my_data")
 ```
 
 Alternatively, if you already have the data loaded in the main session,
-you can use `partition()` to automatically spread it across groups.
-Specify one or more partitioning variables to ensure all of the
-observations belonging to that group end up on the same worker. This
-will happen automatically on grouped data:
+you can use `partition()` to automatically spread it across workers. Use
+`group_by()` to ensure that all of the observations belonging to a group
+end up on the same worker.
 
 ``` r
 library(nycflights13)
 
-flight_dest <- flights %>% group_by(dest) %>% partition(dest, .cluster = cluster)
-#> Warning: group_indices_.grouped_df ignores extra arguments
+flight_dest <- flights %>% group_by(dest) %>% partition(cluster)
 flight_dest
 #> Source: party_df [336,776 x 19]
 #> Groups: dest

@@ -1,45 +1,48 @@
 #' Partition data across a cluster.
 #'
-#' @param .data,data Dataset to partition
-#' @param ... Variables to partition by. Will generally work best when you
-#'   have many more groups than workers. If omitted, will randomly partition
-#'   rows across workers.
-#' @param .cluster Cluster to use.
+#' Partitioning ensures that all observations in a group end up on the same
+#' worker. To try and keep the observations on each worker balanced,
+#' `partition()` uses a greedy algorithm iteratively assigning each group to
+#' the worker with the fewest observations.
+#'
+#' @param data Dataset to partition, typically grouped. When grouped, all
+#'   observations in a group will be assigned to the same cluster.
+#' @param cluster Cluster to use.
 #' @export
 #' @examples
 #' library(dplyr)
 #' cl <- new_cluster(2)
 #'
-#' mtcars2 <- partition(mtcars, .cluster = cl)
+#' mtcars2 <- partition(mtcars, cl)
 #' mtcars2 %>% mutate(cyl2 = 2 * cyl)
 #' mtcars2 %>% filter(vs == 1)
 #' mtcars2 %>% group_by(cyl) %>% summarise(n())
 #' mtcars2 %>% select(-cyl)
-partition <- function(.data, ..., .cluster = get_default_cluster()) {
-  worker_id <- worker_id(.data, .cluster, ...)
+partition <- function(data, cluster = get_default_cluster()) {
+  worker_id <- worker_id(data, cluster)
   worker_rows <- split(seq_along(worker_id), worker_id)
 
-  if (length(worker_rows) < length(.cluster)) {
+  if (length(worker_rows) < length(cluster)) {
     message("Using partial cluster of size ", length(worker_rows))
-    .cluster <- .cluster[seq_along(worker_rows)]
+    cluster <- cluster[seq_along(worker_rows)]
   }
-  shards <- lapply(worker_rows, function(i) .data[i, , drop = FALSE])
+  shards <- lapply(worker_rows, function(i) data[i, , drop = FALSE])
 
   name <- table_name()
-  cluster_assign_each(.cluster, name, shards)
-  new_party_df(.cluster, name)
+  cluster_assign_each(cluster, name, shards)
+  new_party_df(cluster, name)
 }
 
-worker_id <- function(.data, .cluster, ...) {
-  n <- nrow(.data)
-  m <- length(.cluster)
+worker_id <- function(data, cluster) {
+  n <- nrow(data)
+  m <- length(cluster)
 
-  if (missing(...) && !dplyr::is_grouped_df(.data)) {
+  if (!dplyr::is_grouped_df(data)) {
     # Assign sequentially
     (seq_len(n) - 1) %% m + 1
   } else {
     # Assign each new group to the session with fewest rows
-    group_id <- dplyr::group_indices(.data, ...)
+    group_id <- dplyr::group_indices(data)
     counts <- tabulate(group_id)
 
     rows <- integer(m)

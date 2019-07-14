@@ -4,25 +4,25 @@
 \alias{partition}
 \title{Partition data across a cluster.}
 \usage{
-partition(.data, ..., .cluster = get_default_cluster())
+partition(data, cluster = get_default_cluster())
 }
 \arguments{
-\item{.data, data}{Dataset to partition}
+\item{data}{Dataset to partition, typically grouped. When grouped, all
+observations in a group will be assigned to the same cluster.}
 
-\item{...}{Variables to partition by. Will generally work best when you
-have many more groups than workers. If omitted, will randomly partition
-rows across workers.}
-
-\item{.cluster}{Cluster to use.}
+\item{cluster}{Cluster to use.}
 }
 \description{
-Partition data across a cluster.
+Partitioning ensures that all observations in a group end up on the same
+worker. To try and keep the observations on each worker balanced,
+`partition()` uses a greedy algorithm iteratively assigning each group to
+the worker with the fewest observations.
 }
 \examples{
 library(dplyr)
 cl <- new_cluster(2)
 
-mtcars2 <- partition(mtcars, .cluster = cl)
+mtcars2 <- partition(mtcars, cl)
 mtcars2 \%>\% mutate(cyl2 = 2 * cyl)
 mtcars2 \%>\% filter(vs == 1)
 mtcars2 \%>\% group_by(cyl) \%>\% summarise(n())
