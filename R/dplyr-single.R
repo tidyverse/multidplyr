@@ -67,6 +67,6 @@ shard_call <- function(.data, .verb, dots, ...) {
 
   new_name <- table_name()
   cluster_send(.data$cluster, !!call2("<-", new_name, call))
-  new_party_df(.data$cluster, new_name)
+  new_party_df(.data$cluster, new_name, auto_rm = TRUE)
 }
 

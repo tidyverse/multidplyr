@@ -22,6 +22,15 @@ test_that("name must be data frame with same names", {
   expect_error(party_df(cl, "x"), "same names")
 })
 
+test_that("can automatically delete on gc() + cluster_call()", {
+  cl <- default_cluster()
+  cl <- cluster_assign(cl, x = data.frame(y = 1:10))
+
+  df <- party_df(cl, "x", auto_rm = TRUE)
+  rm(df); gc()
+  expect_equal(cluster_call(cl, exists("x")), list(FALSE, FALSE))
+})
+
 # partitioning ------------------------------------------------------------
 
 test_that("can partition and re-collect", {

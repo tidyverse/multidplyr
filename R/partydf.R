@@ -30,7 +30,7 @@ partition <- function(data, cluster) {
 
   name <- table_name()
   cluster_assign_each(cluster, !!name := shards)
-  new_party_df(cluster, name)
+  new_party_df(cluster, name, auto_rm = TRUE)
 }
 
 worker_id <- function(data, cluster) {
@@ -69,6 +69,8 @@ worker_id <- function(data, cluster) {
 #' @param cluster A cluster
 #' @param name Name of data frame variable. Must exist on every worker,
 #'   be a data frame, and have the same names.
+#' @param auto_rm If `TRUE`, will automatically `rm()` the data frame on
+#'   the workers when this object is created.
 #' @export
 #' @examples
 #' # If a real example, you might spread file names across the clusters
@@ -80,7 +82,7 @@ worker_id <- function(data, cluster) {
 #'
 #' df <- party_df(cl, "df")
 #' df
-party_df <- function(cluster, name) {
+party_df <- function(cluster, name, auto_rm = FALSE) {
   stopifnot(is_cluster(cluster))
   stopifnot(is_string(name))
 
@@ -100,10 +102,10 @@ party_df <- function(cluster, name) {
     abort(paste0("`", name, "` does not have the same names on all workers"))
   }
 
-  new_party_df(cluster, name)
+  new_party_df(cluster, name, auto_rm = auto_rm)
 }
 
-new_party_df <- function(cluster, name) {
+new_party_df <- function(cluster, name, auto_rm) {
   stopifnot(is_cluster(cluster))
   stopifnot(is_string(name))
 
@@ -111,7 +113,7 @@ new_party_df <- function(cluster, name) {
     list(
       cluster = cluster,
       name = sym(name),
-      .auto_clean = shard_deleter(name, cluster)
+      .auto_clean = shard_deleter(auto_rm, name, cluster)
     ),
     class = "party_df"
   )
@@ -119,14 +121,15 @@ new_party_df <- function(cluster, name) {
 
 is_party_df <- function(x) inherits(x, "party_df")
 
-shard_deleter <- function(name, cluster) {
-  env <- env()
-  reg.finalizer(env, function(...) {
-    cluster_rm(cluster, name)
-  })
+shard_deleter <- function(auto_rm, name, cluster) {
+  if (!auto_rm) {
+    return(NULL)
+  }
+
+  env <- new_environment()
+  reg.finalizer(env, function(...) attr(cluster, "cleaner")$add(name))
   env
 }
-
 
 shard_rows <- function(x) {
   nrows <- cluster_call(x$cluster, nrow(!!x$name))

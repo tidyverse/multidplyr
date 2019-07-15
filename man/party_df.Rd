@@ -4,13 +4,16 @@
 \alias{party_df}
 \title{Create party_df "by hand"}
 \usage{
-party_df(cluster, name)
+party_df(cluster, name, auto_rm = FALSE)
 }
 \arguments{
 \item{cluster}{A cluster}
 
 \item{name}{Name of data frame variable. Must exist on every worker,
 be a data frame, and have the same names.}
+
+\item{auto_rm}{If `TRUE`, will automatically `rm()` the data frame on
+the workers when this object is created.}
 }
 \description{
 Use this function to create a partitioned data frame from existing

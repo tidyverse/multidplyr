@@ -25,11 +25,14 @@
 cluster_call <- function(cluster, code, ptype = list()) {
   stopifnot(is_cluster(cluster))
   code <- enexpr(code)
+  to_rm <- attr(cluster, "cleaner")$reset()
 
-  f <- function(x) eval(x, globalenv())
-  lapply(cluster, function(x) x$call(f, list(code)))
+  f <- function(code, to_rm) {
+    rm(list = to_rm, envir = globalenv())
+    eval(code, globalenv())
+  }
+  lapply(cluster, function(x) x$call(f, list(code = code, to_rm = to_rm)))
   lapply(cluster, function(x) x$poll_process(-1))
-  processx::poll(cluster, 0)
 
   results <- lapply(cluster, function(x) x$read())
 

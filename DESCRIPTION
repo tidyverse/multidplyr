@@ -21,8 +21,8 @@ Imports:
     crayon,
     dplyr,
     magrittr,
-    processx,
     qs,
+    R6,
     rlang,
     tibble,
     vctrs
