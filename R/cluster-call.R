@@ -28,9 +28,8 @@ cluster_call <- function(cluster, code, ptype = list()) {
 
   f <- function(x) eval(x, globalenv())
   lapply(cluster, function(x) x$call(f, list(code)))
-  Sys.sleep(0.01)
   lapply(cluster, function(x) x$poll_process(-1))
-  lapply(cluster, function(x) x$poll_process(-1))
+  processx::poll(cluster, 0)
 
   results <- lapply(cluster, function(x) x$read())
 
