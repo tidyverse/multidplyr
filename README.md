@@ -62,12 +62,10 @@ efficient is to load a different data on each worker:
 
 ``` r
 # Create a filename vector containing different values on each worker
-cluster_assign_each(cluster, "filename",
-  list("a.csv", "b.csv", "c.csv", "d.csv")
-)
+cluster_assign_each(cluster, filename = c("a.csv", "b.csv", "c.csv", "d.csv"))
 
 # Use vroom to quickly load the csvs
-cluster_assign(cluster, "my_data", vroom::vroom(filename))
+cluster_send(cluster, my_data <- vroom::vroom(filename))
 
 # Create a party_df usingt the my_data variable on each worker
 my_data <- party_df(cluster, "my_data")
