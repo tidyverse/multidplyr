@@ -123,15 +123,15 @@ themselves.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>new_cluster</span>(<span class='kw'>n</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>new_cluster</span>(<span class='no'>n</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>n</th>
-      <td><p>Number of workers to create. If `NULL`, it will use at least
-two, but no more than the number of cores on your computer - 2.</p></td>
+      <td><p>Number of workers to create. Avoid setting this higher than the
+number of cores in your computer as it will degrade performance.</p></td>
     </tr>
     </table>
     

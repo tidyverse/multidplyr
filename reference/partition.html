@@ -33,7 +33,10 @@
 
 <meta property="og:title" content="Partition data across a cluster. — partition" />
 
-<meta property="og:description" content="Partition data across a cluster." />
+<meta property="og:description" content="Partitioning ensures that all observations in a group end up on the same
+worker. To try and keep the observations on each worker balanced,
+`partition()` uses a greedy algorithm iteratively assigning each group to
+the worker with the fewest observations." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -117,27 +120,25 @@
 
     <div class="ref-description">
     
-    <p>Partition data across a cluster.</p>
+    <p>Partitioning ensures that all observations in a group end up on the same
+worker. To try and keep the observations on each worker balanced,
+`partition()` uses a greedy algorithm iteratively assigning each group to
+the worker with the fewest observations.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>partition</span>(<span class='no'>.data</span>, <span class='no'>...</span>, <span class='kw'>.cluster</span> <span class='kw'>=</span> <span class='fu'><a href='default_cluster.html'>get_default_cluster</a></span>())</pre>
+    <pre class="usage"><span class='fu'>partition</span>(<span class='no'>data</span>, <span class='no'>cluster</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>.data, data</th>
-      <td><p>Dataset to partition</p></td>
+      <th>data</th>
+      <td><p>Dataset to partition, typically grouped. When grouped, all
+observations in a group will be assigned to the same cluster.</p></td>
     </tr>
     <tr>
-      <th>...</th>
-      <td><p>Variables to partition by. Will generally work best when you
-have many more groups than workers. If omitted, will randomly partition
-rows across workers.</p></td>
-    </tr>
-    <tr>
-      <th>.cluster</th>
+      <th>cluster</th>
       <td><p>Cluster to use.</p></td>
     </tr>
     </table>
@@ -151,9 +152,9 @@ rows across workers.</p></td>
 #&gt; <span class='message'></span>
 #&gt; <span class='message'>    filter, lag</span></div><div class='output co'>#&gt; <span class='message'>The following objects are masked from ‘package:base’:</span>
 #&gt; <span class='message'></span>
-#&gt; <span class='message'>    intersect, setdiff, setequal, union</span></div><div class='input'><span class='no'>cl</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='new_cluster.html'>new_cluster</a></span>(<span class='fl'>2</span>)
+#&gt; <span class='message'>    intersect, setdiff, setequal, union</span></div><div class='input'><span class='no'>cl</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='default_cluster.html'>default_cluster</a></span>()
 
-<span class='no'>mtcars2</span> <span class='kw'>&lt;-</span> <span class='fu'>partition</span>(<span class='no'>mtcars</span>, <span class='kw'>.cluster</span> <span class='kw'>=</span> <span class='no'>cl</span>)
+<span class='no'>mtcars2</span> <span class='kw'>&lt;-</span> <span class='fu'>partition</span>(<span class='no'>mtcars</span>, <span class='no'>cl</span>)
 <span class='no'>mtcars2</span> <span class='kw'>%&gt;%</span> <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span>(<span class='kw'>cyl2</span> <span class='kw'>=</span> <span class='fl'>2</span> * <span class='no'>cyl</span>)</div><div class='output co'>#&gt; Source: party_df [32 x 12]
 #&gt; Shards: 2 [16--16 rows]
 #&gt; 
