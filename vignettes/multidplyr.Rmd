@@ -71,10 +71,7 @@ Now we find all the files in the directory, and divide them up so that each work
 
 ```{r}
 files <- dir(path, full.names = TRUE)
-files_each <- split(files, cut(seq_along(files), 2, labels = FALSE))
-str(files_each)
-
-cluster_assign_each(cluster, files = files_each)
+cluster_assign_partition(cluster, files = files)
 ```
 
 Then we read in the files on each worker and use `party_df()` to create a partitioned dataframe:

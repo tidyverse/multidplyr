@@ -1,8 +1,12 @@
 #' Cluster utitility functions
 #'
 #' These functions provide useful helpers for performaning common operations.
+#' `cluster_assign()` assigns the same value on each worker;
+#' `cluster_assign_each()` assigns different values on each worker;
+#' `cluster_assign_partition()` partitions vectors so that each worker gets
+#' (approximately) the same number of pieces.
 #'
-#' @param cluster Cluster to work on
+#' @param cluster,.cluster Cluster to work on
 #' @param ... Name-value pairs
 #' @param packages Character vector of packages to load
 #' @name cluster_utils
@@ -18,17 +22,22 @@
 #' cluster_assign_each(cl, b = c(1, 10))
 #' cluster_call(cl, b)
 #'
-#' # If you want different to compute different values on each
-#' # worker, use `cluster_call()` directly:
-#' cluster_call(cl, c <- runif(1))
+#' # Partition a vector so that each worker gets approximately the
+#' # same amount of it
+#' cluster_assign_partition(cl, c = 1:11)
 #' cluster_call(cl, c)
 #'
+#' # If you want different to compute different values on each
+#' # worker, use `cluster_call()` directly:
+#' cluster_call(cl, d <- runif(1))
+#' cluster_call(cl, d)
+#'
 #' # cluster_copy() is a useful shortcut
-#' d <- 10
-#' cluster_copy(cl, "d")
+#' e <- 10
+#' cluster_copy(cl, "e")
 #'
 #' cluster_call(cl, ls())
-#' cluster_rm(cl, letters[1:4])
+#' cluster_rm(cl, letters[1:5])
 #' cluster_call(cl, ls())
 #'
 #' # Use cluster_library() to load packages
@@ -39,8 +48,8 @@ NULL
 
 #' @rdname cluster_utils
 #' @export
-cluster_assign <- function(cluster, ...) {
-  stopifnot(is_cluster(cluster))
+cluster_assign <- function(.cluster, ...) {
+  stopifnot(is_cluster(.cluster))
   values <- list2(...)
   stopifnot(is_named(values))
 
@@ -48,22 +57,37 @@ cluster_assign <- function(cluster, ...) {
   on.exit(unlink(path))
 
   qs::qsave(values, path, preset = "fast", check_hash = FALSE, nthreads = 2)
-  cluster_send(cluster, list2env(qs::qread(!!path), globalenv()))
+  cluster_send(.cluster, list2env(qs::qread(!!path), globalenv()))
 
-  invisible(cluster)
+  invisible(.cluster)
 }
 
 #' @rdname cluster_utils
 #' @export
-cluster_assign_each <- function(cluster, ...) {
-  stopifnot(is_cluster(cluster))
-  values <- tibble(..., .rows = length(cluster))
+cluster_assign_each <- function(.cluster, ...) {
+  stopifnot(is_cluster(.cluster))
+  values <- tibble(..., .rows = length(.cluster))
 
   for (i in seq_len(nrow(values))) {
-    cluster_assign(cluster[i], !!!lapply(values, "[[", i))
+    cluster_assign(.cluster[i], !!!lapply(values, "[[", i))
   }
 
-  invisible(cluster)
+  invisible(.cluster)
+}
+
+#' @export
+#' @rdname cluster_utils
+cluster_assign_partition <- function(.cluster, ...) {
+  stopifnot(is_cluster(.cluster))
+  values <- list(...)
+
+  m <- length(.cluster)
+  values_split <- lapply(values, function(x) {
+    vctrs::vec_split(x, cut(vctrs::vec_seq_along(x), m, labels = FALSE))$val
+  })
+
+  cluster_assign_each(.cluster, !!!values_split)
+  invisible(.cluster)
 }
 
 #' @rdname cluster_utils

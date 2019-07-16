@@ -17,6 +17,16 @@ test_that("can assign different values to different clusters", {
   cluster_rm(cl, "x")
 })
 
+test_that("can partition vectors across clusters", {
+  cl <- default_cluster()
+
+  cluster_assign_partition(cl, x = 1:4, y = 1:5)
+  expect_equal(cluster_call(cl, x), list(1:2, 3:4))
+  expect_equal(cluster_call(cl, y), list(1:3, 4:5))
+
+  cluster_rm(cl, c("x", "y"))
+})
+
 test_that("can copy from objects to cluster", {
   cl <- default_cluster()[1]
   x <- 1

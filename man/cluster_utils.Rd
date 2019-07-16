@@ -4,14 +4,17 @@
 \alias{cluster_utils}
 \alias{cluster_assign}
 \alias{cluster_assign_each}
+\alias{cluster_assign_partition}
 \alias{cluster_copy}
 \alias{cluster_rm}
 \alias{cluster_library}
 \title{Cluster utitility functions}
 \usage{
-cluster_assign(cluster, ...)
+cluster_assign(.cluster, ...)
 
-cluster_assign_each(cluster, ...)
+cluster_assign_each(.cluster, ...)
+
+cluster_assign_partition(.cluster, ...)
 
 cluster_copy(cluster, names, env = caller_env())
 
@@ -20,9 +23,9 @@ cluster_rm(cluster, names)
 cluster_library(cluster, packages)
 }
 \arguments{
-\item{cluster}{Cluster to work on}
-
 \item{...}{Name-value pairs}
+
+\item{cluster, .cluster}{Cluster to work on}
 
 \item{names}{Name of variables to copy.}
 
@@ -37,6 +40,10 @@ All functions that modify the worker environment invisibly return
 }
 \description{
 These functions provide useful helpers for performaning common operations.
+`cluster_assign()` assigns the same value on each worker;
+`cluster_assign_each()` assigns different values on each worker;
+`cluster_assign_partition()` partitions vectors so that each worker gets
+(approximately) the same number of pieces.
 }
 \examples{
 cl <- default_cluster()
@@ -47,17 +54,22 @@ cluster_call(cl, a)
 cluster_assign_each(cl, b = c(1, 10))
 cluster_call(cl, b)
 
-# If you want different to compute different values on each
-# worker, use `cluster_call()` directly:
-cluster_call(cl, c <- runif(1))
+# Partition a vector so that each worker gets approximately the
+# same amount of it
+cluster_assign_partition(cl, c = 1:11)
 cluster_call(cl, c)
 
+# If you want different to compute different values on each
+# worker, use `cluster_call()` directly:
+cluster_call(cl, d <- runif(1))
+cluster_call(cl, d)
+
 # cluster_copy() is a useful shortcut
-d <- 10
-cluster_copy(cl, "d")
+e <- 10
+cluster_copy(cl, "e")
 
 cluster_call(cl, ls())
-cluster_rm(cl, letters[1:4])
+cluster_rm(cl, letters[1:5])
 cluster_call(cl, ls())
 
 # Use cluster_library() to load packages
