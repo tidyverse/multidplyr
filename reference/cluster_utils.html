@@ -33,7 +33,11 @@
 
 <meta property="og:title" content="Cluster utitility functions — cluster_utils" />
 
-<meta property="og:description" content="These functions provide useful helpers for performaning common operations." />
+<meta property="og:description" content="These functions provide useful helpers for performaning common operations.
+`cluster_assign()` assigns the same value on each worker;
+`cluster_assign_each()` assigns different values on each worker;
+`cluster_assign_partition()` partitions vectors so that each worker gets
+(approximately) the same number of pieces." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -117,13 +121,19 @@
 
     <div class="ref-description">
     
-    <p>These functions provide useful helpers for performaning common operations.</p>
+    <p>These functions provide useful helpers for performaning common operations.
+`cluster_assign()` assigns the same value on each worker;
+`cluster_assign_each()` assigns different values on each worker;
+`cluster_assign_partition()` partitions vectors so that each worker gets
+(approximately) the same number of pieces.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>cluster_assign</span>(<span class='no'>cluster</span>, <span class='no'>...</span>)
+    <pre class="usage"><span class='fu'>cluster_assign</span>(<span class='no'>.cluster</span>, <span class='no'>...</span>)
 
-<span class='fu'>cluster_assign_each</span>(<span class='no'>cluster</span>, <span class='no'>...</span>)
+<span class='fu'>cluster_assign_each</span>(<span class='no'>.cluster</span>, <span class='no'>...</span>)
+
+<span class='fu'>cluster_assign_partition</span>(<span class='no'>.cluster</span>, <span class='no'>...</span>)
 
 <span class='fu'>cluster_copy</span>(<span class='no'>cluster</span>, <span class='no'>names</span>, <span class='kw'>env</span> <span class='kw'>=</span> <span class='fu'>caller_env</span>())
 
@@ -135,12 +145,12 @@
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>cluster</th>
-      <td><p>Cluster to work on</p></td>
-    </tr>
-    <tr>
       <th>...</th>
       <td><p>Name-value pairs</p></td>
+    </tr>
+    <tr>
+      <th>cluster, .cluster</th>
+      <td><p>Cluster to work on</p></td>
     </tr>
     <tr>
       <th>names</th>
@@ -180,29 +190,38 @@
 #&gt; [[2]]
 #&gt; [1] 10
 #&gt; </div><div class='input'>
+<span class='co'># Partition a vector so that each worker gets approximately the</span>
+<span class='co'># same amount of it</span>
+<span class='fu'>cluster_assign_partition</span>(<span class='no'>cl</span>, <span class='kw'>c</span> <span class='kw'>=</span> <span class='fl'>1</span>:<span class='fl'>11</span>)
+<span class='fu'><a href='cluster_call.html'>cluster_call</a></span>(<span class='no'>cl</span>, <span class='no'>c</span>)</div><div class='output co'>#&gt; [[1]]
+#&gt; [1] 1 2 3 4 5 6
+#&gt; 
+#&gt; [[2]]
+#&gt; [1]  7  8  9 10 11
+#&gt; </div><div class='input'>
 <span class='co'># If you want different to compute different values on each</span>
 <span class='co'># worker, use `cluster_call()` directly:</span>
-<span class='fu'><a href='cluster_call.html'>cluster_call</a></span>(<span class='no'>cl</span>, <span class='no'>c</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/Uniform'>runif</a></span>(<span class='fl'>1</span>))</div><div class='output co'>#&gt; [[1]]
-#&gt; [1] 0.2522415
+<span class='fu'><a href='cluster_call.html'>cluster_call</a></span>(<span class='no'>cl</span>, <span class='no'>d</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/Uniform'>runif</a></span>(<span class='fl'>1</span>))</div><div class='output co'>#&gt; [[1]]
+#&gt; [1] 0.4840137
 #&gt; 
 #&gt; [[2]]
-#&gt; [1] 0.4205002
-#&gt; </div><div class='input'><span class='fu'><a href='cluster_call.html'>cluster_call</a></span>(<span class='no'>cl</span>, <span class='no'>c</span>)</div><div class='output co'>#&gt; [[1]]
-#&gt; [1] 0.2522415
+#&gt; [1] 0.542872
+#&gt; </div><div class='input'><span class='fu'><a href='cluster_call.html'>cluster_call</a></span>(<span class='no'>cl</span>, <span class='no'>d</span>)</div><div class='output co'>#&gt; [[1]]
+#&gt; [1] 0.4840137
 #&gt; 
 #&gt; [[2]]
-#&gt; [1] 0.4205002
+#&gt; [1] 0.542872
 #&gt; </div><div class='input'>
 <span class='co'># cluster_copy() is a useful shortcut</span>
-<span class='no'>d</span> <span class='kw'>&lt;-</span> <span class='fl'>10</span>
-<span class='fu'>cluster_copy</span>(<span class='no'>cl</span>, <span class='st'>"d"</span>)
+<span class='no'>e</span> <span class='kw'>&lt;-</span> <span class='fl'>10</span>
+<span class='fu'>cluster_copy</span>(<span class='no'>cl</span>, <span class='st'>"e"</span>)
 
 <span class='fu'><a href='cluster_call.html'>cluster_call</a></span>(<span class='no'>cl</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/ls'>ls</a></span>())</div><div class='output co'>#&gt; [[1]]
-#&gt; [1] "a"    "b"    "c"    "d"    "data" "env"  "x"   
+#&gt; [1] "a"    "b"    "c"    "d"    "data" "e"    "env"  "x"   
 #&gt; 
 #&gt; [[2]]
-#&gt; [1] "a"    "b"    "c"    "d"    "data" "env"  "x"   
-#&gt; </div><div class='input'><span class='fu'>cluster_rm</span>(<span class='no'>cl</span>, <span class='no'>letters</span>[<span class='fl'>1</span>:<span class='fl'>4</span>])
+#&gt; [1] "a"    "b"    "c"    "d"    "data" "e"    "env"  "x"   
+#&gt; </div><div class='input'><span class='fu'>cluster_rm</span>(<span class='no'>cl</span>, <span class='no'>letters</span>[<span class='fl'>1</span>:<span class='fl'>5</span>])
 <span class='fu'><a href='cluster_call.html'>cluster_call</a></span>(<span class='no'>cl</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/ls'>ls</a></span>())</div><div class='output co'>#&gt; [[1]]
 #&gt; [1] "data" "env"  "x"   
 #&gt; 

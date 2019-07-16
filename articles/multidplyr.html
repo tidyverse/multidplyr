@@ -86,149 +86,195 @@
 
     
     
-<p>multidplyr is a new backend for dplyr. You continue to use the dplyr verbs that you’re familiar with, but instead of the computation happening on one core it’s spread across multiple cores. You effectively create a local cluster on your computer, and then multidplyr takes care of telling each node what to do.</p>
-<div id="basics" class="section level2">
-<h2 class="hasAnchor">
-<a href="#basics" class="anchor"></a>Basics</h2>
-<p>multiplyr is built on the principle that moving data around is expensive so you want to do it as little as possible. The basic sequence of operations is:</p>
-<ol style="list-style-type: decimal">
-<li><p>Call <code><a href="../reference/partition.html">partition()</a></code> to split your dataset across multiple cores. This makes a partitioned data frame, or a party df for short.</p></li>
-<li><p>Each dplyr verb applied to a party df performs the operation independently on each core. It leaves each result on each core, and returns another party df.</p></li>
-<li><p>When you’re done with the expensive operations that need to be done on each core, you call <code><a href="https://dplyr.tidyverse.org/reference/compute.html">collect()</a></code> to retrieve the data and bring it back to your local computer.</p></li>
-</ol>
-<p>Let’s see a simple example of that using the <code><a href="https://www.rdocumentation.org/packages/nycflights13/topics/flights">nycflights13::flights</a></code>. This dataset contains information for about ~300,000 flights departing New York City in 2013.</p>
-<p>We start by loading the packages we need:</p>
+<p>multidplyr is a backend for dplyr that spreads work across multiple processes. Like all dplyr backends, it allows you to use the dplyr verbs that you’re already familiar with, but alters the underlying computational model to transparently support multi-process parallelism.</p>
+<p>This vignette will show you the basics of multidplyr using the nycflights13 dataset.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(multidplyr)</a>
 <a class="sourceLine" id="cb1-2" data-line-number="2"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(dplyr, <span class="dt">warn.conflicts =</span> <span class="ot">FALSE</span>)</a>
 <a class="sourceLine" id="cb1-3" data-line-number="3"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(nycflights13)</a></code></pre></div>
-<p>And creating a cluster. Here I used two cores because it’s the maximum permitted by CRAN, but I suggest that you use more (typically slightly less than the number of cores your computer has).</p>
+<div id="creating-a-cluster" class="section level2">
+<h2 class="hasAnchor">
+<a href="#creating-a-cluster" class="anchor"></a>Creating a cluster</h2>
+<p>To start using multidplyr you must create a cluster. Here I used two cores because it’s the maximum permitted by CRAN, but I suggest that you use more. For best performance, I recommend using 1 or 2 less than the total number of cores on your computer, which you can detect with <code><a href="https://www.rdocumentation.org/packages/parallel/topics/detectCores">parallel::detectCores()</a></code> (leaving at least 1 core free means that you should still be able to use your computer for other tasks while your computation is running).</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">cluster &lt;-<span class="st"> </span><span class="kw"><a href="../reference/new_cluster.html">new_cluster</a></span>(<span class="dv">2</span>)</a>
 <a class="sourceLine" id="cb2-2" data-line-number="2">cluster</a>
 <a class="sourceLine" id="cb2-3" data-line-number="3"><span class="co">#&gt; 2 session cluster [..]</span></a></code></pre></div>
-<p>Next, we partition the flights data by destination, compute the average delay per flight, and then collect the results:</p>
+<p>(In the examples, you’ll also see the use of <code><a href="../reference/default_cluster.html">default_cluster()</a></code>; this is designed specifically for the constraints of R CMD check, so I don’t recommend using it in your own code.)</p>
+<p>A cluster consists of multiple R processes created by <a href="http://callr.r-lib.org/">callr</a>. When multiple processes are running at the same time, your operating system will take care of spreading the work across multiple cores.</p>
+</div>
+<div id="add-data" class="section level2">
+<h2 class="hasAnchor">
+<a href="#add-data" class="anchor"></a>Add data</h2>
+<p>There are two ways to get data to the workers in cluster:</p>
+<ul>
+<li>
+<code><a href="../reference/partition.html">partition()</a></code> a data frame that’s loaded in the interactive process.</li>
+<li>Load a different subset of the data in each worker.</li>
+</ul>
+<div id="partition" class="section level3">
+<h3 class="hasAnchor">
+<a href="#partition" class="anchor"></a><code><a href="../reference/partition.html">partition()</a></code>
+</h3>
+<p><code><a href="../reference/partition.html">partition()</a></code> is useful if you have a single in-memory data frame. For example, take <code><a href="https://www.rdocumentation.org/packages/nycflights13/topics/flights">nycflights13::flights</a></code>. This dataset contains information for about ~300,000 flights departing New York City in 2013. We group it by destination, then partition it:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">flights1 &lt;-<span class="st"> </span>flights <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span>(dest) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/partition.html">partition</a></span>(cluster)</a>
-<a class="sourceLine" id="cb3-2" data-line-number="2">flights2 &lt;-<span class="st"> </span>flights1 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarise</a></span>(<span class="dt">dep_delay =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/mean">mean</a></span>(dep_delay, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>))</a>
-<a class="sourceLine" id="cb3-3" data-line-number="3">flights3 &lt;-<span class="st"> </span>flights2 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/compute.html">collect</a></span>()</a></code></pre></div>
-<p>The dplyr code looks the same as usual, but behind the scenes things are very different. <code>flights1</code> and <code>flights2</code> are party dfs. These look like normal data frames, but have an additional attribute: the number of shards. In this example, it tells us that <code>flights2</code> is spread across seven nodes, and the size on each node varies from 12 to 25 rows. <code><a href="../reference/partition.html">partition()</a></code> always makes sure a group is kept together on one node.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">flights2</a>
-<a class="sourceLine" id="cb4-2" data-line-number="2"><span class="co">#&gt; Source: party_df [105 x 2]</span></a>
-<a class="sourceLine" id="cb4-3" data-line-number="3"><span class="co">#&gt; Shards: 2 [47--58 rows]</span></a>
-<a class="sourceLine" id="cb4-4" data-line-number="4"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb4-5" data-line-number="5"><span class="co">#&gt; # Description: party_df</span></a>
-<a class="sourceLine" id="cb4-6" data-line-number="6"><span class="co">#&gt;   dest  dep_delay</span></a>
-<a class="sourceLine" id="cb4-7" data-line-number="7"><span class="co">#&gt;   &lt;chr&gt;     &lt;dbl&gt;</span></a>
-<a class="sourceLine" id="cb4-8" data-line-number="8"><span class="co">#&gt; 1 ABQ       13.7 </span></a>
-<a class="sourceLine" id="cb4-9" data-line-number="9"><span class="co">#&gt; 2 ALB       23.6 </span></a>
-<a class="sourceLine" id="cb4-10" data-line-number="10"><span class="co">#&gt; 3 AUS       13.0 </span></a>
-<a class="sourceLine" id="cb4-11" data-line-number="11"><span class="co">#&gt; 4 AVL        8.19</span></a>
-<a class="sourceLine" id="cb4-12" data-line-number="12"><span class="co">#&gt; 5 BDL       17.7 </span></a>
-<a class="sourceLine" id="cb4-13" data-line-number="13"><span class="co">#&gt; 6 BGR       19.5 </span></a>
-<a class="sourceLine" id="cb4-14" data-line-number="14"><span class="co">#&gt; # … with 99 more rows</span></a></code></pre></div>
+<a class="sourceLine" id="cb3-2" data-line-number="2">flights1</a>
+<a class="sourceLine" id="cb3-3" data-line-number="3"><span class="co">#&gt; Source: party_df [336,776 x 19]</span></a>
+<a class="sourceLine" id="cb3-4" data-line-number="4"><span class="co">#&gt; Groups: dest</span></a>
+<a class="sourceLine" id="cb3-5" data-line-number="5"><span class="co">#&gt; Shards: 2 [166,251--170,525 rows]</span></a>
+<a class="sourceLine" id="cb3-6" data-line-number="6"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb3-7" data-line-number="7"><span class="co">#&gt;    year month   day dep_time sched_dep_time dep_delay arr_time</span></a>
+<a class="sourceLine" id="cb3-8" data-line-number="8"><span class="co">#&gt;   &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;</span></a>
+<a class="sourceLine" id="cb3-9" data-line-number="9"><span class="co">#&gt; 1  2013     1     1      557            600        -3      709</span></a>
+<a class="sourceLine" id="cb3-10" data-line-number="10"><span class="co">#&gt; 2  2013     1     1      557            600        -3      838</span></a>
+<a class="sourceLine" id="cb3-11" data-line-number="11"><span class="co">#&gt; 3  2013     1     1      558            600        -2      849</span></a>
+<a class="sourceLine" id="cb3-12" data-line-number="12"><span class="co">#&gt; 4  2013     1     1      558            600        -2      853</span></a>
+<a class="sourceLine" id="cb3-13" data-line-number="13"><span class="co">#&gt; 5  2013     1     1      559            559         0      702</span></a>
+<a class="sourceLine" id="cb3-14" data-line-number="14"><span class="co">#&gt; 6  2013     1     1      559            600        -1      854</span></a>
+<a class="sourceLine" id="cb3-15" data-line-number="15"><span class="co">#&gt; # … with 3.368e+05 more rows, and 12 more variables: sched_arr_time &lt;int&gt;,</span></a>
+<a class="sourceLine" id="cb3-16" data-line-number="16"><span class="co">#&gt; #   arr_delay &lt;dbl&gt;, carrier &lt;chr&gt;, flight &lt;int&gt;, tailnum &lt;chr&gt;,</span></a>
+<a class="sourceLine" id="cb3-17" data-line-number="17"><span class="co">#&gt; #   origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;,</span></a>
+<a class="sourceLine" id="cb3-18" data-line-number="18"><span class="co">#&gt; #   minute &lt;dbl&gt;, time_hour &lt;dttm&gt;</span></a></code></pre></div>
+<p><code><a href="../reference/partition.html">partition()</a></code> splitting it into roughly equal subsets on each worker, ensuring that all rows in a group are put on the same worker. The result is a <code>party_df</code>, oor partitioned data frame. ### Manual loading</p>
+<p><code><a href="../reference/partition.html">partition()</a></code> is simple to use, but it’s relatively because it has to copy a lot of data between process. An alternative strategy is for each worker to load the data it needs directly.</p>
+<p>To show how that might work, I’ll first split flights up by month and save as csv files:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">path &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/tempfile">tempfile</a></span>()</a>
+<a class="sourceLine" id="cb4-2" data-line-number="2"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/files2">dir.create</a></span>(path)</a>
+<a class="sourceLine" id="cb4-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb4-4" data-line-number="4">flights <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb4-5" data-line-number="5"><span class="st">  </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span>(month) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb4-6" data-line-number="6"><span class="st">  </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/group_map.html">group_walk</a></span>(<span class="op">~</span><span class="st"> </span>vroom<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/vroom/topics/vroom_write">vroom_write</a></span>(.x, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sprintf">sprintf</a></span>(<span class="st">"%s/month-%02i.csv"</span>, path, .y<span class="op">$</span>month)))</a>
+<a class="sourceLine" id="cb4-7" data-line-number="7"><span class="co">#&gt; # A tibble: 336,776 x 19</span></a>
+<a class="sourceLine" id="cb4-8" data-line-number="8"><span class="co">#&gt; # Groups:   month [12]</span></a>
+<a class="sourceLine" id="cb4-9" data-line-number="9"><span class="co">#&gt;     year month   day dep_time sched_dep_time dep_delay arr_time</span></a>
+<a class="sourceLine" id="cb4-10" data-line-number="10"><span class="co">#&gt;    &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;</span></a>
+<a class="sourceLine" id="cb4-11" data-line-number="11"><span class="co">#&gt;  1  2013     1     1      517            515         2      830</span></a>
+<a class="sourceLine" id="cb4-12" data-line-number="12"><span class="co">#&gt;  2  2013     1     1      533            529         4      850</span></a>
+<a class="sourceLine" id="cb4-13" data-line-number="13"><span class="co">#&gt;  3  2013     1     1      542            540         2      923</span></a>
+<a class="sourceLine" id="cb4-14" data-line-number="14"><span class="co">#&gt;  4  2013     1     1      544            545        -1     1004</span></a>
+<a class="sourceLine" id="cb4-15" data-line-number="15"><span class="co">#&gt;  5  2013     1     1      554            600        -6      812</span></a>
+<a class="sourceLine" id="cb4-16" data-line-number="16"><span class="co">#&gt;  6  2013     1     1      554            558        -4      740</span></a>
+<a class="sourceLine" id="cb4-17" data-line-number="17"><span class="co">#&gt;  7  2013     1     1      555            600        -5      913</span></a>
+<a class="sourceLine" id="cb4-18" data-line-number="18"><span class="co">#&gt;  8  2013     1     1      557            600        -3      709</span></a>
+<a class="sourceLine" id="cb4-19" data-line-number="19"><span class="co">#&gt;  9  2013     1     1      557            600        -3      838</span></a>
+<a class="sourceLine" id="cb4-20" data-line-number="20"><span class="co">#&gt; 10  2013     1     1      558            600        -2      753</span></a>
+<a class="sourceLine" id="cb4-21" data-line-number="21"><span class="co">#&gt; # … with 336,766 more rows, and 12 more variables: sched_arr_time &lt;int&gt;,</span></a>
+<a class="sourceLine" id="cb4-22" data-line-number="22"><span class="co">#&gt; #   arr_delay &lt;dbl&gt;, carrier &lt;chr&gt;, flight &lt;int&gt;, tailnum &lt;chr&gt;,</span></a>
+<a class="sourceLine" id="cb4-23" data-line-number="23"><span class="co">#&gt; #   origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;,</span></a>
+<a class="sourceLine" id="cb4-24" data-line-number="24"><span class="co">#&gt; #   minute &lt;dbl&gt;, time_hour &lt;dttm&gt;</span></a></code></pre></div>
+<p>Now we find all the files in the directory, and divide them up so that each worker gets (approximately) the same number of pieces:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">files &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list.files">dir</a></span>(path, <span class="dt">full.names =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb5-2" data-line-number="2"><span class="kw"><a href="../reference/cluster_utils.html">cluster_assign_partition</a></span>(cluster, <span class="dt">files =</span> files)</a></code></pre></div>
+<p>Then we read in the files on each worker and use <code><a href="../reference/party_df.html">party_df()</a></code> to create a partitioned dataframe:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="kw"><a href="../reference/cluster_call.html">cluster_send</a></span>(cluster, flights2 &lt;-<span class="st"> </span>vroom<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/vroom/topics/vroom">vroom</a></span>(files))</a>
+<a class="sourceLine" id="cb6-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb6-3" data-line-number="3">flights2 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/party_df.html">party_df</a></span>(cluster, <span class="st">"flights2"</span>)</a>
+<a class="sourceLine" id="cb6-4" data-line-number="4">flights2</a>
+<a class="sourceLine" id="cb6-5" data-line-number="5"><span class="co">#&gt; Source: party_df [336,776 x 18]</span></a>
+<a class="sourceLine" id="cb6-6" data-line-number="6"><span class="co">#&gt; Shards: 2 [166,158--170,618 rows]</span></a>
+<a class="sourceLine" id="cb6-7" data-line-number="7"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb6-8" data-line-number="8"><span class="co">#&gt;    year   day dep_time sched_dep_time dep_delay arr_time sched_arr_time</span></a>
+<a class="sourceLine" id="cb6-9" data-line-number="9"><span class="co">#&gt;   &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;          &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;          &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb6-10" data-line-number="10"><span class="co">#&gt; 1  2013     1      517            515         2      830            819</span></a>
+<a class="sourceLine" id="cb6-11" data-line-number="11"><span class="co">#&gt; 2  2013     1      533            529         4      850            830</span></a>
+<a class="sourceLine" id="cb6-12" data-line-number="12"><span class="co">#&gt; 3  2013     1      542            540         2      923            850</span></a>
+<a class="sourceLine" id="cb6-13" data-line-number="13"><span class="co">#&gt; 4  2013     1      544            545        -1     1004           1022</span></a>
+<a class="sourceLine" id="cb6-14" data-line-number="14"><span class="co">#&gt; 5  2013     1      554            600        -6      812            837</span></a>
+<a class="sourceLine" id="cb6-15" data-line-number="15"><span class="co">#&gt; 6  2013     1      554            558        -4      740            728</span></a>
+<a class="sourceLine" id="cb6-16" data-line-number="16"><span class="co">#&gt; # … with 3.368e+05 more rows, and 11 more variables: arr_delay &lt;dbl&gt;,</span></a>
+<a class="sourceLine" id="cb6-17" data-line-number="17"><span class="co">#&gt; #   carrier &lt;chr&gt;, flight &lt;dbl&gt;, tailnum &lt;chr&gt;, origin &lt;chr&gt;, dest &lt;chr&gt;,</span></a>
+<a class="sourceLine" id="cb6-18" data-line-number="18"><span class="co">#&gt; #   air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;, minute &lt;dbl&gt;,</span></a>
+<a class="sourceLine" id="cb6-19" data-line-number="19"><span class="co">#&gt; #   time_hour &lt;dttm&gt;</span></a></code></pre></div>
 </div>
-<div id="performance" class="section level2">
+</div>
+<div id="dplyr-verbs" class="section level2">
 <h2 class="hasAnchor">
-<a href="#performance" class="anchor"></a>Performance</h2>
-<p>For this size of data, with a simple transformation, using a local cluster actually makes performance much slower!</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">by_dest &lt;-<span class="st"> </span>flights <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span>(dest)</a>
-<a class="sourceLine" id="cb5-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb5-3" data-line-number="3"><span class="co"># Local computation</span></a>
-<a class="sourceLine" id="cb5-4" data-line-number="4"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/system.time">system.time</a></span>(by_dest <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarise</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/mean">mean</a></span>(dep_delay, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>)))</a>
-<a class="sourceLine" id="cb5-5" data-line-number="5"><span class="co">#&gt;    user  system elapsed </span></a>
-<a class="sourceLine" id="cb5-6" data-line-number="6"><span class="co">#&gt;   0.007   0.000   0.007</span></a>
-<a class="sourceLine" id="cb5-7" data-line-number="7"></a>
-<a class="sourceLine" id="cb5-8" data-line-number="8"><span class="co"># Remote: partitioning</span></a>
-<a class="sourceLine" id="cb5-9" data-line-number="9"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/system.time">system.time</a></span>(flights2 &lt;-<span class="st"> </span>flights <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/partition.html">partition</a></span>(cluster))</a>
-<a class="sourceLine" id="cb5-10" data-line-number="10"><span class="co">#&gt;    user  system elapsed </span></a>
-<a class="sourceLine" id="cb5-11" data-line-number="11"><span class="co">#&gt;   0.481   0.067   0.579</span></a>
-<a class="sourceLine" id="cb5-12" data-line-number="12"><span class="co"># Remote: computation</span></a>
-<a class="sourceLine" id="cb5-13" data-line-number="13"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/system.time">system.time</a></span>(flights3 &lt;-<span class="st"> </span>flights2 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarise</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/mean">mean</a></span>(dep_delay, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>)))</a>
-<a class="sourceLine" id="cb5-14" data-line-number="14"><span class="co">#&gt;    user  system elapsed </span></a>
-<a class="sourceLine" id="cb5-15" data-line-number="15"><span class="co">#&gt;   0.019   0.000   0.078</span></a>
-<a class="sourceLine" id="cb5-16" data-line-number="16"><span class="co"># Remote: retrieve results</span></a>
-<a class="sourceLine" id="cb5-17" data-line-number="17"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/system.time">system.time</a></span>(flights3 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/compute.html">collect</a></span>())</a>
-<a class="sourceLine" id="cb5-18" data-line-number="18"><span class="co">#&gt;    user  system elapsed </span></a>
-<a class="sourceLine" id="cb5-19" data-line-number="19"><span class="co">#&gt;   0.010   0.000   0.093</span></a></code></pre></div>
-<p>That’s because there’s some overhead associated with sending the data to each node and retrieving the results at the end. For basic dplyr verbs, multidplyr is unlikely to give you significant speed ups unless you have 10s or 100s of millions of data points (and in that scenario you should first try <a href="http://dtplyr.tidyverse.org/">dtplyr</a>, which uses <a href="http://R-datatable.com/">data.table</a>).</p>
-<p>It might however, if you’re doing more complex things with <code><a href="https://dplyr.tidyverse.org/reference/do.html">do()</a></code>. Let’s see how that plays out. We’ll start by selecting a subset of flights that have at least 50 occurences, and we’ll compute the day of the year from the date:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">daily_flights &lt;-<span class="st"> </span>flights <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb6-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/tally.html">count</a></span>(dest) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb6-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(n <span class="op">&gt;=</span><span class="st"> </span><span class="dv">365</span>)</a>
-<a class="sourceLine" id="cb6-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb6-5" data-line-number="5">common_dest &lt;-<span class="st"> </span>flights <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb6-6" data-line-number="6"><span class="st">  </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/join.html">semi_join</a></span>(daily_flights, <span class="dt">by =</span> <span class="st">"dest"</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb6-7" data-line-number="7"><span class="st">  </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="dt">yday =</span> lubridate<span class="op">::</span><span class="kw"><a href="http://lubridate.tidyverse.org/reference/day.html">yday</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/ISOdatetime">ISOdate</a></span>(year, month, day))) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb6-8" data-line-number="8"><span class="st">  </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span>(dest)</a>
-<a class="sourceLine" id="cb6-9" data-line-number="9"></a>
-<a class="sourceLine" id="cb6-10" data-line-number="10">common_dest</a>
-<a class="sourceLine" id="cb6-11" data-line-number="11"><span class="co">#&gt; # A tibble: 332,942 x 20</span></a>
-<a class="sourceLine" id="cb6-12" data-line-number="12"><span class="co">#&gt; # Groups:   dest [78]</span></a>
-<a class="sourceLine" id="cb6-13" data-line-number="13"><span class="co">#&gt;     year month   day dep_time sched_dep_time dep_delay arr_time</span></a>
-<a class="sourceLine" id="cb6-14" data-line-number="14"><span class="co">#&gt;    &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;</span></a>
-<a class="sourceLine" id="cb6-15" data-line-number="15"><span class="co">#&gt;  1  2013     1     1      517            515         2      830</span></a>
-<a class="sourceLine" id="cb6-16" data-line-number="16"><span class="co">#&gt;  2  2013     1     1      533            529         4      850</span></a>
-<a class="sourceLine" id="cb6-17" data-line-number="17"><span class="co">#&gt;  3  2013     1     1      542            540         2      923</span></a>
-<a class="sourceLine" id="cb6-18" data-line-number="18"><span class="co">#&gt;  4  2013     1     1      544            545        -1     1004</span></a>
-<a class="sourceLine" id="cb6-19" data-line-number="19"><span class="co">#&gt;  5  2013     1     1      554            600        -6      812</span></a>
-<a class="sourceLine" id="cb6-20" data-line-number="20"><span class="co">#&gt;  6  2013     1     1      554            558        -4      740</span></a>
-<a class="sourceLine" id="cb6-21" data-line-number="21"><span class="co">#&gt;  7  2013     1     1      555            600        -5      913</span></a>
-<a class="sourceLine" id="cb6-22" data-line-number="22"><span class="co">#&gt;  8  2013     1     1      557            600        -3      709</span></a>
-<a class="sourceLine" id="cb6-23" data-line-number="23"><span class="co">#&gt;  9  2013     1     1      557            600        -3      838</span></a>
-<a class="sourceLine" id="cb6-24" data-line-number="24"><span class="co">#&gt; 10  2013     1     1      558            600        -2      753</span></a>
-<a class="sourceLine" id="cb6-25" data-line-number="25"><span class="co">#&gt; # … with 332,932 more rows, and 13 more variables: sched_arr_time &lt;int&gt;,</span></a>
-<a class="sourceLine" id="cb6-26" data-line-number="26"><span class="co">#&gt; #   arr_delay &lt;dbl&gt;, carrier &lt;chr&gt;, flight &lt;int&gt;, tailnum &lt;chr&gt;,</span></a>
-<a class="sourceLine" id="cb6-27" data-line-number="27"><span class="co">#&gt; #   origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;,</span></a>
-<a class="sourceLine" id="cb6-28" data-line-number="28"><span class="co">#&gt; #   minute &lt;dbl&gt;, time_hour &lt;dttm&gt;, yday &lt;dbl&gt;</span></a></code></pre></div>
+<a href="#dplyr-verbs" class="anchor"></a>dplyr verbs</h2>
+<p>Once you have a partitioned data frame, you can operate on it with the usual dplyr verbs. To bring the data back to the interactive process, use <code><a href="https://dplyr.tidyverse.org/reference/compute.html">collect()</a></code>:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">flights1 <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb7-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarise</a></span>(<span class="dt">dep_delay =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/mean">mean</a></span>(dep_delay, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>)) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb7-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/compute.html">collect</a></span>()</a>
+<a class="sourceLine" id="cb7-4" data-line-number="4"><span class="co">#&gt; # A tibble: 105 x 2</span></a>
+<a class="sourceLine" id="cb7-5" data-line-number="5"><span class="co">#&gt;    dest  dep_delay</span></a>
+<a class="sourceLine" id="cb7-6" data-line-number="6"><span class="co">#&gt;    &lt;chr&gt;     &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb7-7" data-line-number="7"><span class="co">#&gt;  1 ABQ       13.7 </span></a>
+<a class="sourceLine" id="cb7-8" data-line-number="8"><span class="co">#&gt;  2 ALB       23.6 </span></a>
+<a class="sourceLine" id="cb7-9" data-line-number="9"><span class="co">#&gt;  3 AUS       13.0 </span></a>
+<a class="sourceLine" id="cb7-10" data-line-number="10"><span class="co">#&gt;  4 AVL        8.19</span></a>
+<a class="sourceLine" id="cb7-11" data-line-number="11"><span class="co">#&gt;  5 BDL       17.7 </span></a>
+<a class="sourceLine" id="cb7-12" data-line-number="12"><span class="co">#&gt;  6 BGR       19.5 </span></a>
+<a class="sourceLine" id="cb7-13" data-line-number="13"><span class="co">#&gt;  7 BHM       29.7 </span></a>
+<a class="sourceLine" id="cb7-14" data-line-number="14"><span class="co">#&gt;  8 BNA       16.0 </span></a>
+<a class="sourceLine" id="cb7-15" data-line-number="15"><span class="co">#&gt;  9 BOS        8.73</span></a>
+<a class="sourceLine" id="cb7-16" data-line-number="16"><span class="co">#&gt; 10 BZN       11.5 </span></a>
+<a class="sourceLine" id="cb7-17" data-line-number="17"><span class="co">#&gt; # … with 95 more rows</span></a></code></pre></div>
+<p>For this size of data and a simple transformation, using a local cluster actually makes performance much worse!</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">by_dest &lt;-<span class="st"> </span>flights <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span>(dest)</a>
+<a class="sourceLine" id="cb8-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb8-3" data-line-number="3"><span class="co"># Local computation</span></a>
+<a class="sourceLine" id="cb8-4" data-line-number="4"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/system.time">system.time</a></span>(by_dest <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarise</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/mean">mean</a></span>(dep_delay, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>)))</a>
+<a class="sourceLine" id="cb8-5" data-line-number="5"><span class="co">#&gt;    user  system elapsed </span></a>
+<a class="sourceLine" id="cb8-6" data-line-number="6"><span class="co">#&gt;   0.006   0.000   0.006</span></a>
+<a class="sourceLine" id="cb8-7" data-line-number="7"></a>
+<a class="sourceLine" id="cb8-8" data-line-number="8"><span class="co"># Remote: partitioning</span></a>
+<a class="sourceLine" id="cb8-9" data-line-number="9"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/system.time">system.time</a></span>(flights2 &lt;-<span class="st"> </span>flights <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/partition.html">partition</a></span>(cluster))</a>
+<a class="sourceLine" id="cb8-10" data-line-number="10"><span class="co">#&gt;    user  system elapsed </span></a>
+<a class="sourceLine" id="cb8-11" data-line-number="11"><span class="co">#&gt;   0.440   0.123   0.668</span></a>
+<a class="sourceLine" id="cb8-12" data-line-number="12"><span class="co"># Remote: computation</span></a>
+<a class="sourceLine" id="cb8-13" data-line-number="13"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/system.time">system.time</a></span>(flights3 &lt;-<span class="st"> </span>flights2 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarise</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/mean">mean</a></span>(dep_delay, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>)))</a>
+<a class="sourceLine" id="cb8-14" data-line-number="14"><span class="co">#&gt;    user  system elapsed </span></a>
+<a class="sourceLine" id="cb8-15" data-line-number="15"><span class="co">#&gt;   0.020   0.000   0.077</span></a>
+<a class="sourceLine" id="cb8-16" data-line-number="16"><span class="co"># Remote: retrieve results</span></a>
+<a class="sourceLine" id="cb8-17" data-line-number="17"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/system.time">system.time</a></span>(flights3 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/compute.html">collect</a></span>())</a>
+<a class="sourceLine" id="cb8-18" data-line-number="18"><span class="co">#&gt;    user  system elapsed </span></a>
+<a class="sourceLine" id="cb8-19" data-line-number="19"><span class="co">#&gt;   0.010   0.000   0.093</span></a></code></pre></div>
+<p>That’s because of the overhead associated with sending the data to each worker and retrieving the results at the end. For basic dplyr verbs, multidplyr is unlikely to give you significant speed ups unless you have 10s or 100s of millions of data points (and in that scenario you should first try <a href="http://dtplyr.tidyverse.org/">dtplyr</a>, which uses <a href="http://R-datatable.com/">data.table</a>).</p>
+<p>multipldyr might help, however, if you’re doing more complex things. Let’s see how that plays out when fitting a moderately complex model. We’ll start by selecting a subset of flights that have at least 50 occurences, and we’ll compute the day of the year from the date:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1">daily_flights &lt;-<span class="st"> </span>flights <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb9-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/tally.html">count</a></span>(dest) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb9-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(n <span class="op">&gt;=</span><span class="st"> </span><span class="dv">365</span>)</a>
+<a class="sourceLine" id="cb9-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb9-5" data-line-number="5">common_dest &lt;-<span class="st"> </span>flights <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb9-6" data-line-number="6"><span class="st">  </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/join.html">semi_join</a></span>(daily_flights, <span class="dt">by =</span> <span class="st">"dest"</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb9-7" data-line-number="7"><span class="st">  </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="dt">yday =</span> lubridate<span class="op">::</span><span class="kw"><a href="http://lubridate.tidyverse.org/reference/day.html">yday</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/ISOdatetime">ISOdate</a></span>(year, month, day))) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb9-8" data-line-number="8"><span class="st">  </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span>(dest)</a>
+<a class="sourceLine" id="cb9-9" data-line-number="9"></a>
+<a class="sourceLine" id="cb9-10" data-line-number="10"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/nrow">nrow</a></span>(common_dest)</a>
+<a class="sourceLine" id="cb9-11" data-line-number="11"><span class="co">#&gt; [1] 332942</span></a></code></pre></div>
 <p>That leaves us with ~332,000 observations. Let’s partition this smaller dataset:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">by_dest &lt;-<span class="st"> </span>common_dest <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/partition.html">partition</a></span>(cluster)</a>
-<a class="sourceLine" id="cb7-2" data-line-number="2">by_dest</a>
-<a class="sourceLine" id="cb7-3" data-line-number="3"><span class="co">#&gt; Source: party_df [332,942 x 20]</span></a>
-<a class="sourceLine" id="cb7-4" data-line-number="4"><span class="co">#&gt; Groups: dest</span></a>
-<a class="sourceLine" id="cb7-5" data-line-number="5"><span class="co">#&gt; Shards: 2 [164,539--168,403 rows]</span></a>
-<a class="sourceLine" id="cb7-6" data-line-number="6"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb7-7" data-line-number="7"><span class="co">#&gt; # Description: party_df</span></a>
-<a class="sourceLine" id="cb7-8" data-line-number="8"><span class="co">#&gt;    year month   day dep_time sched_dep_time dep_delay arr_time</span></a>
-<a class="sourceLine" id="cb7-9" data-line-number="9"><span class="co">#&gt;   &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;</span></a>
-<a class="sourceLine" id="cb7-10" data-line-number="10"><span class="co">#&gt; 1  2013     1     1      517            515         2      830</span></a>
-<a class="sourceLine" id="cb7-11" data-line-number="11"><span class="co">#&gt; 2  2013     1     1      533            529         4      850</span></a>
-<a class="sourceLine" id="cb7-12" data-line-number="12"><span class="co">#&gt; 3  2013     1     1      542            540         2      923</span></a>
-<a class="sourceLine" id="cb7-13" data-line-number="13"><span class="co">#&gt; 4  2013     1     1      554            558        -4      740</span></a>
-<a class="sourceLine" id="cb7-14" data-line-number="14"><span class="co">#&gt; 5  2013     1     1      555            600        -5      913</span></a>
-<a class="sourceLine" id="cb7-15" data-line-number="15"><span class="co">#&gt; 6  2013     1     1      558            600        -2      753</span></a>
-<a class="sourceLine" id="cb7-16" data-line-number="16"><span class="co">#&gt; # … with 3.329e+05 more rows, and 13 more variables: sched_arr_time &lt;int&gt;,</span></a>
-<a class="sourceLine" id="cb7-17" data-line-number="17"><span class="co">#&gt; #   arr_delay &lt;dbl&gt;, carrier &lt;chr&gt;, flight &lt;int&gt;, tailnum &lt;chr&gt;,</span></a>
-<a class="sourceLine" id="cb7-18" data-line-number="18"><span class="co">#&gt; #   origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;,</span></a>
-<a class="sourceLine" id="cb7-19" data-line-number="19"><span class="co">#&gt; #   minute &lt;dbl&gt;, time_hour &lt;dttm&gt;, yday &lt;dbl&gt;</span></a></code></pre></div>
-<p>It’s always a good idea to check the evenness of the partition - you’ll get the most benefit when the rows are roughly even across all of the nodes.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1">by_dest &lt;-<span class="st"> </span>common_dest <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/partition.html">partition</a></span>(cluster)</a>
+<a class="sourceLine" id="cb10-2" data-line-number="2">by_dest</a>
+<a class="sourceLine" id="cb10-3" data-line-number="3"><span class="co">#&gt; Source: party_df [332,942 x 20]</span></a>
+<a class="sourceLine" id="cb10-4" data-line-number="4"><span class="co">#&gt; Groups: dest</span></a>
+<a class="sourceLine" id="cb10-5" data-line-number="5"><span class="co">#&gt; Shards: 2 [164,539--168,403 rows]</span></a>
+<a class="sourceLine" id="cb10-6" data-line-number="6"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb10-7" data-line-number="7"><span class="co">#&gt;    year month   day dep_time sched_dep_time dep_delay arr_time</span></a>
+<a class="sourceLine" id="cb10-8" data-line-number="8"><span class="co">#&gt;   &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;</span></a>
+<a class="sourceLine" id="cb10-9" data-line-number="9"><span class="co">#&gt; 1  2013     1     1      517            515         2      830</span></a>
+<a class="sourceLine" id="cb10-10" data-line-number="10"><span class="co">#&gt; 2  2013     1     1      533            529         4      850</span></a>
+<a class="sourceLine" id="cb10-11" data-line-number="11"><span class="co">#&gt; 3  2013     1     1      542            540         2      923</span></a>
+<a class="sourceLine" id="cb10-12" data-line-number="12"><span class="co">#&gt; 4  2013     1     1      554            558        -4      740</span></a>
+<a class="sourceLine" id="cb10-13" data-line-number="13"><span class="co">#&gt; 5  2013     1     1      555            600        -5      913</span></a>
+<a class="sourceLine" id="cb10-14" data-line-number="14"><span class="co">#&gt; 6  2013     1     1      558            600        -2      753</span></a>
+<a class="sourceLine" id="cb10-15" data-line-number="15"><span class="co">#&gt; # … with 3.329e+05 more rows, and 13 more variables: sched_arr_time &lt;int&gt;,</span></a>
+<a class="sourceLine" id="cb10-16" data-line-number="16"><span class="co">#&gt; #   arr_delay &lt;dbl&gt;, carrier &lt;chr&gt;, flight &lt;int&gt;, tailnum &lt;chr&gt;,</span></a>
+<a class="sourceLine" id="cb10-17" data-line-number="17"><span class="co">#&gt; #   origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;,</span></a>
+<a class="sourceLine" id="cb10-18" data-line-number="18"><span class="co">#&gt; #   minute &lt;dbl&gt;, time_hour &lt;dttm&gt;, yday &lt;dbl&gt;</span></a></code></pre></div>
 <p>Let’s fit a smoothed generalised additive model to each destination, estimating how delays vary over the course of the year and within a day. Note that we need to use <code><a href="../reference/cluster_utils.html">cluster_library()</a></code> to load the mgcv package on every node. That takes around 3s:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="kw"><a href="../reference/cluster_utils.html">cluster_library</a></span>(cluster, <span class="st">"mgcv"</span>)</a>
-<a class="sourceLine" id="cb8-2" data-line-number="2"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/system.time">system.time</a></span>({</a>
-<a class="sourceLine" id="cb8-3" data-line-number="3">  models &lt;-<span class="st"> </span>by_dest <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb8-4" data-line-number="4"><span class="st">    </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/do.html">do</a></span>(<span class="dt">mod =</span> <span class="kw">gam</span>(dep_delay <span class="op">~</span><span class="st"> </span><span class="kw">s</span>(yday) <span class="op">+</span><span class="st"> </span><span class="kw">s</span>(dep_time), <span class="dt">data =</span> .))</a>
-<a class="sourceLine" id="cb8-5" data-line-number="5">})</a>
-<a class="sourceLine" id="cb8-6" data-line-number="6"><span class="co">#&gt;    user  system elapsed </span></a>
-<a class="sourceLine" id="cb8-7" data-line-number="7"><span class="co">#&gt;   0.019   0.001   4.274</span></a></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="kw"><a href="../reference/cluster_utils.html">cluster_library</a></span>(cluster, <span class="st">"mgcv"</span>)</a>
+<a class="sourceLine" id="cb11-2" data-line-number="2"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/system.time">system.time</a></span>({</a>
+<a class="sourceLine" id="cb11-3" data-line-number="3">  models &lt;-<span class="st"> </span>by_dest <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb11-4" data-line-number="4"><span class="st">    </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/do.html">do</a></span>(<span class="dt">mod =</span> <span class="kw">gam</span>(dep_delay <span class="op">~</span><span class="st"> </span><span class="kw">s</span>(yday) <span class="op">+</span><span class="st"> </span><span class="kw">s</span>(dep_time), <span class="dt">data =</span> .))</a>
+<a class="sourceLine" id="cb11-5" data-line-number="5">})</a>
+<a class="sourceLine" id="cb11-6" data-line-number="6"><span class="co">#&gt;    user  system elapsed </span></a>
+<a class="sourceLine" id="cb11-7" data-line-number="7"><span class="co">#&gt;   0.021   0.000   4.411</span></a></code></pre></div>
 <p>Compared with around 5s doing it locally:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/system.time">system.time</a></span>({</a>
-<a class="sourceLine" id="cb9-2" data-line-number="2">  models &lt;-<span class="st"> </span>common_dest <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb9-3" data-line-number="3"><span class="st">    </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span>(dest) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb9-4" data-line-number="4"><span class="st">    </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/do.html">do</a></span>(<span class="dt">mod =</span> <span class="kw">gam</span>(dep_delay <span class="op">~</span><span class="st"> </span><span class="kw">s</span>(yday) <span class="op">+</span><span class="st"> </span><span class="kw">s</span>(dep_time), <span class="dt">data =</span> .))</a>
-<a class="sourceLine" id="cb9-5" data-line-number="5">})</a>
-<a class="sourceLine" id="cb9-6" data-line-number="6"><span class="co">#&gt;    user  system elapsed </span></a>
-<a class="sourceLine" id="cb9-7" data-line-number="7"><span class="co">#&gt;   5.300   0.191   5.492</span></a></code></pre></div>
-<p>That’s not a huge speed up, but generally you don’t care about parallelising things that only take a couple of seconds. The cost of transmitting messages to the nodes is roughly fixed, so the longer the task you’re parallelising, the closer to a linear speed up you’ll get. You’ll also get greater improvements with more nodes, but unfortunately vignettes are only allowed to use 2 nodes max, so I can’t show you that here.</p>
-</div>
-<div id="efficiency" class="section level2">
-<h2 class="hasAnchor">
-<a href="#efficiency" class="anchor"></a>Efficiency</h2>
-<p>For the best performance, you’ll want to avoid loading all the data in the host process, and then sending it to individual workers. Instead, it’s more efficient (but harder!) for each worker to load the data directly.</p>
-<p>For example, if you were reading in many csv files, your code might look something like this:</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1">cluster &lt;-<span class="st"> </span><span class="kw"><a href="../reference/new_cluster.html">new_cluster</a></span>(<span class="dv">4</span>)</a>
-<a class="sourceLine" id="cb10-2" data-line-number="2"><span class="kw"><a href="../reference/cluster_utils.html">cluster_assign_each</a></span>(cluster, <span class="st">"filename"</span>,</a>
-<a class="sourceLine" id="cb10-3" data-line-number="3">  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="st">"a.csv"</span>, <span class="st">"b.csv"</span>, <span class="st">"c.csv"</span>, <span class="st">"d.csv"</span>)</a>
-<a class="sourceLine" id="cb10-4" data-line-number="4">)</a>
-<a class="sourceLine" id="cb10-5" data-line-number="5"><span class="kw"><a href="../reference/cluster_utils.html">cluster_assign</a></span>(cluster, <span class="st">"my_data"</span>, vroom<span class="op">::</span><span class="kw">vroom</span>(filename))</a>
-<a class="sourceLine" id="cb10-6" data-line-number="6"></a>
-<a class="sourceLine" id="cb10-7" data-line-number="7">my_data &lt;-<span class="st"> </span><span class="kw"><a href="../reference/party_df.html">party_df</a></span>(cluster, <span class="st">"my_data"</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/system.time">system.time</a></span>({</a>
+<a class="sourceLine" id="cb12-2" data-line-number="2">  models &lt;-<span class="st"> </span>common_dest <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb12-3" data-line-number="3"><span class="st">    </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span>(dest) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb12-4" data-line-number="4"><span class="st">    </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/do.html">do</a></span>(<span class="dt">mod =</span> <span class="kw">gam</span>(dep_delay <span class="op">~</span><span class="st"> </span><span class="kw">s</span>(yday) <span class="op">+</span><span class="st"> </span><span class="kw">s</span>(dep_time), <span class="dt">data =</span> .))</a>
+<a class="sourceLine" id="cb12-5" data-line-number="5">})</a>
+<a class="sourceLine" id="cb12-6" data-line-number="6"><span class="co">#&gt;    user  system elapsed </span></a>
+<a class="sourceLine" id="cb12-7" data-line-number="7"><span class="co">#&gt;   5.427   0.208   5.636</span></a></code></pre></div>
+<p>The cost of transmitting messages to the nodes is roughly constant, so the longer the task you’re parallelising, the closer you’ll get to a linear speed up.</p>
 </div>
   </div>
 
@@ -237,9 +283,9 @@
       <h2 class="hasAnchor">
 <a href="#tocnav" class="anchor"></a>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
-<li><a href="#basics">Basics</a></li>
-      <li><a href="#performance">Performance</a></li>
-      <li><a href="#efficiency">Efficiency</a></li>
+<li><a href="#creating-a-cluster">Creating a cluster</a></li>
+      <li><a href="#add-data">Add data</a></li>
+      <li><a href="#dplyr-verbs">dplyr verbs</a></li>
       </ul>
 </div>
       </div>

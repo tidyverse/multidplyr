@@ -152,21 +152,21 @@ which will always succeed. Set to a narrower type to simplify the output.</p></t
     <pre class="examples"><div class='input'><span class='no'>cl</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='default_cluster.html'>default_cluster</a></span>()</div><div class='output co'>#&gt; <span class='message'>Initialising default cluster of size 2</span></div><div class='input'>
 <span class='co'># Run code on each cluster and retrieve results</span>
 <span class='fu'>cluster_call</span>(<span class='no'>cl</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Sys.getpid'>Sys.getpid</a></span>())</div><div class='output co'>#&gt; [[1]]
-#&gt; [1] 13252
+#&gt; [1] 13830
 #&gt; 
 #&gt; [[2]]
-#&gt; [1] 13258
+#&gt; [1] 13836
 #&gt; </div><div class='input'><span class='fu'>cluster_call</span>(<span class='no'>cl</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/Uniform'>runif</a></span>(<span class='fl'>1</span>))</div><div class='output co'>#&gt; [[1]]
-#&gt; [1] 0.272652
+#&gt; [1] 0.3392102
 #&gt; 
 #&gt; [[2]]
-#&gt; [1] 0.6871493
+#&gt; [1] 0.4025648
 #&gt; </div><div class='input'>
 <span class='co'># use ptype to simplify</span>
-<span class='fu'>cluster_call</span>(<span class='no'>cl</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/Uniform'>runif</a></span>(<span class='fl'>1</span>), <span class='kw'>ptype</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/double'>double</a></span>())</div><div class='output co'>#&gt; [1] 0.95006463 0.07768594</div><div class='input'>
+<span class='fu'>cluster_call</span>(<span class='no'>cl</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/Uniform'>runif</a></span>(<span class='fl'>1</span>), <span class='kw'>ptype</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/double'>double</a></span>())</div><div class='output co'>#&gt; [1] 0.05935197 0.79370325</div><div class='input'>
 <span class='co'># use cluster_send() to ignore results</span>
 <span class='fu'>cluster_send</span>(<span class='no'>cl</span>, <span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/Uniform'>runif</a></span>(<span class='fl'>1</span>))
-<span class='fu'>cluster_call</span>(<span class='no'>cl</span>, <span class='no'>x</span>, <span class='kw'>ptype</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/double'>double</a></span>())</div><div class='output co'>#&gt; [1] 0.8760926 0.9509401</div></pre>
+<span class='fu'>cluster_call</span>(<span class='no'>cl</span>, <span class='no'>x</span>, <span class='kw'>ptype</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/double'>double</a></span>())</div><div class='output co'>#&gt; [1] 0.30087157 0.05019092</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
