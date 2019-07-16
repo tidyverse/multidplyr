@@ -1,7 +1,6 @@
 Source: party_df [20 x 1]
 Shards: 2 [10--10 rows]
 
-# Description: party_df
       y
   <int>
 1     1

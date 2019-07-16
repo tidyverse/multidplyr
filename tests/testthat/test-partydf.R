@@ -5,7 +5,8 @@ test_that("can construct and print partydf", {
   df <- party_df(cl, "x")
   on.exit(cluster_rm(cl, "x"))
 
-  expect_s3_class(df, "party_df")
+  expect_s3_class(df, "multidplyr_party_df")
+  expect_true(is_party_df(df))
   expect_equal(df$cluster, cl)
   expect_known_output(print(df), test_path("test-partydf-print.txt"))
 })
@@ -39,7 +40,7 @@ test_that("can partition and re-collect", {
   df1 <- data.frame(x = 1:2)
   df2 <- partition(df1, cl)
 
-  expect_s3_class(df2, "party_df")
+  expect_s3_class(df2, "multidplyr_party_df")
   expect_equal(df2$cluster, cl)
 
   expect_equal(collect(df2), df1)

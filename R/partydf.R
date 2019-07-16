@@ -115,11 +115,11 @@ new_party_df <- function(cluster, name, auto_rm) {
       name = sym(name),
       .auto_clean = shard_deleter(auto_rm, name, cluster)
     ),
-    class = "party_df"
+    class = "multidplyr_party_df"
   )
 }
 
-is_party_df <- function(x) inherits(x, "party_df")
+is_party_df <- function(x) inherits(x, "multidplyr_party_df")
 
 shard_deleter <- function(auto_rm, name, cluster) {
   if (!auto_rm) {
@@ -140,26 +140,32 @@ shard_cols <- function(x) {
   cluster_call(x$cluster[1], ncol(!!x$name))[[1]]
 }
 
+#' @importFrom tibble tbl_sum
+#' @export
+tbl_sum.multidplyr_party_df <- function(x) {
+  character()
+}
+
 #' @importFrom dplyr tbl_vars
 #' @export
-tbl_vars.party_df <- function(x) {
+tbl_vars.multidplyr_party_df <- function(x) {
   cluster_call(x$cluster[1], dplyr::tbl_vars(!!x$name))[[1]]
 }
 
 #' @importFrom dplyr groups
 #' @export
-groups.party_df <- function(x) {
+groups.multidplyr_party_df <- function(x) {
   cluster_call(x$cluster[1], dplyr::groups(!!x$name))[[1]]
 }
 
 #' @export
-dim.party_df <- function(x) {
+dim.multidplyr_party_df <- function(x) {
   c(sum(shard_rows(x)), shard_cols(x))
 }
 
 #' @importFrom utils head
 #' @export
-head.party_df <- function(x, n = 6L, ...) {
+head.multidplyr_party_df <- function(x, n = 6L, ...) {
   pieces <- vector("list", length(x$cluster))
   left <- n
 
@@ -177,7 +183,7 @@ head.party_df <- function(x, n = 6L, ...) {
 }
 
 #' @export
-print.party_df <- function(x, ..., n = NULL, width = NULL) {
+print.multidplyr_party_df <- function(x, ..., n = NULL, width = NULL) {
   cat("Source: party_df ", dplyr::dim_desc(x), "\n", sep = "")
 
   groups <- groups(x)
@@ -197,20 +203,20 @@ print.party_df <- function(x, ..., n = NULL, width = NULL) {
 }
 
 #' @export
-as.data.frame.party_df <- function(x, row.names, optional, ...) {
+as.data.frame.multidplyr_party_df <- function(x, row.names, optional, ...) {
   dplyr::bind_rows(cluster_call(x$cluster, !!x$name))
 }
 
 #' @importFrom dplyr collect
 #' @export
-collect.party_df <- function(.data, ...) {
+collect.multidplyr_party_df <- function(.data, ...) {
   out <- as.data.frame(.data)
   group_by(out, !!!groups(.data))
 }
 
 #' @importFrom dplyr pull
 #' @export
-pull.party_df <- function(.data, var = -1) {
+pull.multidplyr_party_df <- function(.data, var = -1) {
   expr <- enquo(var)
   var <- dplyr:::find_var(expr, tbl_vars(.data))
 

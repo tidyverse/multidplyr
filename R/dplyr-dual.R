@@ -1,12 +1,12 @@
 #' @importFrom dplyr same_src
 #' @export
-same_src.party_df <- function(x, y) {
+same_src.multidplyr_party_df <- function(x, y) {
   is_party_df(y) && identical(x$cluster, y$cluster)
 }
 
 #' @importFrom dplyr auto_copy
 #' @export
-auto_copy.party_df <- function(x, y, copy = FALSE, ...) {
+auto_copy.multidplyr_party_df <- function(x, y, copy = FALSE, ...) {
   name <- table_name()
   cluster_assign(x$cluster, !!name := y)
   party_df(x$cluster, name)
@@ -16,42 +16,42 @@ auto_copy.party_df <- function(x, y, copy = FALSE, ...) {
 
 #' @importFrom dplyr left_join
 #' @export
-left_join.party_df <- function(x, y, ..., by = NULL, copy = FALSE, suffix = c(".x", ".y")) {
+left_join.multidplyr_party_df <- function(x, y, ..., by = NULL, copy = FALSE, suffix = c(".x", ".y")) {
   y <- auto_copy(x, y, copy = copy)
   shard_call_dual("left_join", x, y, ..., by = by, suffix = suffix)
 }
 
 #' @importFrom dplyr right_join
 #' @export
-right_join.party_df <- function(x, y, ..., by = NULL, copy = FALSE, suffix = c(".x", ".y")) {
+right_join.multidplyr_party_df <- function(x, y, ..., by = NULL, copy = FALSE, suffix = c(".x", ".y")) {
   y <- auto_copy(x, y, copy = copy)
   shard_call_dual("right_join", x, y, ..., by = by, suffix = suffix)
 }
 
 #' @importFrom dplyr inner_join
 #' @export
-inner_join.party_df <- function(x, y, ..., by = NULL, copy = FALSE, suffix = c(".x", ".y")) {
+inner_join.multidplyr_party_df <- function(x, y, ..., by = NULL, copy = FALSE, suffix = c(".x", ".y")) {
   y <- auto_copy(x, y, copy = copy)
   shard_call_dual("inner_join", x, y, ..., by = by, suffix = suffix)
 }
 
 #' @importFrom dplyr full_join
 #' @export
-full_join.party_df <- function(x, y, ..., by = NULL, copy = FALSE, suffix = c(".x", ".y")) {
+full_join.multidplyr_party_df <- function(x, y, ..., by = NULL, copy = FALSE, suffix = c(".x", ".y")) {
   y <- auto_copy(x, y, copy = copy)
   shard_call_dual("full_join", x, y, ..., by = by, suffix = suffix)
 }
 
 #' @importFrom dplyr anti_join
 #' @export
-anti_join.party_df <- function(x, y, ..., by = NULL, copy = FALSE) {
+anti_join.multidplyr_party_df <- function(x, y, ..., by = NULL, copy = FALSE) {
   y <- auto_copy(x, y, copy = copy)
   shard_call_dual("anti_join", x, y, ..., by = by)
 }
 
 #' @importFrom dplyr semi_join
 #' @export
-semi_join.party_df <- function(x, y, ..., by = NULL, copy = FALSE) {
+semi_join.multidplyr_party_df <- function(x, y, ..., by = NULL, copy = FALSE) {
   y <- auto_copy(x, y, copy = copy)
   shard_call_dual("semi_join", x, y, ..., by = by)
 }
@@ -60,28 +60,28 @@ semi_join.party_df <- function(x, y, ..., by = NULL, copy = FALSE) {
 
 #' @importFrom dplyr intersect
 # Exported onload
-intersect.party_df <- function(x, y, ..., copy = FALSE) {
+intersect.multidplyr_party_df <- function(x, y, ..., copy = FALSE) {
   y <- auto_copy(x, y, copy = copy)
   shard_call_dual("intersect", x, y, ..., by = by)
 }
 
 #' @importFrom dplyr union
 # Exported onload
-union.party_df <- function(x, y, ..., copy = FALSE) {
+union.multidplyr_party_df <- function(x, y, ..., copy = FALSE) {
   y <- auto_copy(x, y, copy = copy)
   shard_call_dual("union", x, y, ..., by = by)
 }
 
 #' @importFrom dplyr union_all
 #' @export
-union_all.party_df <- function(x, y, ..., copy = FALSE) {
+union_all.multidplyr_party_df <- function(x, y, ..., copy = FALSE) {
   y <- auto_copy(x, y, copy = copy)
   shard_call_dual("union_all", x, y, ..., by = by)
 }
 
 #' @importFrom dplyr setdiff
 # Exported onload
-setdiff.party_df <- function(x, y, ..., copy = FALSE) {
+setdiff.multidplyr_party_df <- function(x, y, ..., copy = FALSE) {
   y <- auto_copy(x, y, copy = copy)
   shard_call_dual("setdiff", x, y, ..., by = by)
 }
