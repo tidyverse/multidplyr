@@ -5,14 +5,14 @@
 
 <!-- badges: start -->
 
+[![Lifecycle:
+experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 [![Travis build
 status](https://travis-ci.org/tidyverse/multidplyr.svg?branch=master)](https://travis-ci.org/tidyverse/multidplyr)
 [![Codecov test
 coverage](https://codecov.io/gh/tidyverse/multidplyr/branch/master/graph/badge.svg)](https://codecov.io/gh/tidyverse/multidplyr?branch=master)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/multidplyr)](https://cran.r-project.org/package=multidplyr)
-[![Lifecycle:
-experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 <!-- badges: end -->
 
 ## Overview
@@ -23,13 +23,16 @@ multiple cores. You tell multidplyr how to split the data up with
 retrieve it with `collect()`. This minimises the amount of time spent
 moving data around, and maximises parallel performance. This idea is
 inspired by [partools](http://bit.ly/1Nve8v5) by Norm Matloff and
-[distributedR](http://bit.ly/1KZVAwK) by the Vertica Analytics team.
+[distributedR](https://github.com/vertica/DistributedR) by the Vertica
+Analytics team.
 
 Due to the overhead associated with communicating between the nodes, you
-won’t expect to see much performance improvement on basic dplyr verbs
-with less than \~10 million observations. However, you’ll see
-improvements much faster if you’re doing more complex operations with
-`do()`.
+won’t see much performance improvement on basic dplyr verbs with less
+than \~10 million observations, and you may want to try
+[dtplyr](http://dtplyr.tidyverse.org/), which uses
+[data.table](http://R-datatable.com/) instead. multidplyr’s strength is
+conveniently parallelising the type of more complex operation often
+found in `do()`.
 
 (Note that unlike other packages in the tidyverse, multidplyr requires R
 3.5 or greater. We hope to relax this requirement [in the

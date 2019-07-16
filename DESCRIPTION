@@ -1,5 +1,5 @@
 Package: multidplyr
-Title: Partitioned data frames for 'dplyr'
+Title: A Multi-Process 'dplyr' Backend
 Version: 0.0.0.9000
 Authors@R: 
     c(person(given = "Hadley",
@@ -8,9 +8,8 @@ Authors@R:
              email = "hadley@rstudio.com"),
       person(given = "RStudio",
              role = "cph"))
-Description: A dplyr backend that partitions a data frame across
-    multiple nodes in a cluster (e.g. cores on your computer) to make
-    common operations faster.
+Description: Patition a data frame across multiple worker processes in to
+    provide simple multicore parallelism.
 License: GPL-3
 URL: https://github.com/tidyverse/multidplyr
 BugReports: https://github.com/tidyverse/multidplyr/issues
@@ -33,7 +32,8 @@ Suggests:
     mgcv,
     nycflights13,
     rmarkdown,
-    testthat (>= 2.1.0)
+    testthat (>= 2.1.0),
+    vroom
 VignetteBuilder: 
     knitr
 Encoding: UTF-8

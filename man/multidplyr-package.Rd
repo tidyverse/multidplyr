@@ -4,11 +4,10 @@
 \name{multidplyr-package}
 \alias{multidplyr}
 \alias{multidplyr-package}
-\title{multidplyr: Partitioned data frames for 'dplyr'}
+\title{multidplyr: A Multi-Process 'dplyr' Backend}
 \description{
-A dplyr backend that partitions a data frame across
-    multiple nodes in a cluster (e.g. cores on your computer) to make
-    common operations faster.
+Patition a data frame across multiple worker processes in to
+    provide simple multicore parallelism.
 }
 \seealso{
 Useful links:

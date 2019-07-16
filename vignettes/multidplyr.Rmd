@@ -12,57 +12,91 @@ knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
 set.seed(1014)
 ```
 
-multidplyr is a new backend for dplyr. You continue to use the dplyr verbs that you're familiar with, but instead of the computation happening on one core it's spread across multiple cores. You effectively create a local cluster on your computer, and then multidplyr takes care of telling each node what to do.
+multidplyr is a backend for dplyr that spreads work across multiple processes. Like all dplyr backends, it allows you to use the dplyr verbs that you're already familiar with, but alters the underlying computational model to transparently support multi-process parallelism. 
 
-## Basics
-
-multiplyr is built on the principle that moving data around is expensive so you want to do it as little as possible. The basic sequence of operations is:
-
-1. Call `partition()` to split your dataset across multiple cores.
-   This makes a partitioned data frame, or a party df for short.
-   
-1. Each dplyr verb applied to a party df performs the operation independently
-   on each core. It leaves each result on each core, and returns another
-   party df.
-   
-1. When you're done with the expensive operations that need to be 
-   done on each core, you call `collect()` to retrieve the data and 
-   bring it back to your local computer.
-  
-Let's see a simple example of that using the `nycflights13::flights`. This dataset contains information for about ~300,000 flights departing New York City in 2013.
-
-We start by loading the packages we need:
+This vignette will show you the basics of multidplyr using the nycflights13 dataset.
 
 ```{r setup}
 library(multidplyr)
 library(dplyr, warn.conflicts = FALSE)
 library(nycflights13)
 ```
-  
-And creating a cluster. Here I used two cores because it's the maximum permitted by CRAN, but I suggest that you use more (typically slightly less than the number of cores your computer has).
+
+## Creating a cluster
+
+To start using multidplyr you must create a cluster. Here I used two cores because it's the maximum permitted by CRAN, but I suggest that you use more. For best performance, I recommend using 1 or 2 less than the total number of cores on your computer, which you can detect with `parallel::detectCores()` (leaving at least 1 core free means that you should still be able to use your computer for other tasks while your computation is running). 
 
 ```{r}
 cluster <- new_cluster(2)
 cluster
 ```
 
-Next, we partition the flights data by destination, compute the average delay per flight, and then collect the results:
+(In the examples, you'll also see the use of `default_cluster()`; this is designed specifically for the constraints of R CMD check, so I don't recommend using it in your own code.)
+
+A cluster consists of multiple R processes created by [callr](http://callr.r-lib.org/). When multiple processes are running at the same time, your operating system will take care of spreading the work across multiple cores.
+
+## Add data
+
+There are two ways to get data to the workers in  cluster:
+
+* `partition()` a data frame that's loaded in the interactive process.
+* Load a different subset of the data in each worker.
+
+### `partition()`
+
+`partition()` is useful if you have a single in-memory data frame. For example, take `nycflights13::flights`. This dataset contains information for about ~300,000 flights departing New York City in 2013. We group it by destination, then partition it:
 
 ```{r}
 flights1 <- flights %>% group_by(dest) %>% partition(cluster)
-flights2 <- flights1 %>% summarise(dep_delay = mean(dep_delay, na.rm = TRUE))
-flights3 <- flights2 %>% collect()
+flights1
 ```
 
-The dplyr code looks the same as usual, but behind the scenes things are very different. `flights1` and `flights2` are party dfs. These look like normal data frames, but have an additional attribute: the number of shards. In this example, it tells us that `flights2` is spread across seven nodes, and the size on each node varies from 12 to 25 rows. `partition()` always makes sure a group is kept together on one node.
+`partition()` splitting it into roughly equal subsets on each worker, ensuring that all rows in a group are put on the same worker. The result is a `party_df`, oor partitioned data frame. 
+### Manual loading
+
+`partition()` is simple to use, but it's relatively because it has to copy a lot of data between process. An alternative strategy is for each worker to load the data it needs directly. 
+
+To show how that might work, I'll first split flights up by month and save as csv files:
 
 ```{r}
+path <- tempfile()
+dir.create(path)
+
+flights %>% 
+  group_by(month) %>% 
+  group_walk(~ vroom::vroom_write(.x, sprintf("%s/month-%02i.csv", path, .y$month)))
+```
+
+Now we find all the files in the directory, and divide them up so that each worker gets (approximately) the same number of pieces:
+
+```{r}
+files <- dir(path, full.names = TRUE)
+files_each <- split(files, cut(seq_along(files), 2, labels = FALSE))
+str(files_each)
+
+cluster_assign_each(cluster, files = files_each)
+```
+
+Then we read in the files on each worker and use `party_df()` to create a partitioned dataframe:
+
+```{r}
+cluster_send(cluster, flights2 <- vroom::vroom(files))
+
+flights2 <- party_df(cluster, "flights2")
 flights2
 ```
 
-## Performance
+## dplyr verbs
 
-For this size of data, with a simple transformation, using a local cluster actually makes performance much slower!
+Once you have a partitioned data frame, you can operate on it with the usual dplyr verbs. To bring the data back to the interactive process, use `collect()`:
+
+```{r}
+flights1 %>% 
+  summarise(dep_delay = mean(dep_delay, na.rm = TRUE)) %>% 
+  collect()
+```
+
+For this size of data and a simple transformation, using a local cluster actually makes performance much worse!
 
 ```{r}
 by_dest <- flights %>% group_by(dest)
@@ -78,9 +112,9 @@ system.time(flights3 <- flights2 %>% summarise(mean(dep_delay, na.rm = TRUE)))
 system.time(flights3 %>% collect())
 ```
 
-That's because there's some overhead associated with sending the data to each node and retrieving the results at the end. For basic dplyr verbs, multidplyr is unlikely to give you significant speed ups unless you have 10s or 100s of millions of data points (and in that scenario you should first try [dtplyr](http://dtplyr.tidyverse.org/), which uses [data.table](http://R-datatable.com/)). 
+That's because of the overhead associated with sending the data to each worker and retrieving the results at the end. For basic dplyr verbs, multidplyr is unlikely to give you significant speed ups unless you have 10s or 100s of millions of data points (and in that scenario you should first try [dtplyr](http://dtplyr.tidyverse.org/), which uses [data.table](http://R-datatable.com/)). 
 
-It might however, if you're doing more complex things with `do()`. Let's see how that plays out. We'll start by selecting a subset of flights that have at least 50 occurences, and we'll compute the day of the year from the date:
+multipldyr might help, however, if you're doing more complex things. Let's see how that plays out when fitting a moderately complex model. We'll start by selecting a subset of flights that have at least 50 occurences, and we'll compute the day of the year from the date:
 
 ```{r}
 daily_flights <- flights %>%
@@ -92,7 +126,7 @@ common_dest <- flights %>%
   mutate(yday = lubridate::yday(ISOdate(year, month, day))) %>% 
   group_by(dest)
 
-common_dest
+nrow(common_dest)
 ```
 
 That leaves us with ~332,000 observations. Let's partition this smaller dataset:
@@ -101,8 +135,6 @@ That leaves us with ~332,000 observations. Let's partition this smaller dataset:
 by_dest <- common_dest %>% partition(cluster)
 by_dest
 ```
-
-It's always a good idea to check the evenness of the partition - you'll get the most benefit when the rows are roughly even across all of the nodes.
 
 Let's fit a smoothed generalised additive model to each destination, estimating how delays vary over the course of the year and within a day. Note that we need to use `cluster_library()` to load the mgcv package on every node. That takes around 3s:
 
@@ -124,20 +156,4 @@ system.time({
 })
 ```
 
-That's not a huge speed up, but generally you don't care about parallelising things that only take a couple of seconds. The cost of transmitting messages to the nodes is roughly fixed, so the longer the task you're parallelising, the closer to a linear speed up you'll get. You'll also get greater improvements with more nodes, but unfortunately vignettes are only allowed to use 2 nodes max, so I can't show you that here.
-
-## Efficiency
-
-For the best performance, you'll want to avoid loading all the data in the host process, and then sending it to individual workers. Instead, it's more efficient (but harder!) for each worker to load the data directly. 
-
-For example, if you were reading in many csv files, your code might look something like this:
-
-```{r, eval = FALSE}
-cluster <- new_cluster(4)
-cluster_assign_each(cluster, "filename",
-  list("a.csv", "b.csv", "c.csv", "d.csv")
-)
-cluster_assign(cluster, "my_data", vroom::vroom(filename))
-
-my_data <- party_df(cluster, "my_data")
-```
+The cost of transmitting messages to the nodes is roughly constant, so the longer the task you're parallelising, the closer you'll get to a linear speed up. 
