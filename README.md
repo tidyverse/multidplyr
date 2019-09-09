@@ -60,8 +60,8 @@ library(dplyr, warn.conflicts = FALSE)
 cluster <- new_cluster(4)
 ```
 
-There are two primary ways to use multidplyr. The first, and most,
-efficient is to load a different data on each worker:
+There are two primary ways to use multidplyr. The first, and most
+efficient, way is to read different files on each worker:
 
 ``` r
 # Create a filename vector containing different values on each worker
