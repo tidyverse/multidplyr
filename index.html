@@ -98,7 +98,7 @@
 <a class="sourceLine" id="cb2-2" data-line-number="2"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(dplyr, <span class="dt">warn.conflicts =</span> <span class="ot">FALSE</span>)</a>
 <a class="sourceLine" id="cb2-3" data-line-number="3"></a>
 <a class="sourceLine" id="cb2-4" data-line-number="4">cluster &lt;-<span class="st"> </span><span class="kw"><a href="reference/new_cluster.html">new_cluster</a></span>(<span class="dv">4</span>)</a></code></pre></div>
-<p>There are two primary ways to use multidplyr. The first, and most, efficient is to load a different data on each worker:</p>
+<p>There are two primary ways to use multidplyr. The first, and most efficient, way is to read different files on each worker:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="co"># Create a filename vector containing different values on each worker</span></a>
 <a class="sourceLine" id="cb3-2" data-line-number="2"><span class="kw"><a href="reference/cluster_utils.html">cluster_assign_each</a></span>(cluster, <span class="dt">filename =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"a.csv"</span>, <span class="st">"b.csv"</span>, <span class="st">"c.csv"</span>, <span class="st">"d.csv"</span>))</a>
 <a class="sourceLine" id="cb3-3" data-line-number="3"></a>

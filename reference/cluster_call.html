@@ -148,21 +148,21 @@ which will always succeed. Set to a narrower type to simplify the output.</p></t
     <pre class="examples"><div class='input'><span class='no'>cl</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='default_cluster.html'>default_cluster</a></span>()</div><div class='output co'>#&gt; <span class='message'>Initialising default cluster of size 2</span></div><div class='input'>
 <span class='co'># Run code on each cluster and retrieve results</span>
 <span class='fu'>cluster_call</span>(<span class='no'>cl</span>, <span class='fu'><a href='https://rdrr.io/r/base/Sys.getpid.html'>Sys.getpid</a></span>())</div><div class='output co'>#&gt; [[1]]
-#&gt; [1] 24121
+#&gt; [1] 13502
 #&gt; 
 #&gt; [[2]]
-#&gt; [1] 24127
+#&gt; [1] 13508
 #&gt; </div><div class='input'><span class='fu'>cluster_call</span>(<span class='no'>cl</span>, <span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span>(<span class='fl'>1</span>))</div><div class='output co'>#&gt; [[1]]
-#&gt; [1] 0.4621491
+#&gt; [1] 0.5250115
 #&gt; 
 #&gt; [[2]]
-#&gt; [1] 0.1921916
+#&gt; [1] 0.2623303
 #&gt; </div><div class='input'>
 <span class='co'># use ptype to simplify</span>
-<span class='fu'>cluster_call</span>(<span class='no'>cl</span>, <span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span>(<span class='fl'>1</span>), <span class='kw'>ptype</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/double.html'>double</a></span>())</div><div class='output co'>#&gt; [1] 0.64001353 0.02450855</div><div class='input'>
+<span class='fu'>cluster_call</span>(<span class='no'>cl</span>, <span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span>(<span class='fl'>1</span>), <span class='kw'>ptype</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/double.html'>double</a></span>())</div><div class='output co'>#&gt; [1] 0.5811089 0.4873265</div><div class='input'>
 <span class='co'># use cluster_send() to ignore results</span>
 <span class='fu'>cluster_send</span>(<span class='no'>cl</span>, <span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span>(<span class='fl'>1</span>))
-<span class='fu'>cluster_call</span>(<span class='no'>cl</span>, <span class='no'>x</span>, <span class='kw'>ptype</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/double.html'>double</a></span>())</div><div class='output co'>#&gt; [1] 0.6362088 0.6325745</div></pre>
+<span class='fu'>cluster_call</span>(<span class='no'>cl</span>, <span class='no'>x</span>, <span class='kw'>ptype</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/double.html'>double</a></span>())</div><div class='output co'>#&gt; [1] 0.21039039 0.01341216</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
