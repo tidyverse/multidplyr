@@ -70,7 +70,7 @@ cluster_assign_each(cluster, filename = c("a.csv", "b.csv", "c.csv", "d.csv"))
 # Use vroom to quickly load the csvs
 cluster_send(cluster, my_data <- vroom::vroom(filename))
 
-# Create a party_df usingt the my_data variable on each worker
+# Create a party_df using the my_data variable on each worker
 my_data <- party_df(cluster, "my_data")
 ```
 
@@ -88,7 +88,6 @@ flight_dest
 #> Groups: dest
 #> Shards: 4 [81,594--86,548 rows]
 #> 
-#> # Description: party_df
 #>    year month   day dep_time sched_dep_time dep_delay arr_time
 #>   <int> <int> <int>    <int>          <int>     <dbl>    <int>
 #> 1  2013     1     1      544            545        -1     1004
