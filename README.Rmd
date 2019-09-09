@@ -59,7 +59,7 @@ cluster_assign_each(cluster, filename = c("a.csv", "b.csv", "c.csv", "d.csv"))
 # Use vroom to quickly load the csvs
 cluster_send(cluster, my_data <- vroom::vroom(filename))
 
-# Create a party_df usingt the my_data variable on each worker
+# Create a party_df using the my_data variable on each worker
 my_data <- party_df(cluster, "my_data")
 ```
 
