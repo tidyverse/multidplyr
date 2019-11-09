@@ -52,7 +52,15 @@ to workers in parallel, and then we wait until they're complete." />
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-115082821-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
 
+  gtag('config', 'UA-115082821-1');
+</script>
 
   </head>
 
@@ -148,21 +156,21 @@ which will always succeed. Set to a narrower type to simplify the output.</p></t
     <pre class="examples"><div class='input'><span class='no'>cl</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='default_cluster.html'>default_cluster</a></span>()</div><div class='output co'>#&gt; <span class='message'>Initialising default cluster of size 2</span></div><div class='input'>
 <span class='co'># Run code on each cluster and retrieve results</span>
 <span class='fu'>cluster_call</span>(<span class='no'>cl</span>, <span class='fu'><a href='https://rdrr.io/r/base/Sys.getpid.html'>Sys.getpid</a></span>())</div><div class='output co'>#&gt; [[1]]
-#&gt; [1] 24256
+#&gt; [1] 14399
 #&gt; 
 #&gt; [[2]]
-#&gt; [1] 24262
+#&gt; [1] 14405
 #&gt; </div><div class='input'><span class='fu'>cluster_call</span>(<span class='no'>cl</span>, <span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span>(<span class='fl'>1</span>))</div><div class='output co'>#&gt; [[1]]
-#&gt; [1] 0.3683795
+#&gt; [1] 0.7863237
 #&gt; 
 #&gt; [[2]]
-#&gt; [1] 0.9411138
+#&gt; [1] 0.8522768
 #&gt; </div><div class='input'>
 <span class='co'># use ptype to simplify</span>
-<span class='fu'>cluster_call</span>(<span class='no'>cl</span>, <span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span>(<span class='fl'>1</span>), <span class='kw'>ptype</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/double.html'>double</a></span>())</div><div class='output co'>#&gt; [1] 0.9363079 0.9232940</div><div class='input'>
+<span class='fu'>cluster_call</span>(<span class='no'>cl</span>, <span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span>(<span class='fl'>1</span>), <span class='kw'>ptype</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/double.html'>double</a></span>())</div><div class='output co'>#&gt; [1] 0.5597085 0.7111066</div><div class='input'>
 <span class='co'># use cluster_send() to ignore results</span>
 <span class='fu'>cluster_send</span>(<span class='no'>cl</span>, <span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span>(<span class='fl'>1</span>))
-<span class='fu'>cluster_call</span>(<span class='no'>cl</span>, <span class='no'>x</span>, <span class='kw'>ptype</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/double.html'>double</a></span>())</div><div class='output co'>#&gt; [1] 0.1747066 0.6338192</div></pre>
+<span class='fu'>cluster_call</span>(<span class='no'>cl</span>, <span class='no'>x</span>, <span class='kw'>ptype</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/double.html'>double</a></span>())</div><div class='output co'>#&gt; [1] 0.5159572 0.5645649</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

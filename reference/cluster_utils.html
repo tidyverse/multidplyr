@@ -54,7 +54,15 @@
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-115082821-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
 
+  gtag('config', 'UA-115082821-1');
+</script>
 
   </head>
 
@@ -197,15 +205,15 @@
 <span class='co'># If you want different to compute different values on each</span>
 <span class='co'># worker, use `cluster_call()` directly:</span>
 <span class='fu'><a href='cluster_call.html'>cluster_call</a></span>(<span class='no'>cl</span>, <span class='no'>d</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span>(<span class='fl'>1</span>))</div><div class='output co'>#&gt; [[1]]
-#&gt; [1] 0.4930006
+#&gt; [1] 0.4862135
 #&gt; 
 #&gt; [[2]]
-#&gt; [1] 0.8414226
+#&gt; [1] 0.2592012
 #&gt; </div><div class='input'><span class='fu'><a href='cluster_call.html'>cluster_call</a></span>(<span class='no'>cl</span>, <span class='no'>d</span>)</div><div class='output co'>#&gt; [[1]]
-#&gt; [1] 0.4930006
+#&gt; [1] 0.4862135
 #&gt; 
 #&gt; [[2]]
-#&gt; [1] 0.8414226
+#&gt; [1] 0.2592012
 #&gt; </div><div class='input'>
 <span class='co'># cluster_copy() is a useful shortcut</span>
 <span class='no'>e</span> <span class='kw'>&lt;-</span> <span class='fl'>10</span>
