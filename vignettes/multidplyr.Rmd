@@ -14,7 +14,7 @@ set.seed(1014)
 
 multidplyr is a backend for dplyr that spreads work across multiple processes. Like all dplyr backends, it allows you to use the dplyr verbs that you're already familiar with, but alters the underlying computational model to transparently support multi-process parallelism. 
 
-This vignette will show you the basics of multidplyr using the nycflights13 dataset.
+This vignette will show you the basics of multidplyr using the [nycflights13](https://CRAN.R-project.org/package=nycflights13) dataset.
 
 ```{r setup}
 library(multidplyr)
@@ -24,7 +24,7 @@ library(nycflights13)
 
 ## Creating a cluster
 
-To start using multidplyr you must create a cluster. Here I used two cores because it's the maximum permitted by CRAN, but I suggest that you use more. For best performance, I recommend using 1 or 2 less than the total number of cores on your computer, which you can detect with `parallel::detectCores()` (leaving at least 1 core free means that you should still be able to use your computer for other tasks while your computation is running). 
+To start using multidplyr you must create a cluster. Here I used two cores because it's the maximum permitted by CRAN, but I suggest that you use more. For best performance, I recommend using 1 or 2 fewer than the total number of cores on your computer, which you can detect with `parallel::detectCores()` (leaving at least 1 core free means that you should still be able to use your computer for other tasks while your computation is running). 
 
 ```{r}
 cluster <- new_cluster(2)
@@ -39,8 +39,8 @@ A cluster consists of multiple R processes created by [callr](http://callr.r-lib
 
 There are two ways to get data to the workers in  cluster:
 
-* `partition()` a data frame that's loaded in the interactive process.
-* Load a different subset of the data in each worker.
+* `partition()` a data frame that already loaded *in the interactive process*.
+* Load a different subset of the data *in each worker*.
 
 ### `partition()`
 
@@ -51,10 +51,11 @@ flights1 <- flights %>% group_by(dest) %>% partition(cluster)
 flights1
 ```
 
-`partition()` splitting it into roughly equal subsets on each worker, ensuring that all rows in a group are put on the same worker. The result is a `party_df`, or partitioned data frame. 
-### Manual loading
+`partition()` splits `flights1` into roughly equal subsets on each worker, ensuring that all rows in a group are transfered to the same worker. The result is a `party_df`, or partitioned data frame. 
 
-`partition()` is simple to use, but it's relatively because it has to copy a lot of data between process. An alternative strategy is for each worker to load the data it needs directly. 
+### Direct loading
+
+`partition()` is simple to call, but it's relatively expensive because it copies a lot of data between processes. An alternative strategy is for each worker to load the data (from files) it needs directly. 
 
 To show how that might work, I'll first split flights up by month and save as csv files:
 
@@ -74,7 +75,7 @@ files <- dir(path, full.names = TRUE)
 cluster_assign_partition(cluster, files = files)
 ```
 
-Then we read in the files on each worker and use `party_df()` to create a partitioned dataframe:
+Then we read in the files on each worker and use [`party_df()`](https://multidplyr.tidyverse.org/reference/party_df.html) to create a partitioned dataframe:
 
 ```{r}
 cluster_send(cluster, flights2 <- vroom::vroom(files))
