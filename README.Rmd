@@ -80,4 +80,4 @@ flight_dest %>%
   collect()
 ```
 
-Note that there is some overhead associated with copying data from the worker nodes back to the host node (and vice versa), so you're best off using multidplyr with more complex operations. See `vignette("multidplyr")` for more details.
+Note that there is some overhead associated with copying data from the worker nodes back to the host node (and vice versa), so you're best off using multidplyr with more complex operations. See [`vignette("multidplyr")`](https://multidplyr.tidyverse.org/articles/multidplyr.html) for more details.
