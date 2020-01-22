@@ -75,7 +75,7 @@ files <- dir(path, full.names = TRUE)
 cluster_assign_partition(cluster, files = files)
 ```
 
-Then we read in the files on each worker and use [`party_df()`](https://multidplyr.tidyverse.org/reference/party_df.html) to create a partitioned dataframe:
+Then we read in the files on each worker and use `party_df()` to create a partitioned dataframe:
 
 ```{r}
 cluster_send(cluster, flights2 <- vroom::vroom(files))
