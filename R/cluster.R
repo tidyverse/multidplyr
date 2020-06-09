@@ -9,8 +9,8 @@
 #' @examples
 #' cluster <- new_cluster(2)
 #' cluster
-new_cluster <- function(n, .wait_timeout=3000) {
-  sessions <- replicate(n, callr::r_session$new(wait_timeout=.wait_timeout))
+new_cluster <- function(n, .options = callr::r_session_options(), .wait_timeout = 3000) {
+  sessions <- replicate(n, callr::r_session$new(options = .options, wait_timeout = .wait_timeout))
   structure(
     sessions,
     cleaner = Cleaner$new(),
