@@ -45,9 +45,9 @@ To use multidplyr, you first create a cluster of the desired number of workers. 
 
 ```{r setup}
 library(multidplyr)
-library(dplyr, warn.conflicts = FALSE)
 
 cluster <- new_cluster(4)
+cluster_library(cluster, "dplyr")
 ```
 
 There are two primary ways to use multidplyr. The first, and most efficient, way is to read different files on each worker:

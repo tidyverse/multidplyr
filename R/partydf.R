@@ -12,6 +12,7 @@
 #' @examples
 #' library(dplyr)
 #' cl <- default_cluster()
+#' cluster_library(cl, "dplyr")
 #'
 #' mtcars2 <- partition(mtcars, cl)
 #' mtcars2 %>% mutate(cyl2 = 2 * cyl)

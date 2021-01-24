@@ -55,9 +55,17 @@ operating system will spread their execution across multiple cores:
 
 ``` r
 library(multidplyr)
-library(dplyr, warn.conflicts = FALSE)
 
 cluster <- new_cluster(4)
+cluster_library(cluster, "dplyr")
+#> 
+#> Attaching package: 'dplyr'
+#> The following objects are masked from 'package:stats':
+#> 
+#>     filter, lag
+#> The following objects are masked from 'package:base':
+#> 
+#>     intersect, setdiff, setequal, union
 ```
 
 There are two primary ways to use multidplyr. The first, and most
@@ -88,18 +96,17 @@ flight_dest
 #> Groups: dest
 #> Shards: 4 [81,594--86,548 rows]
 #> 
-#>    year month   day dep_time sched_dep_time dep_delay arr_time
-#>   <int> <int> <int>    <int>          <int>     <dbl>    <int>
-#> 1  2013     1     1      544            545        -1     1004
-#> 2  2013     1     1      558            600        -2      923
-#> 3  2013     1     1      559            600        -1      854
-#> 4  2013     1     1      602            610        -8      812
-#> 5  2013     1     1      602            605        -3      821
-#> 6  2013     1     1      611            600        11      945
-#> # … with 3.368e+05 more rows, and 12 more variables: sched_arr_time <int>,
-#> #   arr_delay <dbl>, carrier <chr>, flight <int>, tailnum <chr>,
-#> #   origin <chr>, dest <chr>, air_time <dbl>, distance <dbl>, hour <dbl>,
-#> #   minute <dbl>, time_hour <dttm>
+#>    year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time
+#>   <int> <int> <int>    <int>          <int>     <dbl>    <int>          <int>
+#> 1  2013     1     1      544            545        -1     1004           1022
+#> 2  2013     1     1      558            600        -2      923            937
+#> 3  2013     1     1      559            600        -1      854            902
+#> 4  2013     1     1      602            610        -8      812            820
+#> 5  2013     1     1      602            605        -3      821            805
+#> 6  2013     1     1      611            600        11      945            931
+#> # … with 336,770 more rows, and 11 more variables: arr_delay <dbl>,
+#> #   carrier <chr>, flight <int>, tailnum <chr>, origin <chr>, dest <chr>,
+#> #   air_time <dbl>, distance <dbl>, hour <dbl>, minute <dbl>, time_hour <dttm>
 ```
 
 Now you can work with it like a regular data frame, but the computations
