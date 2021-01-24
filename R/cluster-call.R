@@ -27,10 +27,12 @@ cluster_call <- function(cluster, code, ptype = list()) {
   code <- enexpr(code)
   to_rm <- attr(cluster, "cleaner")$reset()
 
+  # nocov start
   f <- function(code, to_rm) {
     rm(list = to_rm, envir = globalenv())
     eval(code, globalenv())
   }
+  # nocov end
   lapply(cluster, function(x) x$call(f, list(code = code, to_rm = to_rm)))
   lapply(cluster, function(x) x$poll_process(-1))
 

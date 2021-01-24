@@ -12,6 +12,13 @@ test_that("calls submitted to each node", {
   expect_equal(length(unique(pid)), length(cl))
 })
 
+test_that("can collapse results", {
+  cl <- default_cluster()
+  out <- cluster_call(cl, 1, ptype = double())
+  expect_identical(out, c(1, 1))
+})
+
+
 test_that("errors are propagated", {
   cl <- default_cluster()
   cnd <- capture_condition(cluster_call(cl, stop("!!")))
