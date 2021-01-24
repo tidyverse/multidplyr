@@ -48,7 +48,9 @@ cluster_call <- function(cluster, code, ptype = list()) {
   }
 
   out <- lapply(results, "[[", "result")
-  out <- vctrs::vec_cast(out, ptype)
+  if (!identical(ptype, list())) {
+    out <- vctrs::vec_list_cast(out, ptype)
+  }
   out
 }
 

@@ -24,7 +24,7 @@ Imports:
     R6,
     rlang,
     tibble,
-    vctrs
+    vctrs (>= 0.3.6)
 Suggests:
     covr,
     knitr,
