@@ -16,7 +16,7 @@ BugReports: https://github.com/tidyverse/multidplyr/issues
 Depends:
     R (>= 3.2.1)
 Imports:
-    callr,
+    callr (>= 3.5.1),
     crayon,
     dplyr,
     magrittr,
