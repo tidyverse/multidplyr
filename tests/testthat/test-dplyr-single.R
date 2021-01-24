@@ -15,6 +15,8 @@ test_that("test that pass through workds", {
 
   expect_equal(pf %>% select(x) %>% collect(), tibble(x = 1:4))
 
+  expect_equal(pf %>% do(y = 1) %>% collect(), tibble(y = list(1, 1)))
+
   expect_equal(
     pf %>% group_by(g) %>% summarise(x = sum(x)) %>% collect(),
     tibble(g = c(1, 2), x = c(3L, 7L))
