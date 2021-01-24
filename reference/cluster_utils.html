@@ -10,27 +10,35 @@
 
 
 <!-- jquery -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 
 <!-- Bootstrap -->
 <link href="../tidyverse.css" rel="stylesheet">
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
+
+<!-- bootstrap-toc -->
+<link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
 
 <!-- headroom.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
 <script src="../pkgdown.js"></script>
 <link href="../tidyverse-2.css" rel="stylesheet">
+
+<!--optional theme-->
+<link href="../.css" rel="stylesheet">
+
 
 
 
@@ -66,7 +74,7 @@
 
   </head>
 
-  <body>
+  <body data-spy="scroll" data-target="#toc">
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -81,7 +89,7 @@
 
       <div class="navbar-brand-container">
         <a class="navbar-brand" href="../index.html">multidplyr</a>
-        <div class="info">
+        <div class="info hidden-xs hidden-sm">
           <span class="partof">part of the <a href="https://tidyverse.org">tidyverse</a></span>
           <span class="version version-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.9000</span>
         </div>
@@ -91,7 +99,7 @@
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -102,8 +110,8 @@
   <a href="../reference/index.html">Reference</a>
 </li>
         <li>
-  <a href="https://github.com/tidyverse/multidplyr">
-    <span class="fab fa fab fa-github fa-lg"></span>
+  <a href="https://github.com/tidyverse/multidplyr/">
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -133,17 +141,17 @@
 (approximately) the same number of pieces.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>cluster_assign</span>(<span class='no'>.cluster</span>, <span class='no'>...</span>)
+    <pre class="usage"><span class='fu'>cluster_assign</span><span class='op'>(</span><span class='va'>.cluster</span>, <span class='va'>...</span><span class='op'>)</span>
 
-<span class='fu'>cluster_assign_each</span>(<span class='no'>.cluster</span>, <span class='no'>...</span>)
+<span class='fu'>cluster_assign_each</span><span class='op'>(</span><span class='va'>.cluster</span>, <span class='va'>...</span><span class='op'>)</span>
 
-<span class='fu'>cluster_assign_partition</span>(<span class='no'>.cluster</span>, <span class='no'>...</span>)
+<span class='fu'>cluster_assign_partition</span><span class='op'>(</span><span class='va'>.cluster</span>, <span class='va'>...</span><span class='op'>)</span>
 
-<span class='fu'>cluster_copy</span>(<span class='no'>cluster</span>, <span class='no'>names</span>, <span class='kw'>env</span> <span class='kw'>=</span> <span class='fu'>caller_env</span>())
+<span class='fu'>cluster_copy</span><span class='op'>(</span><span class='va'>cluster</span>, <span class='va'>names</span>, env <span class='op'>=</span> <span class='fu'>caller_env</span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
 
-<span class='fu'>cluster_rm</span>(<span class='no'>cluster</span>, <span class='no'>names</span>)
+<span class='fu'>cluster_rm</span><span class='op'>(</span><span class='va'>cluster</span>, <span class='va'>names</span><span class='op'>)</span>
 
-<span class='fu'>cluster_library</span>(<span class='no'>cluster</span>, <span class='no'>packages</span>)</pre>
+<span class='fu'>cluster_library</span><span class='op'>(</span><span class='va'>cluster</span>, <span class='va'>packages</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -177,17 +185,19 @@
   lists with with one element for each worker.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>cl</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='default_cluster.html'>default_cluster</a></span>()
-<span class='fu'>cluster_assign</span>(<span class='no'>cl</span>, <span class='kw'>a</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span>(<span class='fl'>1</span>))
-<span class='fu'><a href='cluster_call.html'>cluster_call</a></span>(<span class='no'>cl</span>, <span class='no'>a</span>)</div><div class='output co'>#&gt; [[1]]
+    <pre class="examples"><div class='input'><span class='va'>cl</span> <span class='op'>&lt;-</span> <span class='fu'><a href='default_cluster.html'>default_cluster</a></span><span class='op'>(</span><span class='op'>)</span>
+<span class='fu'>cluster_assign</span><span class='op'>(</span><span class='va'>cl</span>, a <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span>
+<span class='fu'><a href='cluster_call.html'>cluster_call</a></span><span class='op'>(</span><span class='va'>cl</span>, <span class='va'>a</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [[1]]
 #&gt; [1] 0.1803388
 #&gt; 
 #&gt; [[2]]
 #&gt; [1] 0.1803388
 #&gt; </div><div class='input'>
 <span class='co'># Assign different values on each cluster</span>
-<span class='fu'>cluster_assign_each</span>(<span class='no'>cl</span>, <span class='kw'>b</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>10</span>))
-<span class='fu'><a href='cluster_call.html'>cluster_call</a></span>(<span class='no'>cl</span>, <span class='no'>b</span>)</div><div class='output co'>#&gt; [[1]]
+<span class='fu'>cluster_assign_each</span><span class='op'>(</span><span class='va'>cl</span>, b <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>10</span><span class='op'>)</span><span class='op'>)</span>
+<span class='fu'><a href='cluster_call.html'>cluster_call</a></span><span class='op'>(</span><span class='va'>cl</span>, <span class='va'>b</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [[1]]
 #&gt; [1] 1
 #&gt; 
 #&gt; [[2]]
@@ -195,8 +205,9 @@
 #&gt; </div><div class='input'>
 <span class='co'># Partition a vector so that each worker gets approximately the</span>
 <span class='co'># same amount of it</span>
-<span class='fu'>cluster_assign_partition</span>(<span class='no'>cl</span>, <span class='kw'>c</span> <span class='kw'>=</span> <span class='fl'>1</span>:<span class='fl'>11</span>)
-<span class='fu'><a href='cluster_call.html'>cluster_call</a></span>(<span class='no'>cl</span>, <span class='no'>c</span>)</div><div class='output co'>#&gt; [[1]]
+<span class='fu'>cluster_assign_partition</span><span class='op'>(</span><span class='va'>cl</span>, c <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>11</span><span class='op'>)</span>
+<span class='fu'><a href='cluster_call.html'>cluster_call</a></span><span class='op'>(</span><span class='va'>cl</span>, <span class='va'>c</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [[1]]
 #&gt; [1] 1 2 3 4 5 6
 #&gt; 
 #&gt; [[2]]
@@ -204,35 +215,40 @@
 #&gt; </div><div class='input'>
 <span class='co'># If you want different to compute different values on each</span>
 <span class='co'># worker, use `cluster_call()` directly:</span>
-<span class='fu'><a href='cluster_call.html'>cluster_call</a></span>(<span class='no'>cl</span>, <span class='no'>d</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span>(<span class='fl'>1</span>))</div><div class='output co'>#&gt; [[1]]
-#&gt; [1] 0.1118469
+<span class='fu'><a href='cluster_call.html'>cluster_call</a></span><span class='op'>(</span><span class='va'>cl</span>, <span class='va'>d</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [[1]]
+#&gt; [1] 0.19034
 #&gt; 
 #&gt; [[2]]
-#&gt; [1] 0.1556741
-#&gt; </div><div class='input'><span class='fu'><a href='cluster_call.html'>cluster_call</a></span>(<span class='no'>cl</span>, <span class='no'>d</span>)</div><div class='output co'>#&gt; [[1]]
-#&gt; [1] 0.1118469
+#&gt; [1] 0.05888862
+#&gt; </div><div class='input'><span class='fu'><a href='cluster_call.html'>cluster_call</a></span><span class='op'>(</span><span class='va'>cl</span>, <span class='va'>d</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [[1]]
+#&gt; [1] 0.19034
 #&gt; 
 #&gt; [[2]]
-#&gt; [1] 0.1556741
+#&gt; [1] 0.05888862
 #&gt; </div><div class='input'>
 <span class='co'># cluster_copy() is a useful shortcut</span>
-<span class='no'>e</span> <span class='kw'>&lt;-</span> <span class='fl'>10</span>
-<span class='fu'>cluster_copy</span>(<span class='no'>cl</span>, <span class='st'>"e"</span>)
+<span class='va'>e</span> <span class='op'>&lt;-</span> <span class='fl'>10</span>
+<span class='fu'>cluster_copy</span><span class='op'>(</span><span class='va'>cl</span>, <span class='st'>"e"</span><span class='op'>)</span>
 
-<span class='fu'><a href='cluster_call.html'>cluster_call</a></span>(<span class='no'>cl</span>, <span class='fu'><a href='https://rdrr.io/r/base/ls.html'>ls</a></span>())</div><div class='output co'>#&gt; [[1]]
+<span class='fu'><a href='cluster_call.html'>cluster_call</a></span><span class='op'>(</span><span class='va'>cl</span>, <span class='fu'><a href='https://rdrr.io/r/base/ls.html'>ls</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [[1]]
 #&gt; [1] "a" "b" "c" "d" "e" "x"
 #&gt; 
 #&gt; [[2]]
 #&gt; [1] "a" "b" "c" "d" "e" "x"
-#&gt; </div><div class='input'><span class='fu'>cluster_rm</span>(<span class='no'>cl</span>, <span class='no'>letters</span>[<span class='fl'>1</span>:<span class='fl'>5</span>])
-<span class='fu'><a href='cluster_call.html'>cluster_call</a></span>(<span class='no'>cl</span>, <span class='fu'><a href='https://rdrr.io/r/base/ls.html'>ls</a></span>())</div><div class='output co'>#&gt; [[1]]
+#&gt; </div><div class='input'><span class='fu'>cluster_rm</span><span class='op'>(</span><span class='va'>cl</span>, <span class='va'>letters</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>5</span><span class='op'>]</span><span class='op'>)</span>
+<span class='fu'><a href='cluster_call.html'>cluster_call</a></span><span class='op'>(</span><span class='va'>cl</span>, <span class='fu'><a href='https://rdrr.io/r/base/ls.html'>ls</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [[1]]
 #&gt; [1] "x"
 #&gt; 
 #&gt; [[2]]
 #&gt; [1] "x"
 #&gt; </div><div class='input'>
 <span class='co'># Use cluster_library() to load packages</span>
-<span class='fu'><a href='cluster_call.html'>cluster_call</a></span>(<span class='no'>cl</span>, <span class='fu'><a href='https://rdrr.io/r/base/search.html'>search</a></span>())</div><div class='output co'>#&gt; [[1]]
+<span class='fu'><a href='cluster_call.html'>cluster_call</a></span><span class='op'>(</span><span class='va'>cl</span>, <span class='fu'><a href='https://rdrr.io/r/base/search.html'>search</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [[1]]
 #&gt;  [1] ".GlobalEnv"        "package:stats"     "package:graphics" 
 #&gt;  [4] "package:grDevices" "package:utils"     "package:datasets" 
 #&gt;  [7] "package:methods"   "Autoloads"         "tools:callr"      
@@ -243,8 +259,9 @@
 #&gt;  [4] "package:grDevices" "package:utils"     "package:datasets" 
 #&gt;  [7] "package:methods"   "Autoloads"         "tools:callr"      
 #&gt; [10] "package:base"     
-#&gt; </div><div class='input'><span class='fu'>cluster_library</span>(<span class='no'>cl</span>, <span class='st'>"magrittr"</span>)
-<span class='fu'><a href='cluster_call.html'>cluster_call</a></span>(<span class='no'>cl</span>, <span class='fu'><a href='https://rdrr.io/r/base/search.html'>search</a></span>())</div><div class='output co'>#&gt; [[1]]
+#&gt; </div><div class='input'><span class='fu'>cluster_library</span><span class='op'>(</span><span class='va'>cl</span>, <span class='st'>"magrittr"</span><span class='op'>)</span>
+<span class='fu'><a href='cluster_call.html'>cluster_call</a></span><span class='op'>(</span><span class='va'>cl</span>, <span class='fu'><a href='https://rdrr.io/r/base/search.html'>search</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [[1]]
 #&gt;  [1] ".GlobalEnv"        "package:magrittr"  "package:stats"    
 #&gt;  [4] "package:graphics"  "package:grDevices" "package:utils"    
 #&gt;  [7] "package:datasets"  "package:methods"   "Autoloads"        
@@ -257,14 +274,10 @@
 #&gt; [10] "tools:callr"       "package:base"     
 #&gt; </div></pre>
   </div>
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <h2>Contents</h2>
-    <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
-      <li><a href="#value">Value</a></li>
-      <li><a href="#examples">Examples</a></li>
-    </ul>
-
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <nav id="toc" data-toggle="toc" class="sticky-top">
+      <h2 data-toc-skip>Contents</h2>
+    </nav>
   </div>
 </div>
 
