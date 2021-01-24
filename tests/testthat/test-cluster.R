@@ -10,6 +10,8 @@ test_that("subsetting cluster returns cluster", {
 })
 
 test_that("cluster has useful print method", {
-  cl <- default_cluster()
-  expect_known_output(print(cl), test_path("test-cluster-print.txt"))
+  expect_snapshot({
+    cl <- default_cluster()
+    cl
+  })
 })

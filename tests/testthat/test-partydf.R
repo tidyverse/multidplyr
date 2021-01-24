@@ -8,7 +8,8 @@ test_that("can construct and print partydf", {
   expect_s3_class(df, "multidplyr_party_df")
   expect_true(is_party_df(df))
   expect_equal(df$cluster, cl)
-  expect_known_output(print(df), test_path("test-partydf-print.txt"))
+
+  expect_snapshot(df)
 })
 
 test_that("name must be data frame with same names", {
