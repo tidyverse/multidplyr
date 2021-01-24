@@ -74,7 +74,7 @@ default_cluster <- function(n = 2) {
     env_bind(cluster_env, cluster = new_cluster(n))
   } else {
     if (!missing(n)) {
-      abort("`n` ignored; cluster has already been initiated")
+      abort("Can not supply `n` when cluster has already been initiated")
     }
   }
 
