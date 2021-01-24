@@ -26,12 +26,11 @@ inspired by [partools](http://bit.ly/1Nve8v5) by Norm Matloff and
 Analytics team.
 
 Due to the overhead associated with communicating between the nodes, you
-won’t see much performance improvement on basic dplyr verbs with less
-than \~10 million observations, and you may want to try
+won’t see much performance improvement with simple operations on lless
+than \~10 million observations, and you may want to instead try
 [dtplyr](http://dtplyr.tidyverse.org/), which uses
-[data.table](http://R-datatable.com/) instead. multidplyr’s strength is
-conveniently parallelising the type of more complex operation often
-found in `do()`.
+[data.table](http://R-datatable.com/). multidplyr’s strength is found
+parallelsing calls to slower and more complex functions.
 
 (Note that unlike other packages in the tidyverse, multidplyr requires R
 3.5 or greater. We hope to relax this requirement [in the
@@ -45,9 +44,6 @@ To install from GitHub:
 # install.packages("devtools")
 devtools::install_github("tidyverse/multidplyr")
 ```
-
-(Please note that unlike other packages in the tidyverse, multidplyr
-requires R 3.5.0 or greater.)
 
 ## Usage
 
@@ -85,9 +81,10 @@ my_data <- party_df(cluster, "my_data")
 ```
 
 Alternatively, if you already have the data loaded in the main session,
-you can use `partition()` to automatically spread it across workers. Use
-`group_by()` to ensure that all of the observations belonging to a group
-end up on the same worker.
+you can use `partition()` to automatically spread it across the workers.
+Before calling `partition()`, it’s a good idea to call `group_by()` to
+ensure that all of the observations belonging to a group end up on the
+same worker.
 
 ``` r
 library(nycflights13)
