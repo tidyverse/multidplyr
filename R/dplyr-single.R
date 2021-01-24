@@ -13,14 +13,14 @@ filter.multidplyr_party_df <- function(.data, ...) {
 
 #' @importFrom dplyr group_by
 #' @export
-group_by.multidplyr_party_df <- function(.data, ..., add = FALSE) {
-  shard_call(.data, "group_by", enquos(...), add = add)
+group_by.multidplyr_party_df <- function(.data, ..., .add = FALSE) {
+  shard_call(.data, "group_by", enquos(...), .add = .add)
 }
 
 #' @importFrom dplyr ungroup
 #' @export
-ungroup.multidplyr_party_df <- function(.data, ..., add = FALSE) {
-  shard_call(.data, "ungroup", enquos(...), add = add)
+ungroup.multidplyr_party_df <- function(.data, ...) {
+  shard_call(.data, "ungroup", enquos(...))
 }
 
 #' @importFrom dplyr mutate

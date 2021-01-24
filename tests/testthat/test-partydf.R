@@ -38,7 +38,7 @@ test_that("can automatically delete on gc() + cluster_call()", {
 test_that("can partition and re-collect", {
   cl <- default_cluster()
 
-  df1 <- data.frame(x = 1:2)
+  df1 <- tibble::tibble(x = 1:2)
   df2 <- partition(df1, cl)
 
   expect_s3_class(df2, "multidplyr_party_df")
@@ -54,7 +54,10 @@ test_that("can partition by group", {
   df2 <- df1 %>% group_by(x) %>% partition(cl)
 
   dfs <- cluster_call(cl, !!df2$name)
-  expect_equal(dfs, list(tibble(x = c(1, 1)), tibble(x = c(2, 3))))
+  expect_equal(dfs, list(
+    group_by(tibble(x = c(1, 1)), x),
+    group_by(tibble(x = c(2, 3)), x)
+  ))
 })
 
 test_that("reduce cluster size if needed", {

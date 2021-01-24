@@ -152,10 +152,10 @@ tbl_vars.multidplyr_party_df <- function(x) {
   cluster_call(x$cluster[1], dplyr::tbl_vars(!!x$name))[[1]]
 }
 
-#' @importFrom dplyr groups
+#' @importFrom dplyr group_vars
 #' @export
-groups.multidplyr_party_df <- function(x) {
-  cluster_call(x$cluster[1], dplyr::groups(!!x$name))[[1]]
+group_vars.multidplyr_party_df <- function(x) {
+  cluster_call(x$cluster[1], dplyr::group_vars(!!x$name))[[1]]
 }
 
 #' @export
@@ -186,9 +186,8 @@ head.multidplyr_party_df <- function(x, n = 6L, ...) {
 print.multidplyr_party_df <- function(x, ..., n = NULL, width = NULL) {
   cat("Source: party_df ", dplyr::dim_desc(x), "\n", sep = "")
 
-  groups <- groups(x)
+  groups <- group_vars(x)
   if (length(groups) > 0) {
-    groups <- vapply(groups, as.character, character(1))
     cat("Groups: ", paste0(groups, collapse = ", "), "\n", sep = "")
   }
 
@@ -211,7 +210,7 @@ as.data.frame.multidplyr_party_df <- function(x, row.names, optional, ...) {
 #' @export
 collect.multidplyr_party_df <- function(.data, ...) {
   out <- as.data.frame(.data)
-  group_by(out, !!!groups(.data))
+  dplyr::grouped_df(out, group_vars(.data))
 }
 
 #' @importFrom dplyr pull
