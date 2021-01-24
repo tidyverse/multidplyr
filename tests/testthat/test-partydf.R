@@ -10,6 +10,7 @@ test_that("can construct and print partydf", {
   expect_equal(df$cluster, cl)
 
   expect_snapshot(df)
+  expect_snapshot(group_by(df, y))
 })
 
 test_that("name must be data frame with same names", {
