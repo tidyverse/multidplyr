@@ -3,6 +3,7 @@
   register_s3_method("dplyr", "filter", "multidplyr_party_df")
   register_s3_method("dplyr", "intersect", "multidplyr_party_df")
   register_s3_method("dplyr", "union", "multidplyr_party_df")
+  register_s3_method("dplyr", "setdiff", "multidplyr_party_df")
 }
 
 register_s3_method <- function(pkg, generic, class, fun = NULL) {

@@ -28,5 +28,5 @@ test_that("set operations match local results", {
   expect_equal(pf1 %>% intersect(pf2) %>% pull(), 1)
   expect_setequal(pf1 %>% union(pf2) %>% pull(), c(1, 2, 3))
   expect_equal(pf1 %>% union_all(pf2) %>% pull() %>% sort(), c(1, 1, 2, 3))
-  expect_equal(pf1 %>% setdiff(pf2) %>% pull(), 3)
+  expect_equal(pf1 %>% setdiff(pf2) %>% pull(), 2)
 })
