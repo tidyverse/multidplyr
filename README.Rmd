@@ -39,6 +39,8 @@ To install from GitHub:
 devtools::install_github("tidyverse/multidplyr")
 ```
 
+(Please note that unlike other packages in the tidyverse, multidplyr requires R 3.5.0 or greater.)
+
 ## Usage
 
 To use multidplyr, you first create a cluster of the desired number of workers. Each one of these workers is a separate R process, and the operating system will spread their execution across multiple cores:
