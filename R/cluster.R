@@ -10,7 +10,7 @@
 #' cluster <- new_cluster(2)
 #' cluster
 new_cluster <- function(n) {
-  sessions <- replicate(n, callr::r_session$new())
+  sessions <- replicate(n, callr::r_session$new(wait_timeout = 15 * 1000))
   structure(
     sessions,
     cleaner = Cleaner$new(),
