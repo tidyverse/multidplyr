@@ -8,8 +8,8 @@ Authors@R:
              email = "hadley@rstudio.com"),
       person(given = "RStudio",
              role = "cph"))
-Description: Partition a data frame across multiple worker processes to
-    provide simple multicore parallelism.
+Description: Partition a data frame across multiple worker
+    processes to provide simple multicore parallelism.
 License: GPL-3
 URL: https://github.com/tidyverse/multidplyr
 BugReports: https://github.com/tidyverse/multidplyr/issues
