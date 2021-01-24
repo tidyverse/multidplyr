@@ -21,10 +21,7 @@ test_that("can collapse results", {
 
 test_that("errors are propagated", {
   cl <- default_cluster()
-  cnd <- capture_condition(cluster_call(cl, stop("!!")))
-
-  expect_s3_class(cnd, "rlang_error")
-  expect_match(cnd$parent$message, "!!", fixed = TRUE)
+  expect_snapshot(cluster_call(cl, stop("!!")), error = TRUE)
 })
 
 test_that("call_send() returns cluster", {

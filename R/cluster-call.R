@@ -41,12 +41,9 @@ cluster_call <- function(cluster, code, ptype = list()) {
   errs <- lapply(results, "[[", "error")
   failed <- !vapply(errs, is.null, logical(1))
   if (any(failed)) {
-    err <- errs[failed][[1]]
-    if (!is.null(err$parent)) {
-      err <- err$parent
-    }
+    err <- errs[failed][[1]]$parent
     msg <- paste0("Remote computation failed:\n", conditionMessage(err))
-    abort(msg, parent = err)
+    abort(msg) # parent = err$error - only shows trace from worker
   }
 
   out <- lapply(results, "[[", "result")
