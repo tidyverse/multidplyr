@@ -6,7 +6,7 @@
 <!-- badges: start -->
 
 [![Lifecycle:
-experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
+experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![R-CMD-check](https://github.com/tidyverse/multidplyr/workflows/R-CMD-check/badge.svg)](https://github.com/tidyverse/multidplyr/actions)
 [![Codecov test
 coverage](https://codecov.io/gh/tidyverse/multidplyr/branch/master/graph/badge.svg)](https://codecov.io/gh/tidyverse/multidplyr?branch=master)
@@ -21,15 +21,15 @@ multiple cores. You tell multidplyr how to split the data up with
 `partition()` and then the data stays on each node until you explicitly
 retrieve it with `collect()`. This minimises the amount of time spent
 moving data around, and maximises parallel performance. This idea is
-inspired by [partools](http://bit.ly/1Nve8v5) by Norm Matloff and
-[distributedR](https://github.com/vertica/DistributedR) by the Vertica
-Analytics team.
+inspired by [partools](https://github.com/matloff/partools) by Norm
+Matloff and [distributedR](https://github.com/vertica/DistributedR) by
+the Vertica Analytics team.
 
 Due to the overhead associated with communicating between the nodes, you
 won’t see much performance improvement with simple operations on lless
 than \~10 million observations, and you may want to instead try
-[dtplyr](http://dtplyr.tidyverse.org/), which uses
-[data.table](http://R-datatable.com/). multidplyr’s strength is found
+[dtplyr](https://dtplyr.tidyverse.org/), which uses
+[data.table](https://R-datatable.com/). multidplyr’s strength is found
 parallelsing calls to slower and more complex functions.
 
 (Note that unlike other packages in the tidyverse, multidplyr requires R

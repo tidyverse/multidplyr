@@ -33,7 +33,7 @@ cluster
 
 (In the examples, you'll also see the use of `default_cluster()`; this is designed specifically for the constraints of R CMD check, so I don't recommend using it in your own code.)
 
-A cluster consists of multiple R processes created by [callr](http://callr.r-lib.org/). When multiple processes are running at the same time, your operating system will take care of spreading the work across multiple cores.
+A cluster consists of multiple R processes created by [callr](https://callr.r-lib.org/). When multiple processes are running at the same time, your operating system will take care of spreading the work across multiple cores.
 
 ## Add data
 
@@ -110,7 +110,7 @@ system.time(flights3 <- flights2 %>% summarise(mean(dep_delay, na.rm = TRUE)))
 system.time(flights3 %>% collect())
 ```
 
-That's because of the overhead associated with sending the data to each worker and retrieving the results at the end. For basic dplyr verbs, multidplyr is unlikely to give you significant speed ups unless you have 10s or 100s of millions of data points (and in that scenario you should first try [dtplyr](http://dtplyr.tidyverse.org/), which uses [data.table](http://R-datatable.com/)). 
+That's because of the overhead associated with sending the data to each worker and retrieving the results at the end. For basic dplyr verbs, multidplyr is unlikely to give you significant speed ups unless you have 10s or 100s of millions of data points (and in that scenario you should first try [dtplyr](https://dtplyr.tidyverse.org/), which uses [data.table](https://R-datatable.com/)). 
 
 multipldyr might help, however, if you're doing more complex things. Let's see how that plays out when fitting a moderately complex model. We'll start by selecting a subset of flights that have at least 50 occurrences, and we'll compute the day of the year from the date:
 
