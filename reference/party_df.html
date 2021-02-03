@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Create party_df "by hand" — party_df • multidplyr</title>
+<title>A `party_df` partitioned data frame — party_df • multidplyr</title>
 
 
 <!-- jquery -->
@@ -42,9 +42,11 @@
 
 
 
-<meta property="og:title" content="Create party_df "by hand" — party_df" />
-<meta property="og:description" content="Use this function to create a partitioned data frame from existing
-data frames spread across a cluster" />
+<meta property="og:title" content="A `party_df` partitioned data frame — party_df" />
+<meta property="og:description" content="This S3 class represents a data frame partitioned across workers in a
+cluster. You can use this constructor if you have already spread
+data frames spread across a cluster. If not, start with [partition()]
+instead." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -125,14 +127,16 @@ data frames spread across a cluster" />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Create party_df "by hand"</h1>
+    <h1>A `party_df` partitioned data frame</h1>
     <small class="dont-index">Source: <a href='https://github.com/tidyverse/multidplyr/blob/master/R/partydf.R'><code>R/partydf.R</code></a></small>
     <div class="hidden name"><code>party_df.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Use this function to create a partitioned data frame from existing
-data frames spread across a cluster</p>
+    <p>This S3 class represents a data frame partitioned across workers in a
+cluster. You can use this constructor if you have already spread
+data frames spread across a cluster. If not, start with [partition()]
+instead.</p>
     </div>
 
     <pre class="usage"><span class='fu'>party_df</span><span class='op'>(</span><span class='va'>cluster</span>, <span class='va'>name</span>, auto_rm <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></pre>
@@ -156,6 +160,9 @@ the workers when this object is created.</p></td>
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>An S3 object with class `multidplyr_party_df`.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># If a real example, you might spread file names across the clusters</span>
@@ -172,12 +179,12 @@ the workers when this object is created.</p></td>
 #&gt; 
 #&gt;       x
 #&gt;   <span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
-#&gt; </span><span style='color: #555555;'>1</span><span> 0.323
-#&gt; </span><span style='color: #555555;'>2</span><span> 0.770
-#&gt; </span><span style='color: #555555;'>3</span><span> 0.189
-#&gt; </span><span style='color: #555555;'>4</span><span> 0.506
-#&gt; </span><span style='color: #555555;'>5</span><span> 0.425
-#&gt; </span><span style='color: #555555;'>6</span><span> 0.940
+#&gt; </span><span style='color: #555555;'>1</span><span> 0.167
+#&gt; </span><span style='color: #555555;'>2</span><span> 0.257
+#&gt; </span><span style='color: #555555;'>3</span><span> 0.935
+#&gt; </span><span style='color: #555555;'>4</span><span> 0.818
+#&gt; </span><span style='color: #555555;'>5</span><span> 0.125
+#&gt; </span><span style='color: #555555;'>6</span><span> 0.593
 #&gt; </span><span style='color: #555555;'># … with 19 more rows</span><span></div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
