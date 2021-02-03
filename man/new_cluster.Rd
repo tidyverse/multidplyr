@@ -10,6 +10,9 @@ new_cluster(n)
 \item{n}{Number of workers to create. Avoid setting this higher than the
 number of cores in your computer as it will degrade performance.}
 }
+\value{
+A `multidplyr_cluster` object.
+}
 \description{
 Clusters created with this function will automatically clean up after
 themselves.

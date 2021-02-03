@@ -17,6 +17,9 @@ cluster_send(cluster, code)
 \item{ptype}{Determines the output type. The default returns a list,
 which will always succeed. Set to a narrower type to simplify the output.}
 }
+\value{
+A list of results with one element for each worker in `cluster`.
+}
 \description{
 `cluster_call()` executes the code on each worker and returns the results;
 `cluster_send()` executes the code ignoring the result. Jobs are submitted

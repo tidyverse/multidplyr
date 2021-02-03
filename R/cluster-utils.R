@@ -10,9 +10,9 @@
 #' @param ... Name-value pairs
 #' @param packages Character vector of packages to load
 #' @name cluster_utils
-#' @return All functions that modify the worker environment invisibly return
-#'   the cluster so they can chain them together. The other functions return
-#'   lists with with one element for each worker.
+#' @return Functions that modify the worker environment invisibly return
+#'   `cluster` so calls can be piped together. The other functions return
+#'   lists with one element for each worker.
 #' @examples
 #' cl <- default_cluster()
 #' cluster_assign(cl, a = runif(1))

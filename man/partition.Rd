@@ -2,7 +2,7 @@
 % Please edit documentation in R/partydf.R
 \name{partition}
 \alias{partition}
-\title{Partition data across a cluster.}
+\title{Partition data across workers in a cluster}
 \usage{
 partition(data, cluster)
 }
@@ -12,11 +12,14 @@ observations in a group will be assigned to the same cluster.}
 
 \item{cluster}{Cluster to use.}
 }
+\value{
+A [party_df].
+}
 \description{
 Partitioning ensures that all observations in a group end up on the same
 worker. To try and keep the observations on each worker balanced,
-`partition()` uses a greedy algorithm iteratively assigning each group to
-the worker with the fewest observations.
+`partition()` uses a greedy algorithm that iteratively assign each group to
+the worker that currently has the fewest rows.
 }
 \examples{
 library(dplyr)

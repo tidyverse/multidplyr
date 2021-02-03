@@ -9,6 +9,7 @@
 #' @param ptype Determines the output type. The default returns a list,
 #'   which will always succeed. Set to a narrower type to simplify the output.
 #' @export
+#' @return A list of results with one element for each worker in `cluster`.
 #' @examples
 #' cl <- default_cluster()
 #'

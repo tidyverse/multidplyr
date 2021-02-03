@@ -1,13 +1,14 @@
-#' Partition data across a cluster.
+#' Partition data across workers in a cluster
 #'
 #' Partitioning ensures that all observations in a group end up on the same
 #' worker. To try and keep the observations on each worker balanced,
-#' `partition()` uses a greedy algorithm iteratively assigning each group to
-#' the worker with the fewest observations.
+#' `partition()` uses a greedy algorithm that iteratively assign each group to
+#' the worker that currently has the fewest rows.
 #'
 #' @param data Dataset to partition, typically grouped. When grouped, all
 #'   observations in a group will be assigned to the same cluster.
 #' @param cluster Cluster to use.
+#' @returns A [party_df].
 #' @export
 #' @examples
 #' library(dplyr)
@@ -61,10 +62,12 @@ worker_id <- function(data, cluster) {
 
 # Constructor -------------------------------------------------------------
 
-#' Create party_df "by hand"
+#' A `party_df` partitioned data frame
 #'
-#' Use this function to create a partitioned data frame from existing
-#' data frames spread across a cluster
+#' This S3 class represents a data frame partitioned across workers in a
+#' cluster. You can use this constructor if you have already spread
+#' data frames spread across a cluster. If not, start with [partition()]
+#' instead.
 #'
 #' @export
 #' @param cluster A cluster
@@ -72,6 +75,7 @@ worker_id <- function(data, cluster) {
 #'   be a data frame, and have the same names.
 #' @param auto_rm If `TRUE`, will automatically `rm()` the data frame on
 #'   the workers when this object is created.
+#' @return An S3 object with class `multidplyr_party_df`.
 #' @export
 #' @examples
 #' # If a real example, you might spread file names across the clusters

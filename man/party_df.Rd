@@ -2,7 +2,7 @@
 % Please edit documentation in R/partydf.R
 \name{party_df}
 \alias{party_df}
-\title{Create party_df "by hand"}
+\title{A `party_df` partitioned data frame}
 \usage{
 party_df(cluster, name, auto_rm = FALSE)
 }
@@ -15,9 +15,14 @@ be a data frame, and have the same names.}
 \item{auto_rm}{If `TRUE`, will automatically `rm()` the data frame on
 the workers when this object is created.}
 }
+\value{
+An S3 object with class `multidplyr_party_df`.
+}
 \description{
-Use this function to create a partitioned data frame from existing
-data frames spread across a cluster
+This S3 class represents a data frame partitioned across workers in a
+cluster. You can use this constructor if you have already spread
+data frames spread across a cluster. If not, start with [partition()]
+instead.
 }
 \examples{
 # If a real example, you might spread file names across the clusters

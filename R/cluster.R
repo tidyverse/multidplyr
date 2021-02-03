@@ -6,6 +6,7 @@
 #' @param n Number of workers to create. Avoid setting this higher than the
 #'   number of cores in your computer as it will degrade performance.
 #' @export
+#' @returns A `multidplyr_cluster` object.
 #' @examples
 #' cluster <- new_cluster(2)
 #' cluster
@@ -59,12 +60,13 @@ is_cluster <- function(x) inherits(x, "multidplyr_cluster")
 #' Default cluster
 #'
 #' Setting up a cluster is relatively expensive, so it's best to use a single
-#' cluster throughout a session. This funcdtion lazily creates a 2-worker
+#' cluster throughout a session. This function lazily creates a 2-worker
 #' cluster for use in examples and test.
 #'
 #' @param n Number of workers to use; defaults to 2 because this is the maximum
 #'   allowed by CRAN.
 #' @keywords internal
+#' @returns A cached cluster of workers.
 #' @export
 #' @examples
 #' default_cluster()

@@ -10,9 +10,12 @@ default_cluster(n = 2)
 \item{n}{Number of workers to use; defaults to 2 because this is the maximum
 allowed by CRAN.}
 }
+\value{
+A cached cluster of workers.
+}
 \description{
 Setting up a cluster is relatively expensive, so it's best to use a single
-cluster throughout a session. This funcdtion lazily creates a 2-worker
+cluster throughout a session. This function lazily creates a 2-worker
 cluster for use in examples and test.
 }
 \examples{

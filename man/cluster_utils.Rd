@@ -34,9 +34,9 @@ cluster_library(cluster, packages)
 \item{packages}{Character vector of packages to load}
 }
 \value{
-All functions that modify the worker environment invisibly return
-  the cluster so they can chain them together. The other functions return
-  lists with with one element for each worker.
+Functions that modify the worker environment invisibly return
+  `cluster` so calls can be piped together. The other functions return
+  lists with one element for each worker.
 }
 \description{
 These functions provide useful helpers for performaning common operations.
