@@ -10,7 +10,7 @@ Authors@R:
              role = "cph"))
 Description: Partition a data frame across multiple worker
     processes to provide simple multicore parallelism.
-License: GPL-3
+License: MIT + file LICENSE
 URL: https://github.com/tidyverse/multidplyr
 BugReports: https://github.com/tidyverse/multidplyr/issues
 Depends:
