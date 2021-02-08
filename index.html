@@ -44,7 +44,7 @@
         <a class="navbar-brand" href="index.html">multidplyr</a>
         <div class="info hidden-xs hidden-sm">
           <span class="partof">part of the <a href="https://tidyverse.org">tidyverse</a></span>
-          <span class="version version-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+          <span class="version version-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0.9000</span>
         </div>
       </div>
     </div>
@@ -91,14 +91,17 @@
 <h2 class="hasAnchor">
 <a href="#overview" class="anchor"></a>Overview</h2>
 <p>multidplyr is a backend for dplyr that partitions a data frame across multiple cores. You tell multidplyr how to split the data up with <code><a href="reference/partition.html">partition()</a></code> and then the data stays on each node until you explicitly retrieve it with <code>collect()</code>. This minimises the amount of time spent moving data around, and maximises parallel performance. This idea is inspired by <a href="https://github.com/matloff/partools">partools</a> by Norm Matloff and <a href="https://github.com/vertica/DistributedR">distributedR</a> by the Vertica Analytics team.</p>
-<p>Due to the overhead associated with communicating between the nodes, you won’t see much performance improvement with simple operations on lless than ~10 million observations, and you may want to instead try <a href="https://dtplyr.tidyverse.org/">dtplyr</a>, which uses <a href="https://R-datatable.com/">data.table</a>. multidplyr’s strength is found parallelsing calls to slower and more complex functions.</p>
+<p>Due to the overhead associated with communicating between the nodes, you won’t see much performance improvement with simple operations on less than ~10 million observations, and you may want to instead try <a href="https://dtplyr.tidyverse.org/">dtplyr</a>, which uses <a href="https://R-datatable.com/">data.table</a>. multidplyr’s strength is found parallelsing calls to slower and more complex functions.</p>
 <p>(Note that unlike other packages in the tidyverse, multidplyr requires R 3.5 or greater. We hope to relax this requirement <a href="https://github.com/traversc/qs/issues/11">in the future</a>.)</p>
 </div>
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
-<p>To install from GitHub:</p>
+<p>You can install the released version of multidplyr from <a href="https://CRAN.R-project.org">CRAN</a> with:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"multidplyr"</span><span class="op">)</span></code></pre></div>
+<p>And the development version from <a href="https://github.com/">GitHub</a> with:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># install.packages("devtools")</span>
 <span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"tidyverse/multidplyr"</span><span class="op">)</span></code></pre></div>
 </div>
@@ -106,7 +109,7 @@
 <h2 class="hasAnchor">
 <a href="#usage" class="anchor"></a>Usage</h2>
 <p>To use multidplyr, you first create a cluster of the desired number of workers. Each one of these workers is a separate R process, and the operating system will spread their execution across multiple cores:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/tidyverse/multidplyr">multidplyr</a></span><span class="op">)</span>
 
 <span class="va">cluster</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/new_cluster.html">new_cluster</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span>
@@ -120,7 +123,7 @@
 <span class="co">#&gt; </span>
 <span class="co">#&gt;     intersect, setdiff, setequal, union</span></code></pre></div>
 <p>There are two primary ways to use multidplyr. The first, and most efficient, way is to read different files on each worker:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Create a filename vector containing different values on each worker</span>
 <span class="fu"><a href="reference/cluster_utils.html">cluster_assign_each</a></span><span class="op">(</span><span class="va">cluster</span>, filename <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"a.csv"</span>, <span class="st">"b.csv"</span>, <span class="st">"c.csv"</span>, <span class="st">"d.csv"</span><span class="op">)</span><span class="op">)</span>
 
@@ -130,7 +133,7 @@
 <span class="co"># Create a party_df using the my_data variable on each worker</span>
 <span class="va">my_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/party_df.html">party_df</a></span><span class="op">(</span><span class="va">cluster</span>, <span class="st">"my_data"</span><span class="op">)</span></code></pre></div>
 <p>Alternatively, if you already have the data loaded in the main session, you can use <code><a href="reference/partition.html">partition()</a></code> to automatically spread it across the workers. Before calling <code><a href="reference/partition.html">partition()</a></code>, it’s a good idea to call <code>group_by()</code> to ensure that all of the observations belonging to a group end up on the same worker.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://github.com/hadley/nycflights13">nycflights13</a></span><span class="op">)</span>
 
 <span class="va">flight_dest</span> <span class="op">&lt;-</span> <span class="va">flights</span> <span class="op">%&gt;%</span> <span class="fu">group_by</span><span class="op">(</span><span class="va">dest</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="reference/partition.html">partition</a></span><span class="op">(</span><span class="va">cluster</span><span class="op">)</span>
@@ -151,7 +154,7 @@
 <span class="co">#&gt; #   carrier &lt;chr&gt;, flight &lt;int&gt;, tailnum &lt;chr&gt;, origin &lt;chr&gt;, dest &lt;chr&gt;,</span>
 <span class="co">#&gt; #   air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;</span></code></pre></div>
 <p>Now you can work with it like a regular data frame, but the computations will be spread across multiple cores. Once you’ve finished computation, use <code>collect()</code> to bring the data back to the host session:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">flight_dest</span> <span class="op">%&gt;%</span> 
   <span class="fu">summarise</span><span class="op">(</span>delay <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">dep_delay</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>, n <span class="op">=</span> <span class="fu">n</span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
   <span class="fu">collect</span><span class="op">(</span><span class="op">)</span>
