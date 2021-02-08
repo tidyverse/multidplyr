@@ -43,7 +43,7 @@
         <a class="navbar-brand" href="../index.html">multidplyr</a>
         <div class="info hidden-xs hidden-sm">
           <span class="partof">part of the <a href="https://tidyverse.org">tidyverse</a></span>
-          <span class="version version-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.9000</span>
+          <span class="version version-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
         </div>
       </div>
     </div>
@@ -105,7 +105,7 @@
 <span class="va">cluster</span>
 <span class="co">#&gt; 2 session cluster [..]</span></code></pre></div>
 <p>(In the examples, you’ll also see the use of <code><a href="../reference/default_cluster.html">default_cluster()</a></code>; this is designed specifically for the constraints of R CMD check, so I don’t recommend using it in your own code.)</p>
-<p>A cluster consists of multiple R processes created by <a href="http://callr.r-lib.org/">callr</a>. When multiple processes are running at the same time, your operating system will take care of spreading the work across multiple cores.</p>
+<p>A cluster consists of multiple R processes created by <a href="https://callr.r-lib.org/">callr</a>. When multiple processes are running at the same time, your operating system will take care of spreading the work across multiple cores.</p>
 </div>
 <div id="add-data" class="section level2">
 <h2 class="hasAnchor">
@@ -208,21 +208,21 @@
 <span class="co"># Local computation</span>
 <span class="fu"><a href="https://rdrr.io/r/base/system.time.html">system.time</a></span><span class="op">(</span><span class="va">by_dest</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarise</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">dep_delay</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt;    user  system elapsed </span>
-<span class="co">#&gt;   0.016   0.003   0.019</span>
+<span class="co">#&gt;   0.014   0.002   0.016</span>
 
 <span class="co"># Remote: partitioning</span>
 <span class="fu"><a href="https://rdrr.io/r/base/system.time.html">system.time</a></span><span class="op">(</span><span class="va">flights2</span> <span class="op">&lt;-</span> <span class="va">flights</span> <span class="op">%&gt;%</span> <span class="fu"><a href="../reference/partition.html">partition</a></span><span class="op">(</span><span class="va">cluster</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt;    user  system elapsed </span>
-<span class="co">#&gt;   0.453   0.120   0.873</span>
+<span class="co">#&gt;   0.397   0.091   0.673</span>
 <span class="co"># Remote: computation</span>
 <span class="fu"><a href="https://rdrr.io/r/base/system.time.html">system.time</a></span><span class="op">(</span><span class="va">flights3</span> <span class="op">&lt;-</span> <span class="va">flights2</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarise</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">dep_delay</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt;    user  system elapsed </span>
-<span class="co">#&gt;   0.017   0.002   0.138</span>
+<span class="co">#&gt;   0.016   0.002   0.132</span>
 <span class="co"># Remote: retrieve results</span>
 <span class="fu"><a href="https://rdrr.io/r/base/system.time.html">system.time</a></span><span class="op">(</span><span class="va">flights3</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/compute.html">collect</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt;    user  system elapsed </span>
-<span class="co">#&gt;   0.013   0.004   0.240</span></code></pre></div>
-<p>That’s because of the overhead associated with sending the data to each worker and retrieving the results at the end. For basic dplyr verbs, multidplyr is unlikely to give you significant speed ups unless you have 10s or 100s of millions of data points (and in that scenario you should first try <a href="http://dtplyr.tidyverse.org/">dtplyr</a>, which uses <a href="http://R-datatable.com/">data.table</a>).</p>
+<span class="co">#&gt;   0.012   0.003   0.197</span></code></pre></div>
+<p>That’s because of the overhead associated with sending the data to each worker and retrieving the results at the end. For basic dplyr verbs, multidplyr is unlikely to give you significant speed ups unless you have 10s or 100s of millions of data points (and in that scenario you should first try <a href="https://dtplyr.tidyverse.org/">dtplyr</a>, which uses <a href="https://R-datatable.com/">data.table</a>).</p>
 <p>multipldyr might help, however, if you’re doing more complex things. Let’s see how that plays out when fitting a moderately complex model. We’ll start by selecting a subset of flights that have at least 50 occurrences, and we’ll compute the day of the year from the date:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">daily_flights</span> <span class="op">&lt;-</span> <span class="va">flights</span> <span class="op">%&gt;%</span>
@@ -264,7 +264,7 @@
     <span class="fu"><a href="https://dplyr.tidyverse.org/reference/do.html">do</a></span><span class="op">(</span>mod <span class="op">=</span> <span class="fu">gam</span><span class="op">(</span><span class="va">dep_delay</span> <span class="op">~</span> <span class="fu">s</span><span class="op">(</span><span class="va">yday</span><span class="op">)</span> <span class="op">+</span> <span class="fu">s</span><span class="op">(</span><span class="va">dep_time</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">.</span><span class="op">)</span><span class="op">)</span>
 <span class="op">}</span><span class="op">)</span>
 <span class="co">#&gt;    user  system elapsed </span>
-<span class="co">#&gt;   0.018   0.003   3.475</span></code></pre></div>
+<span class="co">#&gt;   0.017   0.002   3.283</span></code></pre></div>
 <p>Compared with around 5s doing it locally:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/system.time.html">system.time</a></span><span class="op">(</span><span class="op">{</span>
@@ -273,7 +273,7 @@
     <span class="fu"><a href="https://dplyr.tidyverse.org/reference/do.html">do</a></span><span class="op">(</span>mod <span class="op">=</span> <span class="fu">gam</span><span class="op">(</span><span class="va">dep_delay</span> <span class="op">~</span> <span class="fu">s</span><span class="op">(</span><span class="va">yday</span><span class="op">)</span> <span class="op">+</span> <span class="fu">s</span><span class="op">(</span><span class="va">dep_time</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">.</span><span class="op">)</span><span class="op">)</span>
 <span class="op">}</span><span class="op">)</span>
 <span class="co">#&gt;    user  system elapsed </span>
-<span class="co">#&gt;   4.946   0.676   5.652</span></code></pre></div>
+<span class="co">#&gt;   4.679   0.652   5.348</span></code></pre></div>
 <p>The cost of transmitting messages to the nodes is roughly constant, so the longer the task you’re parallelising, the closer you’ll get to a linear speed up.</p>
 </div>
   </div>

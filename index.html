@@ -44,7 +44,7 @@
         <a class="navbar-brand" href="index.html">multidplyr</a>
         <div class="info hidden-xs hidden-sm">
           <span class="partof">part of the <a href="https://tidyverse.org">tidyverse</a></span>
-          <span class="version version-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.9000</span>
+          <span class="version version-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
         </div>
       </div>
     </div>
@@ -87,8 +87,8 @@
 <div id="overview" class="section level2">
 <h2 class="hasAnchor">
 <a href="#overview" class="anchor"></a>Overview</h2>
-<p>multidplyr is a backend for dplyr that partitions a data frame across multiple cores. You tell multidplyr how to split the data up with <code><a href="reference/partition.html">partition()</a></code> and then the data stays on each node until you explicitly retrieve it with <code>collect()</code>. This minimises the amount of time spent moving data around, and maximises parallel performance. This idea is inspired by <a href="http://bit.ly/1Nve8v5">partools</a> by Norm Matloff and <a href="https://github.com/vertica/DistributedR">distributedR</a> by the Vertica Analytics team.</p>
-<p>Due to the overhead associated with communicating between the nodes, you won’t see much performance improvement with simple operations on lless than ~10 million observations, and you may want to instead try <a href="http://dtplyr.tidyverse.org/">dtplyr</a>, which uses <a href="http://R-datatable.com/">data.table</a>. multidplyr’s strength is found parallelsing calls to slower and more complex functions.</p>
+<p>multidplyr is a backend for dplyr that partitions a data frame across multiple cores. You tell multidplyr how to split the data up with <code><a href="reference/partition.html">partition()</a></code> and then the data stays on each node until you explicitly retrieve it with <code>collect()</code>. This minimises the amount of time spent moving data around, and maximises parallel performance. This idea is inspired by <a href="https://github.com/matloff/partools">partools</a> by Norm Matloff and <a href="https://github.com/vertica/DistributedR">distributedR</a> by the Vertica Analytics team.</p>
+<p>Due to the overhead associated with communicating between the nodes, you won’t see much performance improvement with simple operations on lless than ~10 million observations, and you may want to instead try <a href="https://dtplyr.tidyverse.org/">dtplyr</a>, which uses <a href="https://R-datatable.com/">data.table</a>. multidplyr’s strength is found parallelsing calls to slower and more complex functions.</p>
 <p>(Note that unlike other packages in the tidyverse, multidplyr requires R 3.5 or greater. We hope to relax this requirement <a href="https://github.com/traversc/qs/issues/11">in the future</a>.)</p>
 </div>
 <div id="installation" class="section level2">
@@ -200,7 +200,7 @@
   <div class="dev-status">
 <h2>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://www.tidyverse.org/lifecycle/#experimental"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a></li>
+<li><a href="https://lifecycle.r-lib.org/articles/stages.html#experimental"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a></li>
 <li><a href="https://github.com/tidyverse/multidplyr/actions"><img src="https://github.com/tidyverse/multidplyr/workflows/R-CMD-check/badge.svg" alt="R-CMD-check"></a></li>
 <li><a href="https://codecov.io/gh/tidyverse/multidplyr?branch=master"><img src="https://codecov.io/gh/tidyverse/multidplyr/branch/master/graph/badge.svg" alt="Codecov test coverage"></a></li>
 <li><a href="https://cran.r-project.org/package=multidplyr"><img src="https://www.r-pkg.org/badges/version/multidplyr" alt="CRAN status"></a></li>
