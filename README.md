@@ -26,7 +26,7 @@ Matloff and [distributedR](https://github.com/vertica/DistributedR) by
 the Vertica Analytics team.
 
 Due to the overhead associated with communicating between the nodes, you
-won’t see much performance improvement with simple operations on lless
+won’t see much performance improvement with simple operations on less
 than \~10 million observations, and you may want to instead try
 [dtplyr](https://dtplyr.tidyverse.org/), which uses
 [data.table](https://R-datatable.com/). multidplyr’s strength is found
