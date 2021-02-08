@@ -32,9 +32,15 @@ Due to the overhead associated with communicating between the nodes, you won't s
 
 ## Installation
 
-To install from GitHub:
+You can install the released version of multidplyr from [CRAN](https://CRAN.R-project.org) with:
 
-```R
+``` r
+install.packages("multidplyr")
+```
+
+And the development version from [GitHub](https://github.com/) with:
+
+``` r
 # install.packages("devtools")
 devtools::install_github("tidyverse/multidplyr")
 ```

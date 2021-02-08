@@ -38,7 +38,14 @@ future](https://github.com/traversc/qs/issues/11).)
 
 ## Installation
 
-To install from GitHub:
+You can install the released version of multidplyr from
+[CRAN](https://CRAN.R-project.org) with:
+
+``` r
+install.packages("multidplyr")
+```
+
+And the development version from [GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("devtools")
