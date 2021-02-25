@@ -5,3 +5,9 @@ home:
 
 template:
   package: tidytemplate
+
+
+news:
+  releases:
+  - text: "Version 0.1.0"
+    href: https://www.tidyverse.org/blog/2021/02/dplyr-backends/
