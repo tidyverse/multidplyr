@@ -32,7 +32,7 @@ Suggests:
     mgcv,
     nycflights13,
     rmarkdown,
-    testthat (>= 3.0.0),
+    testthat (>= 3.0.2),
     vroom
 VignetteBuilder: 
     knitr

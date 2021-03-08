@@ -1,4 +1,6 @@
 test_that("can construct and print partydf", {
+  withr::local_options(lifecycle_verbosity = "quiet")
+
   cl <- default_cluster()
   cl <- cluster_assign(cl, x = data.frame(y = 1:10))
 
