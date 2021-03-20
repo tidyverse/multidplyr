@@ -32,8 +32,9 @@ Suggests:
     mgcv,
     nycflights13,
     rmarkdown,
-    testthat (>= 3.0.0),
-    vroom
+    testthat (>= 3.0.2),
+    vroom,
+    withr
 VignetteBuilder: 
     knitr
 Encoding: UTF-8
