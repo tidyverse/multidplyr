@@ -108,8 +108,22 @@ instead." />
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
-<li>
-  <a href="../news/index.html">Changelog</a>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    News
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li class="dropdown-header">Releases</li>
+    <li>
+      <a href="https://www.tidyverse.org/blog/2021/02/dplyr-backends/">Version 0.1.0</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="../news/index.html">Changelog</a>
+    </li>
+  </ul>
 </li>
         <li>
   <a href="https://github.com/tidyverse/multidplyr/">
@@ -181,14 +195,14 @@ the workers when this object is created.</p></td>
 #&gt; Shards: 2 [10--15 rows]
 #&gt; 
 #&gt;       x
-#&gt;   <span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
-#&gt; </span><span style='color: #555555;'>1</span><span> 0.211
-#&gt; </span><span style='color: #555555;'>2</span><span> 0.712
-#&gt; </span><span style='color: #555555;'>3</span><span> 0.765
-#&gt; </span><span style='color: #555555;'>4</span><span> 0.688
-#&gt; </span><span style='color: #555555;'>5</span><span> 0.830
-#&gt; </span><span style='color: #555555;'>6</span><span> 0.520
-#&gt; </span><span style='color: #555555;'># … with 19 more rows</span><span></div></span></pre>
+#&gt;   <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>
+#&gt; <span style='color: #BCBCBC;'>1</span> 0.567
+#&gt; <span style='color: #BCBCBC;'>2</span> 0.795
+#&gt; <span style='color: #BCBCBC;'>3</span> 0.674
+#&gt; <span style='color: #BCBCBC;'>4</span> 0.723
+#&gt; <span style='color: #BCBCBC;'>5</span> 0.783
+#&gt; <span style='color: #BCBCBC;'>6</span> 0.494
+#&gt; <span style='color: #949494;'># … with 19 more rows</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
