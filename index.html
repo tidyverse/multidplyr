@@ -124,7 +124,7 @@
 <a href="#usage" class="anchor"></a>Usage</h2>
 <p>To use multidplyr, you first create a cluster of the desired number of workers. Each one of these workers is a separate R process, and the operating system will spread their execution across multiple cores:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/tidyverse/multidplyr">multidplyr</a></span><span class="op">)</span>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://multidplyr.tidyverse.org">multidplyr</a></span><span class="op">)</span>
 
 <span class="va">cluster</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/new_cluster.html">new_cluster</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span>
 <span class="fu"><a href="reference/cluster_utils.html">cluster_library</a></span><span class="op">(</span><span class="va">cluster</span>, <span class="st">"dplyr"</span><span class="op">)</span>
