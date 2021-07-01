@@ -6,12 +6,12 @@
 \alias{multidplyr-package}
 \title{multidplyr: A Multi-Process 'dplyr' Backend}
 \description{
-Partition a data frame across multiple worker
-    processes to provide simple multicore parallelism.
+Partition a data frame across multiple worker processes to provide simple multicore parallelism.
 }
 \seealso{
 Useful links:
 \itemize{
+  \item \url{https://multidplyr.tidyverse.org}
   \item \url{https://github.com/tidyverse/multidplyr}
   \item Report bugs at \url{https://github.com/tidyverse/multidplyr/issues}
 }
