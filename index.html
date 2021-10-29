@@ -150,7 +150,7 @@
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/hadley/nycflights13">nycflights13</a></span><span class="op">)</span>
 
-<span class="va">flight_dest</span> <span class="op">&lt;-</span> <span class="va">flights</span> <span class="op">%&gt;%</span> <span class="fu">group_by</span><span class="op">(</span><span class="va">dest</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="reference/partition.html">partition</a></span><span class="op">(</span><span class="va">cluster</span><span class="op">)</span>
+<span class="va">flight_dest</span> <span class="op">&lt;-</span> <span class="va">flights</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu">group_by</span><span class="op">(</span><span class="va">dest</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="reference/partition.html">partition</a></span><span class="op">(</span><span class="va">cluster</span><span class="op">)</span>
 <span class="va">flight_dest</span>
 <span class="co">#&gt; Source: party_df [336,776 x 19]</span>
 <span class="co">#&gt; Groups: dest</span>
@@ -169,10 +169,10 @@
 <span class="co">#&gt; #   air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;</span></code></pre></div>
 <p>Now you can work with it like a regular data frame, but the computations will be spread across multiple cores. Once you’ve finished computation, use <code>collect()</code> to bring the data back to the host session:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">flight_dest</span> <span class="op">%&gt;%</span> 
-  <span class="fu">summarise</span><span class="op">(</span>delay <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">dep_delay</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>, n <span class="op">=</span> <span class="fu">n</span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+<code class="sourceCode R"><span class="va">flight_dest</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu">summarise</span><span class="op">(</span>delay <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">dep_delay</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>, n <span class="op">=</span> <span class="fu">n</span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
   <span class="fu">collect</span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 105 x 3</span>
+<span class="co">#&gt; # A tibble: 105 × 3</span>
 <span class="co">#&gt;    dest  delay     n</span>
 <span class="co">#&gt;    &lt;chr&gt; &lt;dbl&gt; &lt;int&gt;</span>
 <span class="co">#&gt;  1 ABQ    13.7   254</span>
@@ -224,7 +224,7 @@
 <ul class="list-unstyled">
 <li><a href="https://lifecycle.r-lib.org/articles/stages.html#experimental"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a></li>
 <li><a href="https://github.com/tidyverse/multidplyr/actions"><img src="https://github.com/tidyverse/multidplyr/workflows/R-CMD-check/badge.svg" alt="R-CMD-check"></a></li>
-<li><a href="https://codecov.io/gh/tidyverse/multidplyr?branch=master"><img src="https://codecov.io/gh/tidyverse/multidplyr/branch/master/graph/badge.svg" alt="Codecov test coverage"></a></li>
+<li><a href="https://codecov.io/gh/tidyverse/multidplyr?branch=main"><img src="https://codecov.io/gh/tidyverse/multidplyr/branch/main/graph/badge.svg" alt="Codecov test coverage"></a></li>
 <li><a href="https://cran.r-project.org/package=multidplyr"><img src="https://www.r-pkg.org/badges/version/multidplyr" alt="CRAN status"></a></li>
 </ul>
 </div>

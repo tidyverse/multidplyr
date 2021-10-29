@@ -202,94 +202,103 @@
   lists with one element for each worker.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='va'>cl</span> <span class='op'>&lt;-</span> <span class='fu'><a href='default_cluster.html'>default_cluster</a></span><span class='op'>(</span><span class='op'>)</span>
-<span class='fu'>cluster_assign</span><span class='op'>(</span><span class='va'>cl</span>, a <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span>
-<span class='fu'><a href='cluster_call.html'>cluster_call</a></span><span class='op'>(</span><span class='va'>cl</span>, <span class='va'>a</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [[1]]
-#&gt; [1] 0.1803388
-#&gt; 
-#&gt; [[2]]
-#&gt; [1] 0.1803388
-#&gt; </div><div class='input'>
-<span class='co'># Assign different values on each cluster</span>
-<span class='fu'>cluster_assign_each</span><span class='op'>(</span><span class='va'>cl</span>, b <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>10</span><span class='op'>)</span><span class='op'>)</span>
-<span class='fu'><a href='cluster_call.html'>cluster_call</a></span><span class='op'>(</span><span class='va'>cl</span>, <span class='va'>b</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [[1]]
-#&gt; [1] 1
-#&gt; 
-#&gt; [[2]]
-#&gt; [1] 10
-#&gt; </div><div class='input'>
-<span class='co'># Partition a vector so that each worker gets approximately the</span>
-<span class='co'># same amount of it</span>
-<span class='fu'>cluster_assign_partition</span><span class='op'>(</span><span class='va'>cl</span>, c <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>11</span><span class='op'>)</span>
-<span class='fu'><a href='cluster_call.html'>cluster_call</a></span><span class='op'>(</span><span class='va'>cl</span>, <span class='va'>c</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [[1]]
-#&gt; [1] 1 2 3 4 5 6
-#&gt; 
-#&gt; [[2]]
-#&gt; [1]  7  8  9 10 11
-#&gt; </div><div class='input'>
-<span class='co'># If you want different to compute different values on each</span>
-<span class='co'># worker, use `cluster_call()` directly:</span>
-<span class='fu'><a href='cluster_call.html'>cluster_call</a></span><span class='op'>(</span><span class='va'>cl</span>, <span class='va'>d</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [[1]]
-#&gt; [1] 0.2774286
-#&gt; 
-#&gt; [[2]]
-#&gt; [1] 0.7732114
-#&gt; </div><div class='input'><span class='fu'><a href='cluster_call.html'>cluster_call</a></span><span class='op'>(</span><span class='va'>cl</span>, <span class='va'>d</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [[1]]
-#&gt; [1] 0.2774286
-#&gt; 
-#&gt; [[2]]
-#&gt; [1] 0.7732114
-#&gt; </div><div class='input'>
-<span class='co'># cluster_copy() is a useful shortcut</span>
-<span class='va'>e</span> <span class='op'>&lt;-</span> <span class='fl'>10</span>
-<span class='fu'>cluster_copy</span><span class='op'>(</span><span class='va'>cl</span>, <span class='st'>"e"</span><span class='op'>)</span>
-
-<span class='fu'><a href='cluster_call.html'>cluster_call</a></span><span class='op'>(</span><span class='va'>cl</span>, <span class='fu'><a href='https://rdrr.io/r/base/ls.html'>ls</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [[1]]
-#&gt; [1] "a" "b" "c" "d" "e" "x"
-#&gt; 
-#&gt; [[2]]
-#&gt; [1] "a" "b" "c" "d" "e" "x"
-#&gt; </div><div class='input'><span class='fu'>cluster_rm</span><span class='op'>(</span><span class='va'>cl</span>, <span class='va'>letters</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>5</span><span class='op'>]</span><span class='op'>)</span>
-<span class='fu'><a href='cluster_call.html'>cluster_call</a></span><span class='op'>(</span><span class='va'>cl</span>, <span class='fu'><a href='https://rdrr.io/r/base/ls.html'>ls</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [[1]]
-#&gt; [1] "x"
-#&gt; 
-#&gt; [[2]]
-#&gt; [1] "x"
-#&gt; </div><div class='input'>
-<span class='co'># Use cluster_library() to load packages</span>
-<span class='fu'><a href='cluster_call.html'>cluster_call</a></span><span class='op'>(</span><span class='va'>cl</span>, <span class='fu'><a href='https://rdrr.io/r/base/search.html'>search</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [[1]]
-#&gt;  [1] ".GlobalEnv"        "package:stats"     "package:graphics" 
-#&gt;  [4] "package:grDevices" "package:utils"     "package:datasets" 
-#&gt;  [7] "package:methods"   "Autoloads"         "tools:callr"      
-#&gt; [10] "package:base"     
-#&gt; 
-#&gt; [[2]]
-#&gt;  [1] ".GlobalEnv"        "package:stats"     "package:graphics" 
-#&gt;  [4] "package:grDevices" "package:utils"     "package:datasets" 
-#&gt;  [7] "package:methods"   "Autoloads"         "tools:callr"      
-#&gt; [10] "package:base"     
-#&gt; </div><div class='input'><span class='fu'>cluster_library</span><span class='op'>(</span><span class='va'>cl</span>, <span class='st'>"magrittr"</span><span class='op'>)</span>
-<span class='fu'><a href='cluster_call.html'>cluster_call</a></span><span class='op'>(</span><span class='va'>cl</span>, <span class='fu'><a href='https://rdrr.io/r/base/search.html'>search</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [[1]]
-#&gt;  [1] ".GlobalEnv"        "package:magrittr"  "package:stats"    
-#&gt;  [4] "package:graphics"  "package:grDevices" "package:utils"    
-#&gt;  [7] "package:datasets"  "package:methods"   "Autoloads"        
-#&gt; [10] "tools:callr"       "package:base"     
-#&gt; 
-#&gt; [[2]]
-#&gt;  [1] ".GlobalEnv"        "package:magrittr"  "package:stats"    
-#&gt;  [4] "package:graphics"  "package:grDevices" "package:utils"    
-#&gt;  [7] "package:datasets"  "package:methods"   "Autoloads"        
-#&gt; [10] "tools:callr"       "package:base"     
-#&gt; </div></pre>
+    <pre class="examples"><span class='r-in'><span class='va'>cl</span> <span class='op'>&lt;-</span> <span class='fu'><a href='default_cluster.html'>default_cluster</a></span><span class='op'>(</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'>cluster_assign</span><span class='op'>(</span><span class='va'>cl</span>, a <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'><a href='cluster_call.html'>cluster_call</a></span><span class='op'>(</span><span class='va'>cl</span>, <span class='va'>a</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [[1]]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] 0.1803388</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [[2]]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] 0.1803388</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Assign different values on each cluster</span></span>
+<span class='r-in'><span class='fu'>cluster_assign_each</span><span class='op'>(</span><span class='va'>cl</span>, b <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>10</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'><a href='cluster_call.html'>cluster_call</a></span><span class='op'>(</span><span class='va'>cl</span>, <span class='va'>b</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [[1]]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] 1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [[2]]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] 10</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Partition a vector so that each worker gets approximately the</span></span>
+<span class='r-in'><span class='co'># same amount of it</span></span>
+<span class='r-in'><span class='fu'>cluster_assign_partition</span><span class='op'>(</span><span class='va'>cl</span>, c <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>11</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'><a href='cluster_call.html'>cluster_call</a></span><span class='op'>(</span><span class='va'>cl</span>, <span class='va'>c</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [[1]]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] 1 2 3 4 5 6</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [[2]]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1]  7  8  9 10 11</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># If you want different to compute different values on each</span></span>
+<span class='r-in'><span class='co'># worker, use `cluster_call()` directly:</span></span>
+<span class='r-in'><span class='fu'><a href='cluster_call.html'>cluster_call</a></span><span class='op'>(</span><span class='va'>cl</span>, <span class='va'>d</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [[1]]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] 0.2869341</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [[2]]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] 0.7783319</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-in'><span class='fu'><a href='cluster_call.html'>cluster_call</a></span><span class='op'>(</span><span class='va'>cl</span>, <span class='va'>d</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [[1]]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] 0.2869341</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [[2]]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] 0.7783319</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># cluster_copy() is a useful shortcut</span></span>
+<span class='r-in'><span class='va'>e</span> <span class='op'>&lt;-</span> <span class='fl'>10</span></span>
+<span class='r-in'><span class='fu'>cluster_copy</span><span class='op'>(</span><span class='va'>cl</span>, <span class='st'>"e"</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='fu'><a href='cluster_call.html'>cluster_call</a></span><span class='op'>(</span><span class='va'>cl</span>, <span class='fu'><a href='https://rdrr.io/r/base/ls.html'>ls</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [[1]]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "a" "b" "c" "d" "e" "x"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [[2]]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "a" "b" "c" "d" "e" "x"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-in'><span class='fu'>cluster_rm</span><span class='op'>(</span><span class='va'>cl</span>, <span class='va'>letters</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>5</span><span class='op'>]</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'><a href='cluster_call.html'>cluster_call</a></span><span class='op'>(</span><span class='va'>cl</span>, <span class='fu'><a href='https://rdrr.io/r/base/ls.html'>ls</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [[1]]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "x"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [[2]]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "x"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Use cluster_library() to load packages</span></span>
+<span class='r-in'><span class='fu'><a href='cluster_call.html'>cluster_call</a></span><span class='op'>(</span><span class='va'>cl</span>, <span class='fu'><a href='https://rdrr.io/r/base/search.html'>search</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [[1]]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [1] ".GlobalEnv"        "package:stats"     "package:graphics" </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [4] "package:grDevices" "package:utils"     "package:datasets" </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [7] "package:methods"   "Autoloads"         "tools:callr"      </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [10] "package:base"     </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [[2]]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [1] ".GlobalEnv"        "package:stats"     "package:graphics" </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [4] "package:grDevices" "package:utils"     "package:datasets" </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [7] "package:methods"   "Autoloads"         "tools:callr"      </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [10] "package:base"     </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-in'><span class='fu'>cluster_library</span><span class='op'>(</span><span class='va'>cl</span>, <span class='st'>"magrittr"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'><a href='cluster_call.html'>cluster_call</a></span><span class='op'>(</span><span class='va'>cl</span>, <span class='fu'><a href='https://rdrr.io/r/base/search.html'>search</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [[1]]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [1] ".GlobalEnv"        "package:magrittr"  "package:stats"    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [4] "package:graphics"  "package:grDevices" "package:utils"    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [7] "package:datasets"  "package:methods"   "Autoloads"        </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [10] "tools:callr"       "package:base"     </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [[2]]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [1] ".GlobalEnv"        "package:magrittr"  "package:stats"    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [4] "package:graphics"  "package:grDevices" "package:utils"    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [7] "package:datasets"  "package:methods"   "Autoloads"        </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [10] "tools:callr"       "package:base"     </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
