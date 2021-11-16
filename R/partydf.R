@@ -221,8 +221,7 @@ collect.multidplyr_party_df <- function(.data, ...) {
 #' @importFrom dplyr pull
 #' @export
 pull.multidplyr_party_df <- function(.data, var = -1) {
-  expr <- enquo(var)
-  var <- dplyr:::find_var(expr, tbl_vars(.data))
+  var <- tidyselect::vars_pull(tbl_vars(.data), {{ var }})
 
   .data <- ungroup(.data)
   .data <- select(.data, !!sym(var))
