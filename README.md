@@ -30,7 +30,7 @@ won’t see much performance improvement with simple operations on less
 than \~10 million observations, and you may want to instead try
 [dtplyr](https://dtplyr.tidyverse.org/), which uses
 [data.table](https://R-datatable.com/). multidplyr’s strength is found
-parallelsing calls to slower and more complex functions.
+parallelising calls to slower and more complex functions.
 
 (Note that unlike other packages in the tidyverse, multidplyr requires R
 3.5 or greater. We hope to relax this requirement [in the
