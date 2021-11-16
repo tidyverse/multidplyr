@@ -26,7 +26,7 @@ knitr::opts_chunk$set(
 
 multidplyr is a backend for dplyr that partitions a data frame across multiple cores. You tell multidplyr how to split the data up with `partition()` and then the data stays on each node until you explicitly retrieve it with `collect()`. This minimises the amount of time spent moving data around, and maximises parallel performance. This idea is inspired by [partools](https://github.com/matloff/partools) by Norm Matloff and [distributedR](https://github.com/vertica/DistributedR) by the Vertica Analytics team.
 
-Due to the overhead associated with communicating between the nodes, you won't see much performance improvement with simple operations on less than ~10 million observations, and you may want to instead try [dtplyr](https://dtplyr.tidyverse.org/), which uses [data.table](https://R-datatable.com/). multidplyr's strength is found parallelsing calls to slower and more complex functions.
+Due to the overhead associated with communicating between the nodes, you won't see much performance improvement with simple operations on less than ~10 million observations, and you may want to instead try [dtplyr](https://dtplyr.tidyverse.org/), which uses [data.table](https://R-datatable.com/). multidplyr's strength is found parallelising calls to slower and more complex functions.
 
 (Note that unlike other packages in the tidyverse, multidplyr requires R 3.5 or greater. We hope to relax this requirement [in the future](https://github.com/traversc/qs/issues/11).)
 

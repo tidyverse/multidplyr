@@ -123,7 +123,7 @@ use `collect()` to bring the data back to the host session:
 flight_dest %>% 
   summarise(delay = mean(dep_delay, na.rm = TRUE), n = n()) %>% 
   collect()
-#> # A tibble: 105 x 3
+#> # A tibble: 105 × 3
 #>    dest  delay     n
 #>    <chr> <dbl> <int>
 #>  1 ABQ    13.7   254
