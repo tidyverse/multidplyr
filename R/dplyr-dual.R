@@ -62,28 +62,28 @@ semi_join.multidplyr_party_df <- function(x, y, ..., by = NULL, copy = FALSE) {
 # Exported onload
 intersect.multidplyr_party_df <- function(x, y, ..., copy = FALSE) {
   y <- auto_copy(x, y, copy = copy)
-  shard_call_dual("intersect", x, y, ..., by = by)
+  shard_call_dual("intersect", x, y, ...)
 }
 
 #' @importFrom dplyr union
 # Exported onload
 union.multidplyr_party_df <- function(x, y, ..., copy = FALSE) {
   y <- auto_copy(x, y, copy = copy)
-  shard_call_dual("union", x, y, ..., by = by)
+  shard_call_dual("union", x, y, ...)
 }
 
 #' @importFrom dplyr union_all
 #' @export
 union_all.multidplyr_party_df <- function(x, y, ..., copy = FALSE) {
   y <- auto_copy(x, y, copy = copy)
-  shard_call_dual("union_all", x, y, ..., by = by)
+  shard_call_dual("union_all", x, y, ...)
 }
 
 #' @importFrom dplyr setdiff
 # Exported onload
 setdiff.multidplyr_party_df <- function(x, y, ..., copy = FALSE) {
   y <- auto_copy(x, y, copy = copy)
-  shard_call_dual("setdiff", x, y, ..., by = by)
+  shard_call_dual("setdiff", x, y, ...)
 }
 
 
