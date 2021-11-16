@@ -18,7 +18,7 @@ A [party_df].
 \description{
 Partitioning ensures that all observations in a group end up on the same
 worker. To try and keep the observations on each worker balanced,
-`partition()` uses a greedy algorithm that iteratively assign each group to
+`partition()` uses a greedy algorithm that iteratively assigns each group to
 the worker that currently has the fewest rows.
 }
 \examples{
