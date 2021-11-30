@@ -225,20 +225,20 @@
 <span class="co"># Local computation</span>
 <span class="fu"><a href="https://rdrr.io/r/base/system.time.html">system.time</a></span><span class="op">(</span><span class="va">by_dest</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarise</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">dep_delay</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt;    user  system elapsed </span>
-<span class="co">#&gt;   0.016   0.000   0.016</span>
+<span class="co">#&gt;   0.012   0.000   0.012</span>
 
 <span class="co"># Remote: partitioning</span>
 <span class="fu"><a href="https://rdrr.io/r/base/system.time.html">system.time</a></span><span class="op">(</span><span class="va">flights2</span> <span class="op">&lt;-</span> <span class="va">flights</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="../reference/partition.html">partition</a></span><span class="op">(</span><span class="va">cluster</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt;    user  system elapsed </span>
-<span class="co">#&gt;   0.498   0.068   0.667</span>
+<span class="co">#&gt;   0.443   0.064   0.571</span>
 <span class="co"># Remote: computation</span>
 <span class="fu"><a href="https://rdrr.io/r/base/system.time.html">system.time</a></span><span class="op">(</span><span class="va">flights3</span> <span class="op">&lt;-</span> <span class="va">flights2</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarise</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">dep_delay</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt;    user  system elapsed </span>
-<span class="co">#&gt;   0.020   0.000   0.065</span>
+<span class="co">#&gt;   0.015   0.000   0.058</span>
 <span class="co"># Remote: retrieve results</span>
 <span class="fu"><a href="https://rdrr.io/r/base/system.time.html">system.time</a></span><span class="op">(</span><span class="va">flights3</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/compute.html">collect</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt;    user  system elapsed </span>
-<span class="co">#&gt;   0.010   0.000   0.079</span></code></pre></div>
+<span class="co">#&gt;   0.008   0.000   0.074</span></code></pre></div>
 <p>That’s because of the overhead associated with sending the data to each worker and retrieving the results at the end. For basic dplyr verbs, multidplyr is unlikely to give you significant speed ups unless you have 10s or 100s of millions of data points (and in that scenario you should first try <a href="https://dtplyr.tidyverse.org/">dtplyr</a>, which uses <a href="https://R-datatable.com/">data.table</a>).</p>
 <p>multipldyr might help, however, if you’re doing more complex things. Let’s see how that plays out when fitting a moderately complex model. We’ll start by selecting a subset of flights that have at least 50 occurrences, and we’ll compute the day of the year from the date:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
@@ -281,7 +281,7 @@
     <span class="fu"><a href="https://dplyr.tidyverse.org/reference/do.html">do</a></span><span class="op">(</span>mod <span class="op">=</span> <span class="fu">gam</span><span class="op">(</span><span class="va">dep_delay</span> <span class="op">~</span> <span class="fu">s</span><span class="op">(</span><span class="va">yday</span><span class="op">)</span> <span class="op">+</span> <span class="fu">s</span><span class="op">(</span><span class="va">dep_time</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">.</span><span class="op">)</span><span class="op">)</span>
 <span class="op">}</span><span class="op">)</span>
 <span class="co">#&gt;    user  system elapsed </span>
-<span class="co">#&gt;   0.019   0.000   3.319</span></code></pre></div>
+<span class="co">#&gt;   0.016   0.002   2.975</span></code></pre></div>
 <p>Compared with around 5s doing it locally:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/system.time.html">system.time</a></span><span class="op">(</span><span class="op">{</span>
@@ -290,7 +290,7 @@
     <span class="fu"><a href="https://dplyr.tidyverse.org/reference/do.html">do</a></span><span class="op">(</span>mod <span class="op">=</span> <span class="fu">gam</span><span class="op">(</span><span class="va">dep_delay</span> <span class="op">~</span> <span class="fu">s</span><span class="op">(</span><span class="va">yday</span><span class="op">)</span> <span class="op">+</span> <span class="fu">s</span><span class="op">(</span><span class="va">dep_time</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">.</span><span class="op">)</span><span class="op">)</span>
 <span class="op">}</span><span class="op">)</span>
 <span class="co">#&gt;    user  system elapsed </span>
-<span class="co">#&gt;   4.939   0.111   5.050</span></code></pre></div>
+<span class="co">#&gt;   4.304   0.059   4.365</span></code></pre></div>
 <p>The cost of transmitting messages to the nodes is roughly constant, so the longer the task you’re parallelising, the closer you’ll get to a linear speed up.</p>
 </div>
   </div>
