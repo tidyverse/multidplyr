@@ -1,10 +1,8 @@
-## Test environments
-* local R installation, R 4.0.3
-* ubuntu 16.04 (on travis-ci), R 4.0.3
-* win-builder (devel)
+## Release summary
+
+This is a patch release, to address issues discovered when 
+working on the next version of dplyr. 
 
 ## R CMD check results
 
-0 errors | 0 warnings | 1 note
-
-* This is a new release.
+0 errors ✓ | 0 warnings ✓ | 0 notes ✓
