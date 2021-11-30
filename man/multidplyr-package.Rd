@@ -6,8 +6,7 @@
 \alias{multidplyr-package}
 \title{multidplyr: A Multi-Process 'dplyr' Backend}
 \description{
-Partition a data frame across multiple worker
-    processes to provide simple multicore parallelism.
+Partition a data frame across multiple worker processes to provide simple multicore parallelism.
 }
 \seealso{
 Useful links:
