@@ -32,10 +32,6 @@ than \~10 million observations, and you may want to instead try
 [data.table](https://R-datatable.com/). multidplyr’s strength is found
 parallelising calls to slower and more complex functions.
 
-(Note that unlike other packages in the tidyverse, multidplyr requires R
-3.5 or greater. We hope to relax this requirement [in the
-future](https://github.com/traversc/qs/issues/11).)
-
 ## Installation
 
 You can install the released version of multidplyr from

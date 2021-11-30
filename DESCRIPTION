@@ -20,7 +20,7 @@ Imports:
     crayon,
     dplyr (>= 1.0.0),
     magrittr,
-    qs (>= 0.18.3),
+    qs (>= 0.24.1),
     R6,
     rlang,
     tibble,
