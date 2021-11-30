@@ -9,7 +9,7 @@
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![R-CMD-check](https://github.com/tidyverse/multidplyr/workflows/R-CMD-check/badge.svg)](https://github.com/tidyverse/multidplyr/actions)
 [![Codecov test
-coverage](https://codecov.io/gh/tidyverse/multidplyr/branch/main/graph/badge.svg)](https://codecov.io/gh/tidyverse/multidplyr?branch=main)
+coverage](https://codecov.io/gh/tidyverse/multidplyr/branch/main/graph/badge.svg)](https://app.codecov.io/gh/tidyverse/multidplyr?branch=main)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/multidplyr)](https://cran.r-project.org/package=multidplyr)
 <!-- badges: end -->
