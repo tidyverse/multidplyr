@@ -1,4 +1,4 @@
-# multidplyr (development version)
+# multidplyr 0.1.2
 
 * Fixed problems identified as part of working on dplyr 1.0.8.
 
