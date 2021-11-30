@@ -19,7 +19,8 @@ new_cluster <- function(n) {
   )
 }
 
-Cleaner <- R6::R6Class("Cleaner", list(
+#' @importFrom R6 R6Class
+Cleaner <- R6Class("Cleaner", list(
   names = character(),
   add = function(x) {
     self$names <- union(self$names, x)
