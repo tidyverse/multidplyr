@@ -107,27 +107,27 @@ which will always succeed. Set to a narrower type to simplify the output.</p></d
 <span class="r-in"><span class="co"># Run code on each cluster and retrieve results</span></span>
 <span class="r-in"><span class="fu">cluster_call</span><span class="op">(</span><span class="va">cl</span>, <span class="fu"><a href="https://rdrr.io/r/base/Sys.getpid.html" class="external-link">Sys.getpid</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[1]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 12107</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 11567</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[2]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 12113</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 11573</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span class="fu">cluster_call</span><span class="op">(</span><span class="va">cl</span>, <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[1]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.9844907</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.003208039</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[2]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.1032351</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.2882261</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># use ptype to simplify</span></span>
 <span class="r-in"><span class="fu">cluster_call</span><span class="op">(</span><span class="va">cl</span>, <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>, ptype <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html" class="external-link">double</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.15062180 0.08370537</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.6906657 0.8176413</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># use cluster_send() to ignore results</span></span>
 <span class="r-in"><span class="fu">cluster_send</span><span class="op">(</span><span class="va">cl</span>, <span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-in"><span class="fu">cluster_call</span><span class="op">(</span><span class="va">cl</span>, <span class="va">x</span>, ptype <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html" class="external-link">double</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.07574814 0.55541824</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.6440320 0.6218443</span>
 </code></pre></div>
     </div>
   </div>
