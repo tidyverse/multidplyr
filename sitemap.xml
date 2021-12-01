@@ -1,7 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://multidplyr.tidyverse.org/404.html</loc>
+  </url>
+  <url>
+    <loc>https://multidplyr.tidyverse.org/LICENSE-text.html</loc>
+  </url>
+  <url>
+    <loc>https://multidplyr.tidyverse.org/LICENSE.html</loc>
+  </url>
+  <url>
+    <loc>https://multidplyr.tidyverse.org/articles/index.html</loc>
+  </url>
+  <url>
+    <loc>https://multidplyr.tidyverse.org/articles/multidplyr.html</loc>
+  </url>
+  <url>
+    <loc>https://multidplyr.tidyverse.org/authors.html</loc>
+  </url>
+  <url>
     <loc>https://multidplyr.tidyverse.org/index.html</loc>
+  </url>
+  <url>
+    <loc>https://multidplyr.tidyverse.org/news/index.html</loc>
   </url>
   <url>
     <loc>https://multidplyr.tidyverse.org/reference/cluster_call.html</loc>
@@ -11,6 +32,9 @@
   </url>
   <url>
     <loc>https://multidplyr.tidyverse.org/reference/default_cluster.html</loc>
+  </url>
+  <url>
+    <loc>https://multidplyr.tidyverse.org/reference/index.html</loc>
   </url>
   <url>
     <loc>https://multidplyr.tidyverse.org/reference/multidplyr-package.html</loc>
@@ -26,8 +50,5 @@
   </url>
   <url>
     <loc>https://multidplyr.tidyverse.org/reference/reexports.html</loc>
-  </url>
-  <url>
-    <loc>https://multidplyr.tidyverse.org/articles/multidplyr.html</loc>
   </url>
 </urlset>
