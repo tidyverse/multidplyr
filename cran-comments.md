@@ -1,7 +1,5 @@
-## Release summary
-
-This is a minor release, dealing with some findings from work on dplyr. 
-
 ## R CMD check results
 
-0 errors v | 0 warnings v | 0 notes v
+0 errors | 0 warnings | 0 note
+
+The current CRAN release (sometimes) generates a WARN for "Check: re-building of vignette outputs". This is a problem in the vroom package which has been fixed upstream, and submitted to CRAN in due course.
