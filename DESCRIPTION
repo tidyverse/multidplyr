@@ -1,6 +1,6 @@
 Package: multidplyr
 Title: A Multi-Process 'dplyr' Backend
-Version: 0.1.1
+Version: 0.1.1.9000
 Authors@R: 
     c(person(given = "Hadley",
              family = "Wickham",
