@@ -28,7 +28,7 @@ to workers in parallel, and then we wait until they're complete."><meta name="tw
         <a class="navbar-brand" href="../index.html">multidplyr</a>
         <div class="info hidden-xs hidden-sm">
           <span class="partof">part of the <a href="https://tidyverse.org" class="external-link">tidyverse</a></span>
-          <span class="version version-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.1</span>
+          <span class="version version-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.1.9000</span>
         </div>
       </div>
     </div>
@@ -107,27 +107,27 @@ which will always succeed. Set to a narrower type to simplify the output.</p></d
 <span class="r-in"><span class="co"># Run code on each cluster and retrieve results</span></span>
 <span class="r-in"><span class="fu">cluster_call</span><span class="op">(</span><span class="va">cl</span>, <span class="fu"><a href="https://rdrr.io/r/base/Sys.getpid.html" class="external-link">Sys.getpid</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[1]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 11567</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 11488</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[2]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 11573</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 11495</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span class="fu">cluster_call</span><span class="op">(</span><span class="va">cl</span>, <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[1]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.003208039</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.1105765</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[2]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.2882261</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.9903287</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># use ptype to simplify</span></span>
 <span class="r-in"><span class="fu">cluster_call</span><span class="op">(</span><span class="va">cl</span>, <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>, ptype <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html" class="external-link">double</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.6906657 0.8176413</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.1059857 0.9104167</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># use cluster_send() to ignore results</span></span>
 <span class="r-in"><span class="fu">cluster_send</span><span class="op">(</span><span class="va">cl</span>, <span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-in"><span class="fu">cluster_call</span><span class="op">(</span><span class="va">cl</span>, <span class="va">x</span>, ptype <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html" class="external-link">double</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.6440320 0.6218443</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.1896456 0.4208833</span>
 </code></pre></div>
     </div>
   </div>
