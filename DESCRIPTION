@@ -3,7 +3,7 @@ Title: A Multi-Process 'dplyr' Backend
 Version: 0.1.1.9000
 Authors@R: c(
     person("Hadley", "Wickham", , "hadley@rstudio.com", role = c("aut", "cre")),
-    person("RStudio", role = "cph")
+    person("RStudio", role = c("cph", "fnd"))
   )
 Description: Partition a data frame across multiple worker processes to
     provide simple multicore parallelism.
