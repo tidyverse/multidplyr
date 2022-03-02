@@ -1,11 +1,15 @@
 url: https://multidplyr.tidyverse.org
 
-home:
-  strip_header: true
-
 template:
   package: tidytemplate
+  bootstrap: 5
 
+  includes:
+    in_header: |
+      <script defer data-domain="multidplyr.tidyverse.org,all.tidyverse.org" src="https://plausible.io/js/plausible.js"></script>
+
+development:
+  mode: auto
 
 news:
   releases:
