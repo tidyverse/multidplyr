@@ -1,9 +1,9 @@
 pandoc: 2.14.2
-pkgdown: 2.0.2
+pkgdown: 2.0.6
 pkgdown_sha: ~
 articles:
   multidplyr: multidplyr.html
-last_built: 2022-03-01T20:59Z
+last_built: 2022-09-25T15:34Z
 urls:
   reference: https://multidplyr.tidyverse.org/reference
   article: https://multidplyr.tidyverse.org/articles

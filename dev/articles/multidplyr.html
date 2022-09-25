@@ -8,9 +8,9 @@
 <meta name="description" content="multidplyr">
 <title>An introduction to multidplyr • multidplyr</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.1.0/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.1.0/bootstrap.bundle.min.js"></script><link href="../deps/_Source%20Sans%20Pro-0.4.0/font.css" rel="stylesheet">
-<link href="../deps/_Source%20Code%20Pro-0.4.0/font.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.1.3/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.1.3/bootstrap.bundle.min.js"></script><link href="../deps/Source_Sans_Pro-0.4.2/font.css" rel="stylesheet">
+<link href="../deps/Source_Code_Pro-0.4.2/font.css" rel="stylesheet">
 <!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- bootstrap-toc --><script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="An introduction to multidplyr">
@@ -76,7 +76,7 @@
 
 
 <div class="row">
-  <main id="main"><div class="page-header">
+  <main id="main" class="col-md-9"><div class="page-header">
       <img src="" class="logo" alt=""><h1>An introduction to multidplyr</h1>
             
       
@@ -89,17 +89,17 @@
 <p>multidplyr is a backend for dplyr that spreads work across multiple processes. Like all dplyr backends, it allows you to use the dplyr verbs that you’re already familiar with, but alters the underlying computational model to transparently support multi-process parallelism.</p>
 <p>This vignette will show you the basics of multidplyr using the <a href="https://CRAN.R-project.org/package=nycflights13" class="external-link">nycflights13</a> dataset.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://multidplyr.tidyverse.org">multidplyr</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span>, warn.conflicts <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/hadley/nycflights13" class="external-link">nycflights13</a></span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://multidplyr.tidyverse.org">multidplyr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span>, warn.conflicts <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/hadley/nycflights13" class="external-link">nycflights13</a></span><span class="op">)</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="creating-a-cluster">Creating a cluster<a class="anchor" aria-label="anchor" href="#creating-a-cluster"></a>
 </h2>
 <p>To start using multidplyr you must create a cluster. Here I used two cores because it’s the maximum permitted by CRAN, but I suggest that you use more. For best performance, I recommend using 1 or 2 fewer than the total number of cores on your computer, which you can detect with <code><a href="https://rdrr.io/r/parallel/detectCores.html" class="external-link">parallel::detectCores()</a></code> (leaving at least 1 core free means that you should still be able to use your computer for other tasks while your computation is running).</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">cluster</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/new_cluster.html">new_cluster</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span>
-<span class="va">cluster</span>
-<span class="co">#&gt; 2 session cluster [<span style="color: #00BB00;">..</span>]</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">cluster</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/new_cluster.html">new_cluster</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span></span>
+<span><span class="va">cluster</span></span>
+<span><span class="co">#&gt; 2 session cluster [<span style="color: #00BB00;">..</span>]</span></span></code></pre></div>
 <p>(In the examples, you’ll also see the use of <code><a href="../reference/default_cluster.html">default_cluster()</a></code>; this is designed specifically for the constraints of R CMD check, so I don’t recommend using it in your own code.)</p>
 <p>A cluster consists of multiple R processes created by <a href="https://callr.r-lib.org/" class="external-link">callr</a>. When multiple processes are running at the same time, your operating system will take care of spreading the work across multiple cores.</p>
 </div>
@@ -118,24 +118,24 @@
 </h3>
 <p><code><a href="../reference/partition.html">partition()</a></code> is useful if you have a single in-memory data frame. For example, take <code><a href="https://rdrr.io/pkg/nycflights13/man/flights.html" class="external-link">nycflights13::flights</a></code>. This dataset contains information for about ~300,000 flights departing New York City in 2013. We group it by destination, then partition it:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">flights1</span> <span class="op">&lt;-</span> <span class="va">flights</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">dest</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/partition.html">partition</a></span><span class="op">(</span><span class="va">cluster</span><span class="op">)</span>
-<span class="va">flights1</span>
-<span class="co">#&gt; Source: party_df [336,776 x 19]</span>
-<span class="co">#&gt; Groups: dest</span>
-<span class="co">#&gt; Shards: 2 [166,251--170,525 rows]</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;    year month   day dep_time sched_dep_time dep_delay arr_time</span>
-<span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">1</span>  <span style="text-decoration: underline;">2</span>013     1     1      557            600        -<span style="color: #BB0000;">3</span>      709</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">2</span>  <span style="text-decoration: underline;">2</span>013     1     1      557            600        -<span style="color: #BB0000;">3</span>      838</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">3</span>  <span style="text-decoration: underline;">2</span>013     1     1      558            600        -<span style="color: #BB0000;">2</span>      849</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">4</span>  <span style="text-decoration: underline;">2</span>013     1     1      558            600        -<span style="color: #BB0000;">2</span>      853</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">5</span>  <span style="text-decoration: underline;">2</span>013     1     1      559            559         0      702</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">6</span>  <span style="text-decoration: underline;">2</span>013     1     1      559            600        -<span style="color: #BB0000;">1</span>      854</span>
-<span class="co">#&gt; <span style="color: #949494;"># … with 336,770 more rows, and 12 more variables: sched_arr_time &lt;int&gt;,</span></span>
-<span class="co">#&gt; <span style="color: #949494;">#   arr_delay &lt;dbl&gt;, carrier &lt;chr&gt;, flight &lt;int&gt;, tailnum &lt;chr&gt;,</span></span>
-<span class="co">#&gt; <span style="color: #949494;">#   origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;,</span></span>
-<span class="co">#&gt; <span style="color: #949494;">#   minute &lt;dbl&gt;, time_hour &lt;dttm&gt;</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">flights1</span> <span class="op">&lt;-</span> <span class="va">flights</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">dest</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/partition.html">partition</a></span><span class="op">(</span><span class="va">cluster</span><span class="op">)</span></span>
+<span><span class="va">flights1</span></span>
+<span><span class="co">#&gt; Source: party_df [336,776 x 19]</span></span>
+<span><span class="co">#&gt; Groups: dest</span></span>
+<span><span class="co">#&gt; Shards: 2 [166,251--170,525 rows]</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;    year month   day dep_ti… sched_… dep_de… arr_ti… sched_… arr_de…</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>  <span style="text-decoration: underline;">2</span>013     1     1     557     600      -<span style="color: #BB0000;">3</span>     709     723     -<span style="color: #BB0000;">14</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>  <span style="text-decoration: underline;">2</span>013     1     1     557     600      -<span style="color: #BB0000;">3</span>     838     846      -<span style="color: #BB0000;">8</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>  <span style="text-decoration: underline;">2</span>013     1     1     558     600      -<span style="color: #BB0000;">2</span>     849     851      -<span style="color: #BB0000;">2</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>  <span style="text-decoration: underline;">2</span>013     1     1     558     600      -<span style="color: #BB0000;">2</span>     853     856      -<span style="color: #BB0000;">3</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>  <span style="text-decoration: underline;">2</span>013     1     1     559     559       0     702     706      -<span style="color: #BB0000;">4</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span>  <span style="text-decoration: underline;">2</span>013     1     1     559     600      -<span style="color: #BB0000;">1</span>     854     902      -<span style="color: #BB0000;">8</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># … with 336,770 more rows, and 10 more variables: carrier &lt;chr&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   flight &lt;int&gt;, tailnum &lt;chr&gt;, origin &lt;chr&gt;, dest &lt;chr&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;, minute &lt;dbl&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   time_hour &lt;dttm&gt;</span></span></span></code></pre></div>
 <p><code><a href="../reference/partition.html">partition()</a></code> splits <code>flights1</code> into roughly equal subsets on each worker, ensuring that all rows in a group are transfered to the same worker. The result is a <code>party_df</code>, or partitioned data frame.</p>
 </div>
 <div class="section level3">
@@ -144,37 +144,36 @@
 <p><code><a href="../reference/partition.html">partition()</a></code> is simple to call, but it’s relatively expensive because it copies a lot of data between processes. An alternative strategy is for each worker to load the data (from files) it needs directly.</p>
 <p>To show how that might work, I’ll first split flights up by month and save as csv files:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/files2.html" class="external-link">dir.create</a></span><span class="op">(</span><span class="va">path</span><span class="op">)</span>
-
-<span class="va">flights</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">month</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_map.html" class="external-link">group_walk</a></span><span class="op">(</span><span class="op">~</span> <span class="fu">vroom</span><span class="fu">::</span><span class="fu"><a href="https://vroom.r-lib.org/reference/vroom_write.html" class="external-link">vroom_write</a></span><span class="op">(</span><span class="va">.x</span>, <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"%s/month-%02i.csv"</span>, <span class="va">path</span>, <span class="va">.y</span><span class="op">$</span><span class="va">month</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/files2.html" class="external-link">dir.create</a></span><span class="op">(</span><span class="va">path</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">flights</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">month</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_map.html" class="external-link">group_walk</a></span><span class="op">(</span><span class="op">~</span> <span class="fu">vroom</span><span class="fu">::</span><span class="fu"><a href="https://vroom.r-lib.org/reference/vroom_write.html" class="external-link">vroom_write</a></span><span class="op">(</span><span class="va">.x</span>, <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"%s/month-%02i.csv"</span>, <span class="va">path</span>, <span class="va">.y</span><span class="op">$</span><span class="va">month</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>Now we find all the files in the directory, and divide them up so that each worker gets (approximately) the same number of pieces:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">files</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">dir</a></span><span class="op">(</span><span class="va">path</span>, full.names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="fu"><a href="../reference/cluster_utils.html">cluster_assign_partition</a></span><span class="op">(</span><span class="va">cluster</span>, files <span class="op">=</span> <span class="va">files</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">files</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">dir</a></span><span class="op">(</span><span class="va">path</span>, full.names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/cluster_utils.html">cluster_assign_partition</a></span><span class="op">(</span><span class="va">cluster</span>, files <span class="op">=</span> <span class="va">files</span><span class="op">)</span></span></code></pre></div>
 <p>Then we read in the files on each worker and use <code><a href="../reference/party_df.html">party_df()</a></code> to create a partitioned dataframe:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/cluster_call.html">cluster_send</a></span><span class="op">(</span><span class="va">cluster</span>, <span class="va">flights2</span> <span class="op">&lt;-</span> <span class="fu">vroom</span><span class="fu">::</span><span class="fu"><a href="https://vroom.r-lib.org/reference/vroom.html" class="external-link">vroom</a></span><span class="op">(</span><span class="va">files</span><span class="op">)</span><span class="op">)</span>
-
-<span class="va">flights2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/party_df.html">party_df</a></span><span class="op">(</span><span class="va">cluster</span>, <span class="st">"flights2"</span><span class="op">)</span>
-<span class="va">flights2</span>
-<span class="co">#&gt; Source: party_df [336,776 x 18]</span>
-<span class="co">#&gt; Shards: 2 [166,158--170,618 rows]</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;    year   day dep_time sched_dep_time dep_delay arr_time sched_arr_time</span>
-<span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">1</span>  <span style="text-decoration: underline;">2</span>013     1      517            515         2      830            819</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">2</span>  <span style="text-decoration: underline;">2</span>013     1      533            529         4      850            830</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">3</span>  <span style="text-decoration: underline;">2</span>013     1      542            540         2      923            850</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">4</span>  <span style="text-decoration: underline;">2</span>013     1      544            545        -<span style="color: #BB0000;">1</span>     <span style="text-decoration: underline;">1</span>004           <span style="text-decoration: underline;">1</span>022</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">5</span>  <span style="text-decoration: underline;">2</span>013     1      554            600        -<span style="color: #BB0000;">6</span>      812            837</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">6</span>  <span style="text-decoration: underline;">2</span>013     1      554            558        -<span style="color: #BB0000;">4</span>      740            728</span>
-<span class="co">#&gt; <span style="color: #949494;"># … with 336,770 more rows, and 11 more variables: arr_delay &lt;dbl&gt;,</span></span>
-<span class="co">#&gt; <span style="color: #949494;">#   carrier &lt;chr&gt;, flight &lt;dbl&gt;, tailnum &lt;chr&gt;, origin &lt;chr&gt;, dest &lt;chr&gt;,</span></span>
-<span class="co">#&gt; <span style="color: #949494;">#   air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;, minute &lt;dbl&gt;,</span></span>
-<span class="co">#&gt; <span style="color: #949494;">#   time_hour &lt;dttm&gt;</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/cluster_call.html">cluster_send</a></span><span class="op">(</span><span class="va">cluster</span>, <span class="va">flights2</span> <span class="op">&lt;-</span> <span class="fu">vroom</span><span class="fu">::</span><span class="fu"><a href="https://vroom.r-lib.org/reference/vroom.html" class="external-link">vroom</a></span><span class="op">(</span><span class="va">files</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">flights2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/party_df.html">party_df</a></span><span class="op">(</span><span class="va">cluster</span>, <span class="st">"flights2"</span><span class="op">)</span></span>
+<span><span class="va">flights2</span></span>
+<span><span class="co">#&gt; Source: party_df [336,776 x 18]</span></span>
+<span><span class="co">#&gt; Shards: 2 [166,158--170,618 rows]</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;    year   day dep_ti… sched_… dep_de… arr_ti… sched_… arr_de… carrier</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>  <span style="text-decoration: underline;">2</span>013     1     517     515       2     830     819      11 UA     </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>  <span style="text-decoration: underline;">2</span>013     1     533     529       4     850     830      20 UA     </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>  <span style="text-decoration: underline;">2</span>013     1     542     540       2     923     850      33 AA     </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>  <span style="text-decoration: underline;">2</span>013     1     544     545      -<span style="color: #BB0000;">1</span>    <span style="text-decoration: underline;">1</span>004    <span style="text-decoration: underline;">1</span>022     -<span style="color: #BB0000;">18</span> B6     </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>  <span style="text-decoration: underline;">2</span>013     1     554     600      -<span style="color: #BB0000;">6</span>     812     837     -<span style="color: #BB0000;">25</span> DL     </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span>  <span style="text-decoration: underline;">2</span>013     1     554     558      -<span style="color: #BB0000;">4</span>     740     728      12 UA     </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># … with 336,770 more rows, and 9 more variables: flight &lt;dbl&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   tailnum &lt;chr&gt;, origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   distance &lt;dbl&gt;, hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;</span></span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -182,96 +181,96 @@
 </h2>
 <p>Once you have a partitioned data frame, you can operate on it with the usual dplyr verbs. To bring the data back to the interactive process, use <code><a href="https://dplyr.tidyverse.org/reference/compute.html" class="external-link">collect()</a></code>:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">flights1</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>dep_delay <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">dep_delay</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/compute.html" class="external-link">collect</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; <span style="color: #949494;"># A tibble: 105 × 2</span></span>
-<span class="co">#&gt;    dest  dep_delay</span>
-<span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> ABQ       13.7 </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> ALB       23.6 </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> AUS       13.0 </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> AVL        8.19</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> BDL       17.7 </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> BGR       19.5 </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> BHM       29.7 </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> BNA       16.0 </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> BOS        8.73</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">10</span> BZN       11.5 </span>
-<span class="co">#&gt; <span style="color: #949494;"># … with 95 more rows</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">flights1</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>dep_delay <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">dep_delay</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/compute.html" class="external-link">collect</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 105 × 2</span></span></span>
+<span><span class="co">#&gt;    dest  dep_delay</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> ABQ       13.7 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> ALB       23.6 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> AUS       13.0 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> AVL        8.19</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> BDL       17.7 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> BGR       19.5 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> BHM       29.7 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> BNA       16.0 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> BOS        8.73</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> BZN       11.5 </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># … with 95 more rows</span></span></span></code></pre></div>
 <p>For this size of data and a simple transformation, using a local cluster actually makes performance much worse!</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">by_dest</span> <span class="op">&lt;-</span> <span class="va">flights</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">dest</span><span class="op">)</span>
-
-<span class="co"># Local computation</span>
-<span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="va">by_dest</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">dep_delay</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt;    user  system elapsed </span>
-<span class="co">#&gt;   0.013   0.000   0.013</span>
-
-<span class="co"># Remote: partitioning</span>
-<span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="va">flights2</span> <span class="op">&lt;-</span> <span class="va">flights</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/partition.html">partition</a></span><span class="op">(</span><span class="va">cluster</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt;    user  system elapsed </span>
-<span class="co">#&gt;   0.390   0.064   0.515</span>
-<span class="co"># Remote: computation</span>
-<span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="va">flights3</span> <span class="op">&lt;-</span> <span class="va">flights2</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">dep_delay</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt;    user  system elapsed </span>
-<span class="co">#&gt;   0.014   0.000   0.049</span>
-<span class="co"># Remote: retrieve results</span>
-<span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="va">flights3</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/compute.html" class="external-link">collect</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt;    user  system elapsed </span>
-<span class="co">#&gt;   0.008   0.000   0.059</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">by_dest</span> <span class="op">&lt;-</span> <span class="va">flights</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">dest</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Local computation</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="va">by_dest</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">dep_delay</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;    user  system elapsed </span></span>
+<span><span class="co">#&gt;   0.013   0.000   0.014</span></span>
+<span></span>
+<span><span class="co"># Remote: partitioning</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="va">flights2</span> <span class="op">&lt;-</span> <span class="va">flights</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/partition.html">partition</a></span><span class="op">(</span><span class="va">cluster</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;    user  system elapsed </span></span>
+<span><span class="co">#&gt;   0.494   0.064   0.616</span></span>
+<span><span class="co"># Remote: computation</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="va">flights3</span> <span class="op">&lt;-</span> <span class="va">flights2</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">dep_delay</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;    user  system elapsed </span></span>
+<span><span class="co">#&gt;   0.008   0.000   0.052</span></span>
+<span><span class="co"># Remote: retrieve results</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="va">flights3</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/compute.html" class="external-link">collect</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;    user  system elapsed </span></span>
+<span><span class="co">#&gt;   0.008   0.000   0.058</span></span></code></pre></div>
 <p>That’s because of the overhead associated with sending the data to each worker and retrieving the results at the end. For basic dplyr verbs, multidplyr is unlikely to give you significant speed ups unless you have 10s or 100s of millions of data points (and in that scenario you should first try <a href="https://dtplyr.tidyverse.org/" class="external-link">dtplyr</a>, which uses <a href="https://R-datatable.com/" class="external-link">data.table</a>).</p>
 <p>multipldyr might help, however, if you’re doing more complex things. Let’s see how that plays out when fitting a moderately complex model. We’ll start by selecting a subset of flights that have at least 50 occurrences, and we’ll compute the day of the year from the date:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">daily_flights</span> <span class="op">&lt;-</span> <span class="va">flights</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">count</a></span><span class="op">(</span><span class="va">dest</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">n</span> <span class="op">&gt;=</span> <span class="fl">365</span><span class="op">)</span>
-
-<span class="va">common_dest</span> <span class="op">&lt;-</span> <span class="va">flights</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter-joins.html" class="external-link">semi_join</a></span><span class="op">(</span><span class="va">daily_flights</span>, by <span class="op">=</span> <span class="st">"dest"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>yday <span class="op">=</span> <span class="fu">lubridate</span><span class="fu">::</span><span class="fu"><a href="https://lubridate.tidyverse.org/reference/day.html" class="external-link">yday</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ISOdatetime.html" class="external-link">ISOdate</a></span><span class="op">(</span><span class="va">year</span>, <span class="va">month</span>, <span class="va">day</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">dest</span><span class="op">)</span>
-
-<span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">common_dest</span><span class="op">)</span>
-<span class="co">#&gt; [1] 332942</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">daily_flights</span> <span class="op">&lt;-</span> <span class="va">flights</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">count</a></span><span class="op">(</span><span class="va">dest</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">n</span> <span class="op">&gt;=</span> <span class="fl">365</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">common_dest</span> <span class="op">&lt;-</span> <span class="va">flights</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter-joins.html" class="external-link">semi_join</a></span><span class="op">(</span><span class="va">daily_flights</span>, by <span class="op">=</span> <span class="st">"dest"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>yday <span class="op">=</span> <span class="fu">lubridate</span><span class="fu">::</span><span class="fu"><a href="https://lubridate.tidyverse.org/reference/day.html" class="external-link">yday</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ISOdatetime.html" class="external-link">ISOdate</a></span><span class="op">(</span><span class="va">year</span>, <span class="va">month</span>, <span class="va">day</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">dest</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">common_dest</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 332942</span></span></code></pre></div>
 <p>That leaves us with ~332,000 observations. Let’s partition this smaller dataset:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">by_dest</span> <span class="op">&lt;-</span> <span class="va">common_dest</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/partition.html">partition</a></span><span class="op">(</span><span class="va">cluster</span><span class="op">)</span>
-<span class="va">by_dest</span>
-<span class="co">#&gt; Source: party_df [332,942 x 20]</span>
-<span class="co">#&gt; Groups: dest</span>
-<span class="co">#&gt; Shards: 2 [164,539--168,403 rows]</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;    year month   day dep_time sched_dep_time dep_delay arr_time</span>
-<span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">1</span>  <span style="text-decoration: underline;">2</span>013     1     1      517            515         2      830</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">2</span>  <span style="text-decoration: underline;">2</span>013     1     1      533            529         4      850</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">3</span>  <span style="text-decoration: underline;">2</span>013     1     1      542            540         2      923</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">4</span>  <span style="text-decoration: underline;">2</span>013     1     1      554            558        -<span style="color: #BB0000;">4</span>      740</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">5</span>  <span style="text-decoration: underline;">2</span>013     1     1      555            600        -<span style="color: #BB0000;">5</span>      913</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">6</span>  <span style="text-decoration: underline;">2</span>013     1     1      558            600        -<span style="color: #BB0000;">2</span>      753</span>
-<span class="co">#&gt; <span style="color: #949494;"># … with 332,936 more rows, and 13 more variables: sched_arr_time &lt;int&gt;,</span></span>
-<span class="co">#&gt; <span style="color: #949494;">#   arr_delay &lt;dbl&gt;, carrier &lt;chr&gt;, flight &lt;int&gt;, tailnum &lt;chr&gt;,</span></span>
-<span class="co">#&gt; <span style="color: #949494;">#   origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;,</span></span>
-<span class="co">#&gt; <span style="color: #949494;">#   minute &lt;dbl&gt;, time_hour &lt;dttm&gt;, yday &lt;dbl&gt;</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">by_dest</span> <span class="op">&lt;-</span> <span class="va">common_dest</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/partition.html">partition</a></span><span class="op">(</span><span class="va">cluster</span><span class="op">)</span></span>
+<span><span class="va">by_dest</span></span>
+<span><span class="co">#&gt; Source: party_df [332,942 x 20]</span></span>
+<span><span class="co">#&gt; Groups: dest</span></span>
+<span><span class="co">#&gt; Shards: 2 [164,539--168,403 rows]</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;    year month   day dep_ti… sched_… dep_de… arr_ti… sched_… arr_de…</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>  <span style="text-decoration: underline;">2</span>013     1     1     517     515       2     830     819      11</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>  <span style="text-decoration: underline;">2</span>013     1     1     533     529       4     850     830      20</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>  <span style="text-decoration: underline;">2</span>013     1     1     542     540       2     923     850      33</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>  <span style="text-decoration: underline;">2</span>013     1     1     554     558      -<span style="color: #BB0000;">4</span>     740     728      12</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>  <span style="text-decoration: underline;">2</span>013     1     1     555     600      -<span style="color: #BB0000;">5</span>     913     854      19</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span>  <span style="text-decoration: underline;">2</span>013     1     1     558     600      -<span style="color: #BB0000;">2</span>     753     745       8</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># … with 332,936 more rows, and 11 more variables: carrier &lt;chr&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   flight &lt;int&gt;, tailnum &lt;chr&gt;, origin &lt;chr&gt;, dest &lt;chr&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;, minute &lt;dbl&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   time_hour &lt;dttm&gt;, yday &lt;dbl&gt;</span></span></span></code></pre></div>
 <p>Let’s fit a smoothed generalised additive model to each destination, estimating how delays vary over the course of the year and within a day. Note that we need to use <code><a href="../reference/cluster_utils.html">cluster_library()</a></code> to load the mgcv package on every node. That takes around 3s:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/cluster_utils.html">cluster_library</a></span><span class="op">(</span><span class="va">cluster</span>, <span class="st">"mgcv"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="op">{</span>
-  <span class="va">models</span> <span class="op">&lt;-</span> <span class="va">by_dest</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
-    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/do.html" class="external-link">do</a></span><span class="op">(</span>mod <span class="op">=</span> <span class="fu">gam</span><span class="op">(</span><span class="va">dep_delay</span> <span class="op">~</span> <span class="fu">s</span><span class="op">(</span><span class="va">yday</span><span class="op">)</span> <span class="op">+</span> <span class="fu">s</span><span class="op">(</span><span class="va">dep_time</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">.</span><span class="op">)</span><span class="op">)</span>
-<span class="op">}</span><span class="op">)</span>
-<span class="co">#&gt;    user  system elapsed </span>
-<span class="co">#&gt;   0.018   0.000   2.973</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/cluster_utils.html">cluster_library</a></span><span class="op">(</span><span class="va">cluster</span>, <span class="st">"mgcv"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="op">{</span></span>
+<span>  <span class="va">models</span> <span class="op">&lt;-</span> <span class="va">by_dest</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/do.html" class="external-link">do</a></span><span class="op">(</span>mod <span class="op">=</span> <span class="fu">gam</span><span class="op">(</span><span class="va">dep_delay</span> <span class="op">~</span> <span class="fu">s</span><span class="op">(</span><span class="va">yday</span><span class="op">)</span> <span class="op">+</span> <span class="fu">s</span><span class="op">(</span><span class="va">dep_time</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">.</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">}</span><span class="op">)</span></span>
+<span><span class="co">#&gt;    user  system elapsed </span></span>
+<span><span class="co">#&gt;   0.010   0.004   3.031</span></span></code></pre></div>
 <p>Compared with around 5s doing it locally:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="op">{</span>
-  <span class="va">models</span> <span class="op">&lt;-</span> <span class="va">common_dest</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
-    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">dest</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
-    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/do.html" class="external-link">do</a></span><span class="op">(</span>mod <span class="op">=</span> <span class="fu">gam</span><span class="op">(</span><span class="va">dep_delay</span> <span class="op">~</span> <span class="fu">s</span><span class="op">(</span><span class="va">yday</span><span class="op">)</span> <span class="op">+</span> <span class="fu">s</span><span class="op">(</span><span class="va">dep_time</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">.</span><span class="op">)</span><span class="op">)</span>
-<span class="op">}</span><span class="op">)</span>
-<span class="co">#&gt;    user  system elapsed </span>
-<span class="co">#&gt;   4.359   0.075   4.435</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="op">{</span></span>
+<span>  <span class="va">models</span> <span class="op">&lt;-</span> <span class="va">common_dest</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">dest</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/do.html" class="external-link">do</a></span><span class="op">(</span>mod <span class="op">=</span> <span class="fu">gam</span><span class="op">(</span><span class="va">dep_delay</span> <span class="op">~</span> <span class="fu">s</span><span class="op">(</span><span class="va">yday</span><span class="op">)</span> <span class="op">+</span> <span class="fu">s</span><span class="op">(</span><span class="va">dep_time</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">.</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">}</span><span class="op">)</span></span>
+<span><span class="co">#&gt;    user  system elapsed </span></span>
+<span><span class="co">#&gt;   4.709   0.080   4.791</span></span></code></pre></div>
 <p>The cost of transmitting messages to the nodes is roughly constant, so the longer the task you’re parallelising, the closer you’ll get to a linear speed up.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
@@ -289,7 +288,7 @@
 
 <div class="pkgdown-footer-right">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
   </div></footer>
