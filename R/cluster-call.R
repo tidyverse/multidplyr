@@ -109,9 +109,8 @@ simplify_impl <- function(x,
   names <- vctrs::vec_names(x)
   x <- vctrs::vec_set_names(x, NULL)
 
-  # TODO: use `error_call` when available
   out <- tryCatch(
-    vctrs::list_unchop(x, ptype = ptype),
+    vctrs::vec_c(!!!x, ptype = ptype),
     vctrs_error_incompatible_type = function(err) {
       if (strict || !is.null(ptype)) {
         cnd_signal(err)
