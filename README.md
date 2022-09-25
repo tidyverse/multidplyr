@@ -7,7 +7,7 @@
 
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
-[![R-CMD-check](https://github.com/tidyverse/multidplyr/workflows/R-CMD-check/badge.svg)](https://github.com/tidyverse/multidplyr/actions)
+[![R-CMD-check](https://github.com/tidyverse/multidplyr/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/tidyverse/multidplyr/actions/workflows/R-CMD-check.yaml)
 [![Codecov test
 coverage](https://codecov.io/gh/tidyverse/multidplyr/branch/main/graph/badge.svg)](https://app.codecov.io/gh/tidyverse/multidplyr?branch=main)
 [![CRAN
@@ -102,17 +102,17 @@ flight_dest
 #> Groups: dest
 #> Shards: 4 [81,594--86,548 rows]
 #> 
-#>    year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time
-#>   <int> <int> <int>    <int>          <int>     <dbl>    <int>          <int>
-#> 1  2013     1     1      544            545        -1     1004           1022
-#> 2  2013     1     1      558            600        -2      923            937
-#> 3  2013     1     1      559            600        -1      854            902
-#> 4  2013     1     1      602            610        -8      812            820
-#> 5  2013     1     1      602            605        -3      821            805
-#> 6  2013     1     1      611            600        11      945            931
-#> # … with 336,770 more rows, and 11 more variables: arr_delay <dbl>,
-#> #   carrier <chr>, flight <int>, tailnum <chr>, origin <chr>, dest <chr>,
-#> #   air_time <dbl>, distance <dbl>, hour <dbl>, minute <dbl>, time_hour <dttm>
+#>    year month   day dep_ti… sched_… dep_de… arr_ti… sched_… arr_de… carrier
+#>   <int> <int> <int>   <int>   <int>   <dbl>   <int>   <int>   <dbl> <chr>  
+#> 1  2013     1     1     544     545      -1    1004    1022     -18 B6     
+#> 2  2013     1     1     558     600      -2     923     937     -14 UA     
+#> 3  2013     1     1     559     600      -1     854     902      -8 UA     
+#> 4  2013     1     1     602     610      -8     812     820      -8 DL     
+#> 5  2013     1     1     602     605      -3     821     805      16 MQ     
+#> 6  2013     1     1     611     600      11     945     931      14 UA     
+#> # … with 336,770 more rows, and 9 more variables: flight <int>, tailnum <chr>,
+#> #   origin <chr>, dest <chr>, air_time <dbl>, distance <dbl>, hour <dbl>,
+#> #   minute <dbl>, time_hour <dttm>
 ```
 
 Now you can work with it like a regular data frame, but the computations
