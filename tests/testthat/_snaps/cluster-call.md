@@ -2,7 +2,8 @@
 
     Code
       cluster_call(cl, stop("!!"))
-    Error <rlang_error>
-      Remote computation failed:
+    Condition
+      Error in `cluster_call()`:
+      ! Remote computation failed:
       !!
 
