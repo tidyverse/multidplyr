@@ -32,6 +32,21 @@ test_that("errors are propagated", {
   expect_snapshot(cluster_call(cl, stop("!!")), error = TRUE)
 })
 
+test_that("errors capture worker id", {
+  cl <- default_cluster()
+
+  f <- function(x) {
+    if (x == 2) {
+      rlang::abort("Computation failed")
+    }
+  }
+  cluster_assign(cl, f = f)
+  cluster_assign_each(cl, x = seq_along(cl))
+
+  expect_snapshot(cluster_call(cl, f(x)), error = TRUE)
+})
+
+
 test_that("call_send() returns cluster", {
   cl <- default_cluster()
   expect_equal(cluster_send(cl, 10), cl)
