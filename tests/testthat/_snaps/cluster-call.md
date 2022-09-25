@@ -2,7 +2,8 @@
 
     Code
       out <- cluster_call(cl, 1, ptype = double())
-    Warning <rlang_warning>
+    Condition
+      Warning:
       Must now set `simplify = TRUE` when supplying ptype
 
 # errors are propagated
