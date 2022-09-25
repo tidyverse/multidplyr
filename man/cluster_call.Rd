@@ -5,7 +5,7 @@
 \alias{cluster_send}
 \title{Call a function on each node of a cluster}
 \usage{
-cluster_call(cluster, code, ptype = list())
+cluster_call(cluster, code, simplify = FALSE, ptype = NULL)
 
 cluster_send(cluster, code)
 }
@@ -14,8 +14,11 @@ cluster_send(cluster, code)
 
 \item{code}{An expression to execute on each worker.}
 
-\item{ptype}{Determines the output type. The default returns a list,
-which will always succeed. Set to a narrower type to simplify the output.}
+\item{simplify}{Should the results be simplified from a list? `code`
+must return a vector of length one in order for this to work.}
+
+\item{ptype}{If `simplify` is `TRUE`, use `ptype` to enforce the desired
+output type.}
 }
 \value{
 A list of results with one element for each worker in `cluster`.
@@ -33,9 +36,9 @@ cluster_call(cl, Sys.getpid())
 cluster_call(cl, runif(1))
 
 # use ptype to simplify
-cluster_call(cl, runif(1), ptype = double())
+cluster_call(cl, runif(1), simplify = TRUE)
 
 # use cluster_send() to ignore results
 cluster_send(cl, x <- runif(1))
-cluster_call(cl, x, ptype = double())
+cluster_call(cl, x, simplify = TRUE)
 }

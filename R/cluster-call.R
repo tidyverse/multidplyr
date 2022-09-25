@@ -6,8 +6,10 @@
 #'
 #' @param cluster A cluster.
 #' @param code An expression to execute on each worker.
-#' @param ptype Determines the output type. The default returns a list,
-#'   which will always succeed. Set to a narrower type to simplify the output.
+#' @param simplify Should the results be simplified from a list? `code`
+#'   must return a vector of length one in order for this to work.
+#' @param ptype If `simplify` is `TRUE`, use `ptype` to enforce the desired
+#'   output type.
 #' @export
 #' @return A list of results with one element for each worker in `cluster`.
 #' @examples
@@ -18,15 +20,21 @@
 #' cluster_call(cl, runif(1))
 #'
 #' # use ptype to simplify
-#' cluster_call(cl, runif(1), ptype = double())
+#' cluster_call(cl, runif(1), simplify = TRUE)
 #'
 #' # use cluster_send() to ignore results
 #' cluster_send(cl, x <- runif(1))
-#' cluster_call(cl, x, ptype = double())
-cluster_call <- function(cluster, code, ptype = list()) {
+#' cluster_call(cl, x, simplify = TRUE)
+cluster_call <- function(cluster, code, simplify = FALSE, ptype = NULL) {
   stopifnot(is_cluster(cluster))
   code <- enexpr(code)
   to_rm <- attr(cluster, "cleaner")$reset()
+
+
+  if (!isTRUE(simplify) && !is.null(ptype)) {
+    warn("Must now set `simplify = TRUE` when supplying ptype")
+    simplify <- TRUE
+  }
 
   # nocov start
   f <- function(code, to_rm) {
@@ -48,8 +56,8 @@ cluster_call <- function(cluster, code, ptype = list()) {
   }
 
   out <- lapply(results, "[[", "result")
-  if (!identical(ptype, list())) {
-    out <- vctrs::vec_list_cast(out, ptype)
+  if (isTRUE(simplify)) {
+    out <- simplify_impl(out, ptype = ptype)
   }
   out
 }
@@ -62,4 +70,54 @@ cluster_send <- function(cluster, code) {
   cluster_call(cluster, !!code)
 
   invisible(cluster)
+}
+
+
+# TODO: replace with purrr::list_simplify() when purrr 1.0.0 is out
+simplify_impl <- function(x,
+                          strict = TRUE,
+                          ptype = NULL,
+                          error_arg = caller_arg(x),
+                          error_call = caller_env()) {
+  vctrs::vec_check_list(x, arg = error_arg, call = error_call)
+
+  # Handle the cases where we definitely can't simplify
+  if (strict) {
+    vctrs::list_check_all_vectors(x, arg = error_arg, call = error_call)
+    size_one <- vctrs::list_sizes(x) == 1L
+    can_simplify <- all(size_one)
+
+    if (!can_simplify) {
+      bad <- which(!size_one)[[1]]
+      cli::cli_abort(
+        c(
+          "All elements must be size 1.",
+          i = "`{error_arg}[[{bad}]]` is size {vec_size(x[[bad]])}."
+        ),
+        call = error_call
+      )
+    }
+  } else {
+    can_simplify <- vctrs::list_all_vectors(x) && all(vctrs::list_sizes(x) == 1L)
+
+    if (!can_simplify) {
+      return(x)
+    }
+  }
+
+  names <- vctrs::vec_names(x)
+  x <- vctrs::vec_set_names(x, NULL)
+
+  # TODO: use `error_call` when available
+  out <- tryCatch(
+    vctrs::list_unchop(x, ptype = ptype),
+    vctrs_error_incompatible_type = function(err) {
+      if (strict || !is.null(ptype)) {
+        cnd_signal(err)
+      } else {
+        x
+      }
+    }
+  )
+  vctrs::vec_set_names(out, names)
 }

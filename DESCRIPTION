@@ -15,6 +15,7 @@ Depends:
     R (>= 3.4.0)
 Imports:
     callr (>= 3.5.1),
+    cli,
     crayon,
     dplyr (>= 1.0.0),
     magrittr,
