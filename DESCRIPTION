@@ -20,7 +20,7 @@ Imports:
     magrittr,
     qs (>= 0.24.1),
     R6,
-    rlang,
+    rlang (>= 1.0.6),
     tibble,
     tidyselect,
     vctrs (>= 0.3.6)
