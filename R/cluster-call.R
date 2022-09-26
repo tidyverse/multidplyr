@@ -6,8 +6,13 @@
 #'
 #' @param cluster A cluster.
 #' @param code An expression to execute on each worker.
-#' @param simplify Should the results be simplified from a list? `code`
-#'   must return a vector of length one in order for this to work.
+#' @param simplify Should the results be simplified from a list?
+#'   * `TRUE`: simplify or die trying.
+#'   * `NA`: simplify if possible.
+#'   * `FALSE`: never try to simplify, always leaving as a list.
+#'
+#'   `code` must return a vector of length one in order for simplification
+#'   to succeed.
 #' @param ptype If `simplify` is `TRUE`, use `ptype` to enforce the desired
 #'   output type.
 #' @export
@@ -30,8 +35,11 @@ cluster_call <- function(cluster, code, simplify = FALSE, ptype = NULL) {
   code <- enexpr(code)
   to_rm <- attr(cluster, "cleaner")$reset()
 
-
+  if (length(simplify) > 1 || !is.logical(simplify)) {
+    cli::cli_abort("{.arg simplify} must be `TRUE`, `FALSE`, or `NA`.")
+  }
   if (!isTRUE(simplify) && !is.null(ptype)) {
+    # 0.1.2
     warn("Must now set `simplify = TRUE` when supplying ptype")
     simplify <- TRUE
   }
@@ -57,8 +65,8 @@ cluster_call <- function(cluster, code, simplify = FALSE, ptype = NULL) {
   }
 
   out <- lapply(results, "[[", "result")
-  if (isTRUE(simplify)) {
-    out <- simplify_impl(out, ptype = ptype)
+  if (!isFALSE(simplify)) {
+    out <- simplify_impl(out, strict = !is.na(simplify), ptype = ptype)
   }
   out
 }
@@ -72,7 +80,6 @@ cluster_send <- function(cluster, code) {
 
   invisible(cluster)
 }
-
 
 # TODO: replace with purrr::list_simplify() when purrr 1.0.0 is out
 simplify_impl <- function(x,

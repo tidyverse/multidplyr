@@ -14,8 +14,13 @@ cluster_send(cluster, code)
 
 \item{code}{An expression to execute on each worker.}
 
-\item{simplify}{Should the results be simplified from a list? `code`
-must return a vector of length one in order for this to work.}
+\item{simplify}{Should the results be simplified from a list?
+  * `TRUE`: simplify or die trying.
+  * `NA`: simplify if possible.
+  * `FALSE`: never try to simplify, always leaving as a list.
+
+  `code` must return a vector of length one in order for simplification
+  to succeed.}
 
 \item{ptype}{If `simplify` is `TRUE`, use `ptype` to enforce the desired
 output type.}

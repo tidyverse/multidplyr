@@ -18,6 +18,13 @@ test_that("can simplify results", {
   expect_identical(out, c(1, 1))
 })
 
+test_that("validates inputs", {
+  cl <- default_cluster()
+  expect_snapshot(error = TRUE, {
+    cluster_call(cl, 1, simplify = "x")
+  })
+})
+
 test_that("old ptype interface works with warning", {
   cl <- default_cluster()
   expect_snapshot({
