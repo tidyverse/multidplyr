@@ -5,18 +5,18 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="description" content="Partition a data frame across multiple worker
-    processes to provide simple multicore parallelism.">
+<meta name="description" content="Partition a data frame across multiple worker processes to
+    provide simple multicore parallelism.">
 <title>A Multi-Process dplyr Backend • multidplyr</title>
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="deps/bootstrap-5.1.0/bootstrap.min.css" rel="stylesheet">
-<script src="deps/bootstrap-5.1.0/bootstrap.bundle.min.js"></script><link href="deps/_Source%20Sans%20Pro-0.4.0/font.css" rel="stylesheet">
-<link href="deps/_Source%20Code%20Pro-0.4.0/font.css" rel="stylesheet">
+<link href="deps/bootstrap-5.1.3/bootstrap.min.css" rel="stylesheet">
+<script src="deps/bootstrap-5.1.3/bootstrap.bundle.min.js"></script><link href="deps/Source_Sans_Pro-0.4.2/font.css" rel="stylesheet">
+<link href="deps/Source_Code_Pro-0.4.2/font.css" rel="stylesheet">
 <!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- bootstrap-toc --><script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="A Multi-Process dplyr Backend">
-<meta property="og:description" content="Partition a data frame across multiple worker
-    processes to provide simple multicore parallelism.">
+<meta property="og:description" content="Partition a data frame across multiple worker processes to
+    provide simple multicore parallelism.">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -30,7 +30,7 @@
     
     <a class="navbar-brand me-2" href="index.html">multidplyr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.1.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.1.2</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -77,7 +77,6 @@
 <div class="page-header"><h1 id="multidplyr">multidplyr<a class="anchor" aria-label="anchor" href="#multidplyr"></a>
 </h1></div>
 <!-- badges: start -->
-
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
@@ -90,79 +89,79 @@
 </h2>
 <p>You can install the released version of multidplyr from <a href="https://CRAN.R-project.org" class="external-link">CRAN</a> with:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"multidplyr"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"multidplyr"</span><span class="op">)</span></span></code></pre></div>
 <p>And the development version from <a href="https://github.com/" class="external-link">GitHub</a> with:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># install.packages("devtools")</span>
-<span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"tidyverse/multidplyr"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># install.packages("devtools")</span></span>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"tidyverse/multidplyr"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a>
 </h2>
 <p>To use multidplyr, you first create a cluster of the desired number of workers. Each one of these workers is a separate R process, and the operating system will spread their execution across multiple cores:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://multidplyr.tidyverse.org">multidplyr</a></span><span class="op">)</span>
-
-<span class="va">cluster</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/new_cluster.html">new_cluster</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span>
-<span class="fu"><a href="reference/cluster_utils.html">cluster_library</a></span><span class="op">(</span><span class="va">cluster</span>, <span class="st">"dplyr"</span><span class="op">)</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Attaching package: 'dplyr'</span>
-<span class="co">#&gt; The following objects are masked from 'package:stats':</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;     filter, lag</span>
-<span class="co">#&gt; The following objects are masked from 'package:base':</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;     intersect, setdiff, setequal, union</span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://multidplyr.tidyverse.org">multidplyr</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">cluster</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/new_cluster.html">new_cluster</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span>
+<span><span class="fu"><a href="reference/cluster_utils.html">cluster_library</a></span><span class="op">(</span><span class="va">cluster</span>, <span class="st">"dplyr"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Attaching package: 'dplyr'</span></span>
+<span><span class="co">#&gt; The following objects are masked from 'package:stats':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     filter, lag</span></span>
+<span><span class="co">#&gt; The following objects are masked from 'package:base':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     intersect, setdiff, setequal, union</span></span></code></pre></div>
 <p>There are two primary ways to use multidplyr. The first, and most efficient, way is to read different files on each worker:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Create a filename vector containing different values on each worker</span>
-<span class="fu"><a href="reference/cluster_utils.html">cluster_assign_each</a></span><span class="op">(</span><span class="va">cluster</span>, filename <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"a.csv"</span>, <span class="st">"b.csv"</span>, <span class="st">"c.csv"</span>, <span class="st">"d.csv"</span><span class="op">)</span><span class="op">)</span>
-
-<span class="co"># Use vroom to quickly load the csvs</span>
-<span class="fu"><a href="reference/cluster_call.html">cluster_send</a></span><span class="op">(</span><span class="va">cluster</span>, <span class="va">my_data</span> <span class="op">&lt;-</span> <span class="fu">vroom</span><span class="fu">::</span><span class="fu"><a href="https://vroom.r-lib.org/reference/vroom.html" class="external-link">vroom</a></span><span class="op">(</span><span class="va">filename</span><span class="op">)</span><span class="op">)</span>
-
-<span class="co"># Create a party_df using the my_data variable on each worker</span>
-<span class="va">my_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/party_df.html">party_df</a></span><span class="op">(</span><span class="va">cluster</span>, <span class="st">"my_data"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># Create a filename vector containing different values on each worker</span></span>
+<span><span class="fu"><a href="reference/cluster_utils.html">cluster_assign_each</a></span><span class="op">(</span><span class="va">cluster</span>, filename <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"a.csv"</span>, <span class="st">"b.csv"</span>, <span class="st">"c.csv"</span>, <span class="st">"d.csv"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Use vroom to quickly load the csvs</span></span>
+<span><span class="fu"><a href="reference/cluster_call.html">cluster_send</a></span><span class="op">(</span><span class="va">cluster</span>, <span class="va">my_data</span> <span class="op">&lt;-</span> <span class="fu">vroom</span><span class="fu">::</span><span class="fu"><a href="https://vroom.r-lib.org/reference/vroom.html" class="external-link">vroom</a></span><span class="op">(</span><span class="va">filename</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Create a party_df using the my_data variable on each worker</span></span>
+<span><span class="va">my_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/party_df.html">party_df</a></span><span class="op">(</span><span class="va">cluster</span>, <span class="st">"my_data"</span><span class="op">)</span></span></code></pre></div>
 <p>Alternatively, if you already have the data loaded in the main session, you can use <code><a href="reference/partition.html">partition()</a></code> to automatically spread it across the workers. Before calling <code><a href="reference/partition.html">partition()</a></code>, it’s a good idea to call <code>group_by()</code> to ensure that all of the observations belonging to a group end up on the same worker.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/hadley/nycflights13" class="external-link">nycflights13</a></span><span class="op">)</span>
-
-<span class="va">flight_dest</span> <span class="op">&lt;-</span> <span class="va">flights</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">group_by</span><span class="op">(</span><span class="va">dest</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="reference/partition.html">partition</a></span><span class="op">(</span><span class="va">cluster</span><span class="op">)</span>
-<span class="va">flight_dest</span>
-<span class="co">#&gt; Source: party_df [336,776 x 19]</span>
-<span class="co">#&gt; Groups: dest</span>
-<span class="co">#&gt; Shards: 4 [81,594--86,548 rows]</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;    year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time</span>
-<span class="co">#&gt;   &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;</span>
-<span class="co">#&gt; 1  2013     1     1      544            545        -1     1004           1022</span>
-<span class="co">#&gt; 2  2013     1     1      558            600        -2      923            937</span>
-<span class="co">#&gt; 3  2013     1     1      559            600        -1      854            902</span>
-<span class="co">#&gt; 4  2013     1     1      602            610        -8      812            820</span>
-<span class="co">#&gt; 5  2013     1     1      602            605        -3      821            805</span>
-<span class="co">#&gt; 6  2013     1     1      611            600        11      945            931</span>
-<span class="co">#&gt; # … with 336,770 more rows, and 11 more variables: arr_delay &lt;dbl&gt;,</span>
-<span class="co">#&gt; #   carrier &lt;chr&gt;, flight &lt;int&gt;, tailnum &lt;chr&gt;, origin &lt;chr&gt;, dest &lt;chr&gt;,</span>
-<span class="co">#&gt; #   air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;</span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/hadley/nycflights13" class="external-link">nycflights13</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">flight_dest</span> <span class="op">&lt;-</span> <span class="va">flights</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">group_by</span><span class="op">(</span><span class="va">dest</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="reference/partition.html">partition</a></span><span class="op">(</span><span class="va">cluster</span><span class="op">)</span></span>
+<span><span class="va">flight_dest</span></span>
+<span><span class="co">#&gt; Source: party_df [336,776 x 19]</span></span>
+<span><span class="co">#&gt; Groups: dest</span></span>
+<span><span class="co">#&gt; Shards: 4 [81,594--86,548 rows]</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;    year month   day dep_ti… sched_… dep_de… arr_ti… sched_… arr_de… carrier</span></span>
+<span><span class="co">#&gt;   &lt;int&gt; &lt;int&gt; &lt;int&gt;   &lt;int&gt;   &lt;int&gt;   &lt;dbl&gt;   &lt;int&gt;   &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;  </span></span>
+<span><span class="co">#&gt; 1  2013     1     1     544     545      -1    1004    1022     -18 B6     </span></span>
+<span><span class="co">#&gt; 2  2013     1     1     558     600      -2     923     937     -14 UA     </span></span>
+<span><span class="co">#&gt; 3  2013     1     1     559     600      -1     854     902      -8 UA     </span></span>
+<span><span class="co">#&gt; 4  2013     1     1     602     610      -8     812     820      -8 DL     </span></span>
+<span><span class="co">#&gt; 5  2013     1     1     602     605      -3     821     805      16 MQ     </span></span>
+<span><span class="co">#&gt; 6  2013     1     1     611     600      11     945     931      14 UA     </span></span>
+<span><span class="co">#&gt; # … with 336,770 more rows, and 9 more variables: flight &lt;int&gt;, tailnum &lt;chr&gt;,</span></span>
+<span><span class="co">#&gt; #   origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;,</span></span>
+<span><span class="co">#&gt; #   minute &lt;dbl&gt;, time_hour &lt;dttm&gt;</span></span></code></pre></div>
 <p>Now you can work with it like a regular data frame, but the computations will be spread across multiple cores. Once you’ve finished computation, use <code>collect()</code> to bring the data back to the host session:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">flight_dest</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
-  <span class="fu">summarise</span><span class="op">(</span>delay <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">dep_delay</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>, n <span class="op">=</span> <span class="fu">n</span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
-  <span class="fu">collect</span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 105 × 3</span>
-<span class="co">#&gt;    dest  delay     n</span>
-<span class="co">#&gt;    &lt;chr&gt; &lt;dbl&gt; &lt;int&gt;</span>
-<span class="co">#&gt;  1 ABQ    13.7   254</span>
-<span class="co">#&gt;  2 AUS    13.0  2439</span>
-<span class="co">#&gt;  3 BQN    12.4   896</span>
-<span class="co">#&gt;  4 BTV    13.6  2589</span>
-<span class="co">#&gt;  5 BUF    13.4  4681</span>
-<span class="co">#&gt;  6 CLE    13.4  4573</span>
-<span class="co">#&gt;  7 CMH    12.2  3524</span>
-<span class="co">#&gt;  8 DEN    15.2  7266</span>
-<span class="co">#&gt;  9 DSM    26.2   569</span>
-<span class="co">#&gt; 10 DTW    11.8  9384</span>
-<span class="co">#&gt; # … with 95 more rows</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">flight_dest</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu">summarise</span><span class="op">(</span>delay <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">dep_delay</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>, n <span class="op">=</span> <span class="fu">n</span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu">collect</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 105 × 3</span></span>
+<span><span class="co">#&gt;    dest  delay     n</span></span>
+<span><span class="co">#&gt;    &lt;chr&gt; &lt;dbl&gt; &lt;int&gt;</span></span>
+<span><span class="co">#&gt;  1 ABQ    13.7   254</span></span>
+<span><span class="co">#&gt;  2 AUS    13.0  2439</span></span>
+<span><span class="co">#&gt;  3 BQN    12.4   896</span></span>
+<span><span class="co">#&gt;  4 BTV    13.6  2589</span></span>
+<span><span class="co">#&gt;  5 BUF    13.4  4681</span></span>
+<span><span class="co">#&gt;  6 CLE    13.4  4573</span></span>
+<span><span class="co">#&gt;  7 CMH    12.2  3524</span></span>
+<span><span class="co">#&gt;  8 DEN    15.2  7266</span></span>
+<span><span class="co">#&gt;  9 DSM    26.2   569</span></span>
+<span><span class="co">#&gt; 10 DTW    11.8  9384</span></span>
+<span><span class="co">#&gt; # … with 95 more rows</span></span></code></pre></div>
 <p>Note that there is some overhead associated with copying data from the worker nodes back to the host node (and vice versa), so you’re best off using multidplyr with more complex operations. See <code><a href="articles/multidplyr.html">vignette("multidplyr")</a></code> for more details.</p>
 </div>
 </div>
@@ -196,19 +195,12 @@
 <ul class="list-unstyled">
 <li>
 <a href="http://hadley.nz" class="external-link">Hadley Wickham</a> <br><small class="roles"> Author, maintainer </small>  </li>
-<li><a href="authors.html">More about authors...</a></li>
+<li>
+<a href="https://www.rstudio.com" class="external-link"><img src="https://www.tidyverse.org/rstudio-logo.svg" alt="RStudio" width="72"></a> <br><small class="roles"> Copyright holder, funder </small>  </li>
 </ul>
 </div>
 
-<div class="dev-status">
-<h2 data-toc-skip>Dev status</h2>
-<ul class="list-unstyled">
-<li><a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" class="external-link"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a></li>
-<li><a href="https://github.com/tidyverse/multidplyr/actions" class="external-link"><img src="https://github.com/tidyverse/multidplyr/workflows/R-CMD-check/badge.svg" alt="R-CMD-check"></a></li>
-<li><a href="https://app.codecov.io/gh/tidyverse/multidplyr?branch=main" class="external-link"><img src="https://codecov.io/gh/tidyverse/multidplyr/branch/main/graph/badge.svg" alt="Codecov test coverage"></a></li>
-<li><a href="https://cran.r-project.org/package=multidplyr" class="external-link"><img src="https://www.r-pkg.org/badges/version/multidplyr" alt="CRAN status"></a></li>
-</ul>
-</div>
+
 
   </aside>
 </div>
@@ -218,12 +210,12 @@
   <footer><div class="container">
   <div class="pkgdown-footer-left">
   <p></p>
-<p>Developed by <a href="http://hadley.nz" class="external-link">Hadley Wickham</a>.</p>
+<p>Developed by <a href="http://hadley.nz" class="external-link">Hadley Wickham</a>, <a href="https://www.rstudio.com" class="external-link"><img src="https://www.tidyverse.org/rstudio-logo.svg" alt="RStudio" width="72"></a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
   </div></footer>
