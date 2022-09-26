@@ -1,3 +1,19 @@
+# validates inputs
+
+    Code
+      cluster_call(cl, 1, simplify = "x")
+    Condition
+      Error in `cluster_call()`:
+      ! `simplify` must be `TRUE`, `FALSE`, or `NA`.
+
+# old ptype interface works with warning
+
+    Code
+      out <- cluster_call(cl, 1, ptype = double())
+    Condition
+      Warning:
+      Must now set `simplify = TRUE` when supplying ptype
+
 # errors are propagated
 
     Code
