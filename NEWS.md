@@ -1,4 +1,4 @@
-# multidplyr (development version)
+# multidplyr 0.1.2
 
 * `cluster_call()` gains a `simplify` argument - use this to request that
   the result should be simplified (#136).
