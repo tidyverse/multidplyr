@@ -2,8 +2,8 @@ Package: multidplyr
 Title: A Multi-Process 'dplyr' Backend
 Version: 0.1.2.9000
 Authors@R: c(
-    person("Hadley", "Wickham", , "hadley@rstudio.com", role = c("aut", "cre")),
-    person("RStudio", role = c("cph", "fnd"))
+    person("Hadley", "Wickham", , "hadley@posit.co", role = c("aut", "cre")),
+    person("Posit Software, PBC", role = c("cph", "fnd"))
   )
 Description: Partition a data frame across multiple worker processes to
     provide simple multicore parallelism.
