@@ -6,6 +6,7 @@
       Source: party_df [20 x 1]
       Shards: 2 [10--10 rows]
       
+      # A data frame: 20 x 1
             y
         <int>
       1     1
@@ -25,6 +26,7 @@
       Groups: y
       Shards: 2 [10--10 rows]
       
+      # A data frame: 20 x 1
             y
         <int>
       1     1
