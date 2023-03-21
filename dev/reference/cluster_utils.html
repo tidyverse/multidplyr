@@ -122,10 +122,10 @@
 <span class="r-in"><span><span class="fu">cluster_assign</span><span class="op">(</span><span class="va">cl</span>, a <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="cluster_call.html">cluster_call</a></span><span class="op">(</span><span class="va">cl</span>, <span class="va">a</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[1]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.005588396</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.2072211</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[2]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.005588396</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.2072211</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Assign different values on each cluster</span></span></span>
@@ -153,17 +153,17 @@
 <span class="r-in"><span><span class="co"># worker, use `cluster_call()` directly:</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="cluster_call.html">cluster_call</a></span><span class="op">(</span><span class="va">cl</span>, <span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[1]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.6783959</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.1796535</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[2]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.7985971</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.9954031</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="fu"><a href="cluster_call.html">cluster_call</a></span><span class="op">(</span><span class="va">cl</span>, <span class="va">d</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[1]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.6783959</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.1796535</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[2]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.7985971</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.9954031</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># cluster_copy() is a useful shortcut</span></span></span>
