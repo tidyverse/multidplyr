@@ -1,4 +1,4 @@
-# multidplyr (development version)
+# multidplyr 0.1.3
 
 * Fix for R CMD check failure.
 
