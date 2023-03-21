@@ -19,8 +19,8 @@ group_by.multidplyr_party_df <- function(.data, ..., .add = FALSE) {
 
 #' @importFrom dplyr ungroup
 #' @export
-ungroup.multidplyr_party_df <- function(.data, ...) {
-  shard_call(.data, "ungroup", enquos(...))
+ungroup.multidplyr_party_df <- function(x, ...) {
+  shard_call(x, "ungroup", enquos(...))
 }
 
 #' @importFrom dplyr mutate

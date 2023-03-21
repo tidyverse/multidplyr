@@ -213,14 +213,14 @@ as.data.frame.multidplyr_party_df <- function(x, row.names, optional, ...) {
 
 #' @importFrom dplyr collect
 #' @export
-collect.multidplyr_party_df <- function(.data, ...) {
-  out <- as.data.frame(.data)
-  dplyr::grouped_df(out, group_vars(.data))
+collect.multidplyr_party_df <- function(x, ...) {
+  out <- as.data.frame(x)
+  dplyr::grouped_df(out, group_vars(x))
 }
 
 #' @importFrom dplyr pull
 #' @export
-pull.multidplyr_party_df <- function(.data, var = -1) {
+pull.multidplyr_party_df <- function(.data, var = -1, ...) {
   var <- tidyselect::vars_pull(tbl_vars(.data), {{ var }})
 
   .data <- ungroup(.data)
