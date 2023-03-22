@@ -1,6 +1,6 @@
 Package: multidplyr
 Title: A Multi-Process 'dplyr' Backend
-Version: 0.1.3
+Version: 0.1.3.9000
 Authors@R: c(
     person("Hadley", "Wickham", , "hadley@posit.co", role = c("aut", "cre")),
     person("Posit Software, PBC", role = c("cph", "fnd"))
