@@ -41,8 +41,8 @@ install.packages("multidplyr")
 And the development version from [GitHub](https://github.com/) with:
 
 ``` r
-# install.packages("devtools")
-devtools::install_github("tidyverse/multidplyr")
+# install.packages("pak")
+pak::pak("tidyverse/multidplyr")
 ```
 
 ## Usage
