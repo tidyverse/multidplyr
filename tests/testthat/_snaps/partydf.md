@@ -15,7 +15,7 @@
       4     4
       5     5
       6     6
-      # ... with 14 more rows
+      # i 14 more rows
 
 ---
 
@@ -35,5 +35,5 @@
       4     4
       5     5
       6     6
-      # ... with 14 more rows
+      # i 14 more rows
 

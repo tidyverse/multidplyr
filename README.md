@@ -27,7 +27,7 @@ the Vertica Analytics team.
 
 Due to the overhead associated with communicating between the nodes, you
 won’t see much performance improvement with simple operations on less
-than \~10 million observations, and you may want to instead try
+than ~10 million observations, and you may want to instead try
 [dtplyr](https://dtplyr.tidyverse.org/), which uses
 [data.table](https://R-datatable.com/). multidplyr’s strength is found
 parallelising calls to slower and more complex functions.
@@ -48,8 +48,8 @@ install.packages("multidplyr")
 And the development version from [GitHub](https://github.com/) with:
 
 ``` r
-# install.packages("devtools")
-devtools::install_github("tidyverse/multidplyr")
+# install.packages("pak")
+pak::pak("tidyverse/multidplyr")
 ```
 
 ## Usage
@@ -102,17 +102,19 @@ flight_dest
 #> Groups: dest
 #> Shards: 4 [81,594--86,548 rows]
 #> 
-#>    year month   day dep_ti… sched_… dep_de… arr_ti… sched_… arr_de… carrier
-#>   <int> <int> <int>   <int>   <int>   <dbl>   <int>   <int>   <dbl> <chr>  
-#> 1  2013     1     1     544     545      -1    1004    1022     -18 B6     
-#> 2  2013     1     1     558     600      -2     923     937     -14 UA     
-#> 3  2013     1     1     559     600      -1     854     902      -8 UA     
-#> 4  2013     1     1     602     610      -8     812     820      -8 DL     
-#> 5  2013     1     1     602     605      -3     821     805      16 MQ     
-#> 6  2013     1     1     611     600      11     945     931      14 UA     
-#> # … with 336,770 more rows, and 9 more variables: flight <int>, tailnum <chr>,
-#> #   origin <chr>, dest <chr>, air_time <dbl>, distance <dbl>, hour <dbl>,
-#> #   minute <dbl>, time_hour <dttm>
+#> # A data frame: 336,776 × 19
+#>    year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time
+#>   <int> <int> <int>    <int>          <int>     <dbl>    <int>          <int>
+#> 1  2013     1     1      544            545        -1     1004           1022
+#> 2  2013     1     1      558            600        -2      923            937
+#> 3  2013     1     1      559            600        -1      854            902
+#> 4  2013     1     1      602            610        -8      812            820
+#> 5  2013     1     1      602            605        -3      821            805
+#> 6  2013     1     1      611            600        11      945            931
+#> # ℹ 336,770 more rows
+#> # ℹ 11 more variables: arr_delay <dbl>, carrier <chr>, flight <int>,
+#> #   tailnum <chr>, origin <chr>, dest <chr>, air_time <dbl>, distance <dbl>,
+#> #   hour <dbl>, minute <dbl>, time_hour <dttm>
 ```
 
 Now you can work with it like a regular data frame, but the computations
@@ -136,7 +138,7 @@ flight_dest %>%
 #>  8 DEN    15.2  7266
 #>  9 DSM    26.2   569
 #> 10 DTW    11.8  9384
-#> # … with 95 more rows
+#> # ℹ 95 more rows
 ```
 
 Note that there is some overhead associated with copying data from the
