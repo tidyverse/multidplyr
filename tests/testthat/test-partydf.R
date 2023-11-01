@@ -17,14 +17,14 @@ test_that("can construct and print partydf", {
 
 test_that("name must be data frame with same names", {
   cl <- default_cluster()
-  expect_error(party_df(cl, "x"), "does not exist")
+  expect_snapshot(error = TRUE, party_df(cl, "x"))
 
   cluster_assign(cl, x = 1)
   on.exit(cluster_rm(cl, "x"))
-  expect_error(party_df(cl, "x"), "not a data frame")
+  expect_snapshot(error = TRUE, party_df(cl, "x"))
 
   cluster_assign_each(cl, x = list(tibble(x = 1), tibble(y = 2)))
-  expect_error(party_df(cl, "x"), "same names")
+  expect_snapshot(error = TRUE, party_df(cl, "x"))
 })
 
 test_that("can automatically delete on gc() + cluster_call()", {
