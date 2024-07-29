@@ -5,5 +5,7 @@
     Condition
       Error in `auto_copy()`:
       ! `x` and `y` must share the same src.
-      i set `copy` = TRUE (may be slow).
+      i `x` is a <multidplyr_party_df> object.
+      i `y` is a <data.frame> object.
+      i Set `copy = TRUE` if `y` can be copied to the same source as `x` (may be slow).
 
