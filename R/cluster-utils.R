@@ -56,8 +56,8 @@ cluster_assign <- function(.cluster, ...) {
   path <- tempfile()
   on.exit(unlink(path))
 
-  qs::qsave(values, path, preset = "fast", check_hash = FALSE, nthreads = 2)
-  cluster_send(.cluster, list2env(qs::qread(!!path), globalenv()))
+  qs2::qs_save(values, path, compress_level = 1, nthreads = 1)
+  cluster_send(.cluster, list2env(qs2::qs_read(!!path), globalenv()))
 
   invisible(.cluster)
 }
