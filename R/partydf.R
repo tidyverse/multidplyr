@@ -79,7 +79,7 @@ worker_id <- function(data, cluster) {
 #' @export
 #' @examples
 #' # If a real example, you might spread file names across the clusters
-#' # and read in using data.table::fread()/vroom::vroom()/qs::qread().
+#' # and read in using data.table::fread()/vroom::vroom()/qs2::qs_read().
 #' cl <- default_cluster()
 #' cluster_send(cl[1], n <- 10)
 #' cluster_send(cl[2], n <- 15)
