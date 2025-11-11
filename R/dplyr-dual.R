@@ -16,28 +16,56 @@ auto_copy.multidplyr_party_df <- function(x, y, copy = FALSE, ...) {
 
 #' @importFrom dplyr left_join
 #' @export
-left_join.multidplyr_party_df <- function(x, y, ..., by = NULL, copy = FALSE, suffix = c(".x", ".y")) {
+left_join.multidplyr_party_df <- function(
+  x,
+  y,
+  ...,
+  by = NULL,
+  copy = FALSE,
+  suffix = c(".x", ".y")
+) {
   y <- auto_copy(x, y, copy = copy)
   shard_call_dual("left_join", x, y, ..., by = by, suffix = suffix)
 }
 
 #' @importFrom dplyr right_join
 #' @export
-right_join.multidplyr_party_df <- function(x, y, ..., by = NULL, copy = FALSE, suffix = c(".x", ".y")) {
+right_join.multidplyr_party_df <- function(
+  x,
+  y,
+  ...,
+  by = NULL,
+  copy = FALSE,
+  suffix = c(".x", ".y")
+) {
   y <- auto_copy(x, y, copy = copy)
   shard_call_dual("right_join", x, y, ..., by = by, suffix = suffix)
 }
 
 #' @importFrom dplyr inner_join
 #' @export
-inner_join.multidplyr_party_df <- function(x, y, ..., by = NULL, copy = FALSE, suffix = c(".x", ".y")) {
+inner_join.multidplyr_party_df <- function(
+  x,
+  y,
+  ...,
+  by = NULL,
+  copy = FALSE,
+  suffix = c(".x", ".y")
+) {
   y <- auto_copy(x, y, copy = copy)
   shard_call_dual("inner_join", x, y, ..., by = by, suffix = suffix)
 }
 
 #' @importFrom dplyr full_join
 #' @export
-full_join.multidplyr_party_df <- function(x, y, ..., by = NULL, copy = FALSE, suffix = c(".x", ".y")) {
+full_join.multidplyr_party_df <- function(
+  x,
+  y,
+  ...,
+  by = NULL,
+  copy = FALSE,
+  suffix = c(".x", ".y")
+) {
   y <- auto_copy(x, y, copy = copy)
   shard_call_dual("full_join", x, y, ..., by = by, suffix = suffix)
 }

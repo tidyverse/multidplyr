@@ -32,7 +32,8 @@ test_that("can automatically delete on gc() + cluster_call()", {
   cl <- cluster_assign(cl, x = data.frame(y = 1:10))
 
   df <- party_df(cl, "x", auto_rm = TRUE)
-  rm(df); gc()
+  rm(df)
+  gc()
   expect_equal(cluster_call(cl, exists("x")), list(FALSE, FALSE))
 })
 
@@ -57,10 +58,13 @@ test_that("can partition by group", {
   df2 <- df1 %>% group_by(x) %>% partition(cl)
 
   dfs <- cluster_call(cl, !!df2$name)
-  expect_equal(dfs, list(
-    group_by(tibble(x = c(1, 1)), x),
-    group_by(tibble(x = c(2, 3)), x)
-  ))
+  expect_equal(
+    dfs,
+    list(
+      group_by(tibble(x = c(1, 1)), x),
+      group_by(tibble(x = c(2, 3)), x)
+    )
+  )
 })
 
 test_that("reduce cluster size if needed", {

@@ -1,6 +1,10 @@
 test_that("calls submitted in parallel", {
   cl <- default_cluster()
-  out <- cluster_call(cl, {x <- Sys.time(); Sys.sleep(0.2); x})
+  out <- cluster_call(cl, {
+    x <- Sys.time()
+    Sys.sleep(0.2)
+    x
+  })
 
   rng <- range(as.double(out))
   expect_true(rng[2] - rng[1] < 0.2)

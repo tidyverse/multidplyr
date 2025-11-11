@@ -20,18 +20,21 @@ new_cluster <- function(n) {
 }
 
 #' @importFrom R6 R6Class
-Cleaner <- R6Class("Cleaner", list(
-  names = character(),
-  add = function(x) {
-    self$names <- union(self$names, x)
-    invisible(self)
-  },
-  reset = function(x) {
-    old <- self$names
-    self$names <- character()
-    old
-  }
-))
+Cleaner <- R6Class(
+  "Cleaner",
+  list(
+    names = character(),
+    add = function(x) {
+      self$names <- union(self$names, x)
+      invisible(self)
+    },
+    reset = function(x) {
+      old <- self$names
+      self$names <- character()
+      old
+    }
+  )
+)
 
 #' @export
 print.multidplyr_cluster <- function(x, ...) {
@@ -52,7 +55,8 @@ is_cluster <- function(x) inherits(x, "multidplyr_cluster")
 
 #' @export
 `[.multidplyr_cluster` <- function(x, i, ...) {
-  structure(NextMethod(),
+  structure(
+    NextMethod(),
     cleaner = attr(x, "cleaner"),
     class = "multidplyr_cluster"
   )
@@ -85,4 +89,3 @@ default_cluster <- function(n = 2) {
 }
 
 cluster_env <- env()
-

@@ -1,4 +1,3 @@
-
 #' @importFrom dplyr arrange
 #' @export
 arrange.multidplyr_party_df <- function(.data, ..., .by_group = FALSE) {
@@ -69,4 +68,3 @@ shard_call <- function(.data, .verb, dots, ...) {
   cluster_send(.data$cluster, !!call2("<-", new_name, call))
   new_party_df(.data$cluster, new_name, auto_rm = TRUE)
 }
-
