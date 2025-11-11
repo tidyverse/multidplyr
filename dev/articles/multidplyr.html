@@ -227,20 +227,20 @@ cluster actually makes performance much worse!</p>
 <span><span class="co"># Local computation</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="va">by_dest</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">dep_delay</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.011   0.000   0.011</span></span>
+<span><span class="co">#&gt;    0.01    0.00    0.01</span></span>
 <span></span>
 <span><span class="co"># Remote: partitioning</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="va">flights2</span> <span class="op">&lt;-</span> <span class="va">flights</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/partition.html">partition</a></span><span class="op">(</span><span class="va">cluster</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.282   0.069   0.403</span></span>
+<span><span class="co">#&gt;   0.383   0.007   0.563</span></span>
 <span><span class="co"># Remote: computation</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="va">flights3</span> <span class="op">&lt;-</span> <span class="va">flights2</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">dep_delay</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.006   0.001   0.036</span></span>
+<span><span class="co">#&gt;   0.007   0.000   0.037</span></span>
 <span><span class="co"># Remote: retrieve results</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="va">flights3</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/compute.html" class="external-link">collect</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.006   0.001   0.049</span></span></code></pre></div>
+<span><span class="co">#&gt;   0.005   0.001   0.047</span></span></code></pre></div>
 <p>That’s because of the overhead associated with sending the data to
 each worker and retrieving the results at the end. For basic dplyr
 verbs, multidplyr is unlikely to give you significant speed ups unless
@@ -297,7 +297,7 @@ package on every node. That takes around 3s:</p>
 <span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/do.html" class="external-link">do</a></span><span class="op">(</span>mod <span class="op">=</span> <span class="fu">gam</span><span class="op">(</span><span class="va">dep_delay</span> <span class="op">~</span> <span class="fu">s</span><span class="op">(</span><span class="va">yday</span><span class="op">)</span> <span class="op">+</span> <span class="fu">s</span><span class="op">(</span><span class="va">dep_time</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">.</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.006   0.002   3.340</span></span></code></pre></div>
+<span><span class="co">#&gt;   0.008   0.001   3.305</span></span></code></pre></div>
 <p>Compared with around 5s doing it locally:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="op">{</span></span>
@@ -306,7 +306,7 @@ package on every node. That takes around 3s:</p>
 <span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/do.html" class="external-link">do</a></span><span class="op">(</span>mod <span class="op">=</span> <span class="fu">gam</span><span class="op">(</span><span class="va">dep_delay</span> <span class="op">~</span> <span class="fu">s</span><span class="op">(</span><span class="va">yday</span><span class="op">)</span> <span class="op">+</span> <span class="fu">s</span><span class="op">(</span><span class="va">dep_time</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">.</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   4.396   7.245   3.020</span></span></code></pre></div>
+<span><span class="co">#&gt;   4.274   7.003   2.921</span></span></code></pre></div>
 <p>The cost of transmitting messages to the nodes is roughly constant,
 so the longer the task you’re parallelising, the closer you’ll get to a
 linear speed up.</p>

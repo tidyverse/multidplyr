@@ -35,7 +35,7 @@ An S3 object with class \`multidplyr_party_df\`.
 
 ``` r
 # If a real example, you might spread file names across the clusters
-# and read in using data.table::fread()/vroom::vroom()/qs::qread().
+# and read in using data.table::fread()/vroom::vroom()/qs2::qs_read().
 cl <- default_cluster()
 cluster_send(cl[1], n <- 10)
 cluster_send(cl[2], n <- 15)
@@ -49,11 +49,11 @@ df
 #> # A data frame: 25 × 1
 #>        x
 #>    <dbl>
-#> 1 0.104 
-#> 2 0.0961
-#> 3 0.353 
-#> 4 0.139 
-#> 5 0.0325
-#> 6 0.797 
+#> 1 0.931 
+#> 2 0.158 
+#> 3 0.205 
+#> 4 0.0685
+#> 5 0.230 
+#> 6 0.199 
 #> # ℹ 19 more rows
 ```

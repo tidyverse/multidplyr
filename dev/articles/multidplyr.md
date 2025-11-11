@@ -173,20 +173,20 @@ by_dest <- flights %>% group_by(dest)
 # Local computation
 system.time(by_dest %>% summarise(mean(dep_delay, na.rm = TRUE)))
 #>    user  system elapsed 
-#>   0.011   0.000   0.011
+#>    0.01    0.00    0.01
 
 # Remote: partitioning
 system.time(flights2 <- flights %>% partition(cluster))
 #>    user  system elapsed 
-#>   0.282   0.069   0.403
+#>   0.383   0.007   0.563
 # Remote: computation
 system.time(flights3 <- flights2 %>% summarise(mean(dep_delay, na.rm = TRUE)))
 #>    user  system elapsed 
-#>   0.006   0.001   0.036
+#>   0.007   0.000   0.037
 # Remote: retrieve results
 system.time(flights3 %>% collect())
 #>    user  system elapsed 
-#>   0.006   0.001   0.049
+#>   0.005   0.001   0.047
 ```
 
 That’s because of the overhead associated with sending the data to each
@@ -254,7 +254,7 @@ system.time({
     do(mod = gam(dep_delay ~ s(yday) + s(dep_time), data = .))
 })
 #>    user  system elapsed 
-#>   0.006   0.002   3.340
+#>   0.008   0.001   3.305
 ```
 
 Compared with around 5s doing it locally:
@@ -266,7 +266,7 @@ system.time({
     do(mod = gam(dep_delay ~ s(yday) + s(dep_time), data = .))
 })
 #>    user  system elapsed 
-#>   4.396   7.245   3.020
+#>   4.274   7.003   2.921
 ```
 
 The cost of transmitting messages to the nodes is roughly constant, so

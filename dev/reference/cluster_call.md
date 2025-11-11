@@ -50,25 +50,25 @@ cl <- default_cluster()
 # Run code on each cluster and retrieve results
 cluster_call(cl, Sys.getpid())
 #> [[1]]
-#> [1] 7787
+#> [1] 7657
 #> 
 #> [[2]]
-#> [1] 7796
+#> [1] 7666
 #> 
 cluster_call(cl, runif(1))
 #> [[1]]
-#> [1] 0.7699812
+#> [1] 0.7653902
 #> 
 #> [[2]]
-#> [1] 0.3563222
+#> [1] 0.1271812
 #> 
 
 # use ptype to simplify
 cluster_call(cl, runif(1), simplify = TRUE)
-#> [1] 0.0329545 0.4098657
+#> [1] 0.5198581 0.7294215
 
 # use cluster_send() to ignore results
 cluster_send(cl, x <- runif(1))
 cluster_call(cl, x, simplify = TRUE)
-#> [1] 0.4339169 0.6361318
+#> [1] 0.06084874 0.66824685
 ```

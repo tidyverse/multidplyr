@@ -3,7 +3,7 @@ pkgdown: 2.2.0
 pkgdown_sha: ~
 articles:
   multidplyr: multidplyr.html
-last_built: 2025-11-11T21:13Z
+last_built: 2025-11-11T21:23Z
 urls:
   reference: https://multidplyr.tidyverse.org/reference
   article: https://multidplyr.tidyverse.org/articles

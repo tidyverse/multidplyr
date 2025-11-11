@@ -69,7 +69,6 @@
 </h2>
 <p>multidplyr is a backend for dplyr that partitions a data frame across multiple cores. You tell multidplyr how to split the data up with <code><a href="reference/partition.html">partition()</a></code> and then the data stays on each node until you explicitly retrieve it with <code>collect()</code>. This minimises the amount of time spent moving data around, and maximises parallel performance. This idea is inspired by <a href="https://github.com/matloff/partools" class="external-link">partools</a> by Norm Matloff and <a href="https://github.com/vertica/DistributedR" class="external-link">distributedR</a> by the Vertica Analytics team.</p>
 <p>Due to the overhead associated with communicating between the nodes, you won’t see much performance improvement with simple operations on less than ~10 million observations, and you may want to instead try <a href="https://dtplyr.tidyverse.org/" class="external-link">dtplyr</a>, which uses <a href="https://R-datatable.com/" class="external-link">data.table</a>. multidplyr’s strength is found parallelising calls to slower and more complex functions.</p>
-<p>(Note that unlike other packages in the tidyverse, multidplyr requires R 3.5 or greater. We hope to relax this requirement <a href="https://github.com/traversc/qs/issues/11" class="external-link">in the future</a>.)</p>
 </div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
