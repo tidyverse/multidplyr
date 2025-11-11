@@ -82,11 +82,13 @@ cluster_send <- function(cluster, code) {
 }
 
 # TODO: replace with purrr::list_simplify() when purrr 1.0.0 is out
-simplify_impl <- function(x,
-                          strict = TRUE,
-                          ptype = NULL,
-                          error_arg = caller_arg(x),
-                          error_call = caller_env()) {
+simplify_impl <- function(
+  x,
+  strict = TRUE,
+  ptype = NULL,
+  error_arg = caller_arg(x),
+  error_call = caller_env()
+) {
   vctrs::vec_check_list(x, arg = error_arg, call = error_call)
 
   # Handle the cases where we definitely can't simplify
@@ -106,7 +108,8 @@ simplify_impl <- function(x,
       )
     }
   } else {
-    can_simplify <- vctrs::list_all_vectors(x) && all(vctrs::list_sizes(x) == 1L)
+    can_simplify <- vctrs::list_all_vectors(x) &&
+      all(vctrs::list_sizes(x) == 1L)
 
     if (!can_simplify) {
       return(x)
