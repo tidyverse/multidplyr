@@ -2,6 +2,10 @@
 
 ## multidplyr (development version)
 
+## multidplyr 0.1.4
+
+CRAN release: 2025-11-12
+
 - Switch to qs2, as qs is being archived
   ([@traversc](https://github.com/traversc),
   [\#159](https://github.com/tidyverse/multidplyr/issues/159)).

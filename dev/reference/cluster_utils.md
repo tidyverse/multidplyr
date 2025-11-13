@@ -88,17 +88,17 @@ cluster_call(cl, c)
 # worker, use `cluster_call()` directly:
 cluster_call(cl, d <- runif(1))
 #> [[1]]
-#> [1] 0.9445243
+#> [1] 0.6651081
 #> 
 #> [[2]]
-#> [1] 0.6612082
+#> [1] 0.1691178
 #> 
 cluster_call(cl, d)
 #> [[1]]
-#> [1] 0.9445243
+#> [1] 0.6651081
 #> 
 #> [[2]]
-#> [1] 0.6612082
+#> [1] 0.1691178
 #> 
 
 # cluster_copy() is a useful shortcut
