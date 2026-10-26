@@ -47,24 +47,30 @@ cluster_call <- function(cluster, code, simplify = FALSE, ptype = NULL) {
   # nocov start
   f <- function(code, to_rm) {
     rm(list = to_rm, envir = globalenv())
-    eval(code, globalenv())
+    out <- eval(code, globalenv())
+    # Results may reference shared memory owned by the main process (which
+    # serialises as just its name and may since have been freed), so
+    # materialise into ordinary memory before returning
+    rlang::duplicate(out, shallow = FALSE)
   }
   # nocov end
-  lapply(cluster, function(x) x$call(f, list(code = code, to_rm = to_rm)))
-  lapply(cluster, function(x) x$poll_process(-1))
+  tasks <- lapply(cluster, function(id) {
+    mirai::mirai(
+      f(code, to_rm),
+      .args = list(f = f, code = code, to_rm = to_rm),
+      .compute = id
+    )
+  })
+  out <- mirai::collect_mirai(tasks)
 
-  results <- lapply(cluster, function(x) x$read())
-
-  errs <- lapply(results, "[[", "error")
-  failed <- !vapply(errs, is.null, logical(1))
+  failed <- vapply(out, mirai::is_error_value, logical(1))
   if (any(failed)) {
     worker <- which(failed)[[1]]
-    err <- errs[[worker]]$parent
+    err <- error_cnd(message = remote_message(out[[worker]]))
     message <- paste0("Remote computation failed in worker ", worker)
     abort(message, parent = err)
   }
-
-  out <- lapply(results, "[[", "result")
+  out <- unname(out)
   if (!isFALSE(simplify)) {
     out <- simplify_impl(out, strict = !is.na(simplify), ptype = ptype)
   }
@@ -79,6 +85,16 @@ cluster_send <- function(cluster, code) {
   cluster_call(cluster, !!code)
 
   invisible(cluster)
+}
+
+remote_message <- function(x) {
+  if (mirai::is_mirai_error(x)) {
+    x <- unclass(x)
+    attributes(x) <- NULL
+    sub("^Error.*?: ", "", sub("\n$", "", x))
+  } else {
+    paste0("mirai error: ", format(x))
+  }
 }
 
 # TODO: replace with purrr::list_simplify() when purrr 1.0.0 is out

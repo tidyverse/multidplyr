@@ -33,7 +33,7 @@ cluster
 
 (In the examples, you'll also see the use of `default_cluster()`; this is designed specifically for the constraints of R CMD check, so I don't recommend using it in your own code.)
 
-A cluster consists of multiple R processes created by [callr](https://callr.r-lib.org/). When multiple processes are running at the same time, your operating system will take care of spreading the work across multiple cores.
+A cluster consists of multiple R processes created by [mirai](https://mirai.r-lib.org/). When multiple processes are running at the same time, your operating system will take care of spreading the work across multiple cores.
 
 ## Add data
 

@@ -53,11 +53,11 @@ cluster_assign <- function(.cluster, ...) {
   values <- list2(...)
   stopifnot(is_named(values))
 
-  path <- tempfile()
-  on.exit(unlink(path))
-
-  qs2::qs_save(values, path, compress_level = 1, nthreads = 1)
-  cluster_send(.cluster, list2env(qs2::qs_read(!!path), globalenv()))
+  # Place values in shared memory so each worker maps the same copy rather
+  # than receiving its own serialised version. `share()` returns unsupported
+  # objects (e.g. functions, environments) unchanged.
+  values <- lapply(values, mori::share)
+  cluster_send(.cluster, list2env(!!values, globalenv()))
 
   invisible(.cluster)
 }

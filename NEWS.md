@@ -1,5 +1,7 @@
 # multidplyr (development version)
 
+* Workers are now mirai daemons rather than callr sessions, and `cluster_assign()` (and hence `partition()`) shares data with workers via mori shared memory instead of temporary qs2 files. multidplyr now requires R 4.3 or later.
+
 # multidplyr 0.1.4
 
 * Switch to qs2, as qs is being archived (@traversc, #159).
