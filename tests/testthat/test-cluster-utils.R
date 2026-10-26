@@ -45,3 +45,11 @@ test_that("can load package", {
   cluster_library(cl, "covr")
   expect_true("package:covr" %in% cluster_call(cl, search())[[1]])
 })
+
+test_that("results don't depend on shared memory owned by the main process", {
+  cl <- default_cluster()
+  cluster_assign(cl, x = runif(10))
+  gc()
+  expect_length(cluster_call(cl, x)[[1]], 10)
+  cluster_rm(cl, "x")
+})

@@ -11,12 +11,36 @@
 #' cluster <- new_cluster(2)
 #' cluster
 new_cluster <- function(n) {
-  sessions <- replicate(n, callr::r_session$new(wait_timeout = 15 * 1000))
+  # Each worker gets its own single-daemon compute profile so that we can
+  # target individual workers and their global environments persist.
+  ids <- paste0("multidplyr_", cluster_id(), "_", seq_len(n))
+  # Set up all profiles before launching so workers start in parallel
+  for (id in ids) {
+    mirai::daemons(url = mirai::local_url(), dispatcher = FALSE, .compute = id)
+  }
+  for (id in ids) {
+    mirai::launch_local(1, cleanup = FALSE, .compute = id)
+  }
+
+  cleaner <- Cleaner$new()
+  reg.finalizer(cleaner, function(e) stop_workers(ids), onexit = TRUE)
+
   structure(
-    sessions,
-    cleaner = Cleaner$new(),
+    as.list(ids),
+    cleaner = cleaner,
     class = "multidplyr_cluster"
   )
+}
+
+cluster_id <- function() {
+  cluster_env$n <- (cluster_env$n %||% 0L) + 1L
+  paste0(Sys.getpid(), "_", cluster_env$n)
+}
+
+stop_workers <- function(ids) {
+  for (id in ids) {
+    try(mirai::daemons(0, .compute = id), silent = TRUE)
+  }
 }
 
 #' @importFrom R6 R6Class
@@ -40,13 +64,9 @@ Cleaner <- R6Class(
 print.multidplyr_cluster <- function(x, ...) {
   n <- length(x)
 
-  state <- vapply(x, function(x) x$get_state(), character(1))
-  state_abbr <- c(
-    "starting" = "S",
-    "idle" = crayon::green("."),
-    "busy" = crayon::red("*"),
-    "finished" = "F"
-  )[state]
+  # Calls are synchronous, so a connected worker is always idle here
+  connected <- vapply(x, worker_connected, logical(1))
+  state_abbr <- ifelse(connected, crayon::green("."), "F")
 
   cat_line(n, " session cluster [", paste(state_abbr, collapse = ""), "]")
 }
@@ -86,6 +106,11 @@ default_cluster <- function(n = 2) {
   }
 
   env_get(cluster_env, "cluster")
+}
+
+worker_connected <- function(id) {
+  info <- tryCatch(mirai::info(.compute = id), error = function(e) NULL)
+  !is.null(info) && isTRUE(info[["connections"]] > 0)
 }
 
 cluster_env <- env()
