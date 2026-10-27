@@ -16,12 +16,6 @@ group_by.multidplyr_party_df <- function(.data, ..., .add = FALSE) {
   shard_call(.data, "group_by", enquos(...), .add = .add)
 }
 
-#' @importFrom dplyr ungroup
-#' @export
-ungroup.multidplyr_party_df <- function(x, ...) {
-  shard_call(x, "ungroup", enquos(...))
-}
-
 #' @importFrom dplyr mutate
 #' @export
 mutate.multidplyr_party_df <- function(.data, ...) {
@@ -56,15 +50,4 @@ summarise.multidplyr_party_df <- function(.data, ...) {
 #' @export
 do.multidplyr_party_df <- function(.data, ...) {
   shard_call(.data, "do", enquos(...))
-}
-
-
-# helpers -----------------------------------------------------------------
-
-shard_call <- function(.data, .verb, dots, ...) {
-  call <- call2(.verb, .data$name, !!!dots, ..., .ns = "dplyr")
-
-  new_name <- table_name()
-  cluster_send(.data$cluster, !!call2("<-", new_name, call))
-  new_party_df(.data$cluster, new_name, auto_rm = TRUE)
 }

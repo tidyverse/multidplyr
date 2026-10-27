@@ -1,47 +1,39 @@
-test_that("can set/get/remove/list", {
-  cl <- default_cluster()[1]
-  cluster_assign(cl, x = 1)
-
-  expect_equal(cluster_call(cl, "x" %in% ls()), list(TRUE))
-  expect_equal(cluster_call(cl, x), list(1))
-
-  cluster_rm(cl, "x")
-  expect_equal(cluster_call(cl, "x" %in% ls()), list(FALSE))
-})
-
-test_that("can assign different values to different clusters", {
+test_that("cluster_assign values are visible inside verbs", {
+  skip_if_no_mizu()
   cl <- default_cluster()
+  cluster_assign(cl, a = 100)
+  on.exit(cluster_rm(cl, "a"))
 
-  cluster_assign_each(cl, x = 1:2)
-  expect_equal(cluster_call(cl, x), list(1L, 2L))
-  cluster_rm(cl, "x")
+  pf <- partition(tibble(x = 1:4), cl)
+  expect_equal(collect(pf %>% mutate(y = x + a))$y, 101:104)
 })
 
-test_that("can partition vectors across clusters", {
+test_that("cluster_copy copies values from an environment", {
+  skip_if_no_mizu()
   cl <- default_cluster()
+  f <- function(x) x * 2
+  cluster_copy(cl, "f")
+  on.exit(cluster_rm(cl, "f"))
 
-  cluster_assign_partition(cl, x = 1:4, y = 1:5)
-  expect_equal(cluster_call(cl, x), list(1:2, 3:4))
-  expect_equal(cluster_call(cl, y), list(1:3, 4:5))
-
-  cluster_rm(cl, c("x", "y"))
+  pf <- partition(tibble(x = 1:4), cl)
+  expect_equal(collect(pf %>% mutate(y = f(x)))$y, c(2, 4, 6, 8))
 })
 
-test_that("can copy from objects to cluster", {
-  cl <- default_cluster()[1]
-  x <- 1
-  y <- 2
+test_that("cluster_rm removes values again", {
+  skip_if_no_mizu()
+  cl <- default_cluster()
+  cluster_assign(cl, a = 1)
+  cluster_rm(cl, "a")
 
-  cluster_copy(cl, c("x", "y"))
-  expect_equal(cluster_call(cl, x)[[1]], x)
-  expect_equal(cluster_call(cl, y)[[1]], y)
-
-  cluster_rm(cl, c("x", "y"))
+  pf <- partition(tibble(x = 1), cl)
+  expect_snapshot(pf %>% mutate(y = x + a), error = TRUE)
 })
 
-test_that("can load package", {
-  cl <- new_cluster(1)
+test_that("cluster_library makes package functions available in verbs", {
+  skip_if_no_mizu()
+  cl <- default_cluster()
+  cluster_library(cl, "tools")
 
-  cluster_library(cl, "covr")
-  expect_true("package:covr" %in% cluster_call(cl, search())[[1]])
+  pf <- partition(tibble(x = "hello world"), cl)
+  expect_equal(collect(pf %>% mutate(y = toTitleCase(x)))$y, "Hello World")
 })

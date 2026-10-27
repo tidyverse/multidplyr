@@ -5,8 +5,7 @@
 # cluster has useful print method
 
     Code
-      cl <- default_cluster()
-      cl
+      default_cluster()
     Output
       2 session cluster [..]
 

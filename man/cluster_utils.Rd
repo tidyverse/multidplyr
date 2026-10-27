@@ -3,18 +3,12 @@
 \name{cluster_utils}
 \alias{cluster_utils}
 \alias{cluster_assign}
-\alias{cluster_assign_each}
-\alias{cluster_assign_partition}
 \alias{cluster_copy}
 \alias{cluster_rm}
 \alias{cluster_library}
-\title{Cluster utitility functions}
+\title{Cluster utility functions}
 \usage{
 cluster_assign(.cluster, ...)
-
-cluster_assign_each(.cluster, ...)
-
-cluster_assign_partition(.cluster, ...)
 
 cluster_copy(cluster, names, env = caller_env())
 
@@ -23,57 +17,39 @@ cluster_rm(cluster, names)
 cluster_library(cluster, packages)
 }
 \arguments{
-\item{...}{Name-value pairs}
+\item{...}{Name-value pairs.}
 
-\item{cluster, .cluster}{Cluster to work on}
+\item{cluster, .cluster}{Cluster to work on.}
 
-\item{names}{Name of variables to copy.}
+\item{names}{Name of variables to copy or remove.}
 
-\item{env}{Environment in which to look for varibles to copy.}
+\item{env}{Environment in which to look for variables to copy.}
 
-\item{packages}{Character vector of packages to load}
+\item{packages}{Character vector of packages to load.}
 }
 \value{
-Functions that modify the worker environment invisibly return
-  `cluster` so calls can be piped together. The other functions return
-  lists with one element for each worker.
+All functions return `cluster` invisibly, so calls can be piped
+  together.
 }
 \description{
-These functions provide useful helpers for performaning common operations.
-`cluster_assign()` assigns the same value on each worker;
-`cluster_assign_each()` assigns different values on each worker;
-`cluster_assign_partition()` partitions vectors so that each worker gets
-(approximately) the same number of pieces.
+These functions maintain the cluster's *registry*: the set of values and
+packages made visible inside every verb evaluation and [cluster_map()]
+call. Use them to give workers access to objects (e.g. helper functions or
+lookup tables) and packages from your session.
 }
 \examples{
 cl <- default_cluster()
-cluster_assign(cl, a = runif(1))
-cluster_call(cl, a)
+# Make package functions available inside verbs
+cluster_library(cl, "dplyr")
 
-# Assign different values on each cluster
-cluster_assign_each(cl, b = c(1, 10))
-cluster_call(cl, b)
+# Make a value visible inside verbs
+cluster_assign(cl, a = 10)
+partition(mtcars, cl) \%>\% mutate(x = mpg + a)
 
-# Partition a vector so that each worker gets approximately the
-# same amount of it
-cluster_assign_partition(cl, c = 1:11)
-cluster_call(cl, c)
+# cluster_copy() is a useful shortcut for existing objects
+b <- 20
+cluster_copy(cl, "b")
 
-# If you want different to compute different values on each
-# worker, use `cluster_call()` directly:
-cluster_call(cl, d <- runif(1))
-cluster_call(cl, d)
-
-# cluster_copy() is a useful shortcut
-e <- 10
-cluster_copy(cl, "e")
-
-cluster_call(cl, ls())
-cluster_rm(cl, letters[1:5])
-cluster_call(cl, ls())
-
-# Use cluster_library() to load packages
-cluster_call(cl, search())
-cluster_library(cl, "magrittr")
-cluster_call(cl, search())
+# Values can be removed again
+cluster_rm(cl, c("a", "b"))
 }
