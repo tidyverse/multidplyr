@@ -7,9 +7,9 @@
 # mizu's compact closure codec. They may only use `::`-qualified calls; no
 # multidplyr installation is needed on the workers.
 #
-# Errors must propagate bare: wrapping the eval in a handler (e.g. tryCatch)
-# corrupts rlang/cli errors raised beneath it inside mizu_map_batch's
-# evaluation loop (they arrive as "bad value").
+# Errors propagate bare to mizu's transport: the map machinery annotates
+# them with the shard index, and collect_map() on the host translates them
+# (see below).
 
 shard_slice <- function(i, data, rows) {
   vctrs::vec_slice(data, rows[[i]])

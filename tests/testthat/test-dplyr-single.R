@@ -42,3 +42,22 @@ test_that("an error in one shard aborts the verb", {
   pf <- partition(tibble(x = 1:10), cl)
   expect_snapshot(pf %>% mutate(y = stop("boom")), error = TRUE)
 })
+
+test_that("tryCatch inside verb expressions works", {
+  skip_if_no_mizu()
+  cl <- default_cluster()
+
+  # regression: rlang errors inside a handler corrupted on workers before
+  # mizu's srcref-strip fix (arrived as "bad value")
+  pf <- partition(tibble(x = 1:4), cl)
+  out <- pf %>%
+    mutate(
+      y = tryCatch(
+        {
+          rlang::abort("boom")
+        },
+        error = function(e) 0
+      )
+    )
+  expect_equal(collect(out)$y, rep(0, 4))
+})
