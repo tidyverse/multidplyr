@@ -6,7 +6,12 @@
   # explicitly: `environment(fn) <- globalenv()` alone would create a local
   # copy in .onLoad's frame
   ns <- asNamespace(pkgname)
-  for (fn in c("shard_slice", "shard_eval", "shard_eval_dual", "cluster_map_eval")) {
+  for (fn in c(
+    "shard_slice",
+    "shard_eval",
+    "shard_eval_dual",
+    "cluster_map_eval"
+  )) {
     assign(fn, `environment<-`(get(fn, envir = ns), globalenv()), envir = ns)
   }
 
