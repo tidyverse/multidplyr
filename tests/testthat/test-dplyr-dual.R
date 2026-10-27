@@ -1,4 +1,5 @@
 test_that("joining data frame requires explicit copy", {
+  skip_if_no_mizu()
   pf <- partition(data.frame(x = 1:6), default_cluster())
   df <- data.frame(x = 1:3, y = 3:1)
 
@@ -9,6 +10,7 @@ test_that("joining data frame requires explicit copy", {
 })
 
 test_that("joins match local results", {
+  skip_if_no_mizu()
   pf1 <- partition(tibble(x = c(1, 2)), default_cluster())
   pf2 <- partition(tibble(x = c(1, 3)), default_cluster())
 
@@ -24,6 +26,7 @@ test_that("joins match local results", {
 })
 
 test_that("set operations match local results", {
+  skip_if_no_mizu()
   pf1 <- partition(tibble(x = c(1, 2)), default_cluster())
   pf2 <- partition(tibble(x = c(1, 3)), default_cluster())
 
@@ -31,4 +34,12 @@ test_that("set operations match local results", {
   expect_setequal(pf1 %>% union(pf2) %>% pull(), c(1, 2, 3))
   expect_equal(pf1 %>% union_all(pf2) %>% pull() %>% sort(), c(1, 1, 2, 3))
   expect_equal(pf1 %>% setdiff(pf2) %>% pull(), 2)
+})
+
+test_that("joining party_dfs needs matching shard counts", {
+  skip_if_no_mizu()
+  pf1 <- partition(tibble(x = 1:6), default_cluster(), n_shards = 2)
+  pf2 <- partition(tibble(x = 1:6), default_cluster(), n_shards = 3)
+
+  expect_snapshot(error = TRUE, inner_join(pf1, pf2, by = "x"))
 })

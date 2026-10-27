@@ -1,7 +1,10 @@
 #' Create a new cluster with sensible defaults.
 #'
-#' Clusters created with this function will automatically clean up after
-#' themselves.
+#' A cluster is a pool of worker R processes managed by
+#' [mizu](https://github.com/shikokuchuo/mizu). Work is submitted to the pool
+#' as a whole and stolen by idle workers, so there is no way (or need) to
+#' address individual workers. Workers are torn down when the cluster is
+#' garbage collected.
 #'
 #' @param n Number of workers to create. Avoid setting this higher than the
 #'   number of cores in your computer as it will degrade performance.
@@ -11,56 +14,45 @@
 #' cluster <- new_cluster(2)
 #' cluster
 new_cluster <- function(n) {
-  sessions <- replicate(n, callr::r_session$new(wait_timeout = 15 * 1000))
+  env <- new.env(parent = emptyenv())
+  env$bindings <- list()
+  env$packages <- character()
+
   structure(
-    sessions,
-    cleaner = Cleaner$new(),
+    list(
+      pool = mizu::mizu_pool(
+        n_workers = n,
+        launcher = mizu::mizu_launcher(stdout = FALSE, stderr = FALSE),
+        # Larger result slots give worker errors room to carry the shard
+        # index alongside the message (512 drops the index, 2048 the index
+        # again once the call fits)
+        slot_size = 1024
+      ),
+      n = n,
+      env = env
+    ),
     class = "multidplyr_cluster"
   )
 }
 
-#' @importFrom R6 R6Class
-Cleaner <- R6Class(
-  "Cleaner",
-  list(
-    names = character(),
-    add = function(x) {
-      self$names <- union(self$names, x)
-      invisible(self)
-    },
-    reset = function(x) {
-      old <- self$names
-      self$names <- character()
-      old
-    }
-  )
-)
+#' @export
+length.multidplyr_cluster <- function(x) {
+  x$n
+}
 
 #' @export
 print.multidplyr_cluster <- function(x, ...) {
-  n <- length(x)
+  status <- mizu::mizu_pool_status(x$pool)
+  state_abbr <- ifelse(status$workers == "live", cli::col_green("."), "F")
 
-  state <- vapply(x, function(x) x$get_state(), character(1))
-  state_abbr <- c(
-    "starting" = "S",
-    "idle" = crayon::green("."),
-    "busy" = crayon::red("*"),
-    "finished" = "F"
-  )[state]
-
-  cat_line(n, " session cluster [", paste(state_abbr, collapse = ""), "]")
+  cat_line(x$n, " session cluster [", paste(state_abbr, collapse = ""), "]")
 }
 
 is_cluster <- function(x) inherits(x, "multidplyr_cluster")
 
-#' @export
-`[.multidplyr_cluster` <- function(x, i, ...) {
-  structure(
-    NextMethod(),
-    cleaner = attr(x, "cleaner"),
-    class = "multidplyr_cluster"
-  )
-}
+cluster_bindings <- function(cluster) cluster$env$bindings
+
+cluster_packages <- function(cluster) cluster$env$packages
 
 #' Default cluster
 #'

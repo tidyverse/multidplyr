@@ -33,7 +33,7 @@ cluster
 
 (In the examples, you'll also see the use of `default_cluster()`; this is designed specifically for the constraints of R CMD check, so I don't recommend using it in your own code.)
 
-A cluster consists of multiple R processes created by [callr](https://callr.r-lib.org/). When multiple processes are running at the same time, your operating system will take care of spreading the work across multiple cores.
+A cluster consists of multiple R processes in a single [mizu](https://github.com/shikokuchuo/mizu) pool. The pool work-steals: shards of a computation are claimed by whichever worker is idle next, so load is balanced dynamically. Data lives in shared memory (via [mori](https://cran.r-project.org/package=mori)), so partitioning does not copy the data in the host session, and results that can be represented as views over the shared memory come back without copying. multidplyr runs on 64-bit Linux (kernel >= 5.3), macOS, and Windows; on Linux, shared memory is bounded by `/dev/shm`.
 
 ## Add data
 
@@ -55,7 +55,7 @@ flights1
 
 ### Direct loading
 
-`partition()` is simple to call, but it's relatively expensive because it copies a lot of data between processes. An alternative strategy is for each worker to load the data (from files) it needs directly. 
+`partition()` is simple to call, but the data still has to be serialised to the workers once (their slices of it come back as zero-copy views). An alternative strategy that avoids that transfer is for each worker to load the data (from files) it needs directly. 
 
 To show how that might work, I'll first split flights up by month and save as csv files:
 
@@ -68,19 +68,13 @@ flights %>%
   group_walk(~ vroom::vroom_write(.x, sprintf("%s/month-%02i.csv", path, .y$month)))
 ```
 
-Now we find all the files in the directory, and divide them up so that each worker gets (approximately) the same number of pieces:
+Now we find all the files in the directory, read one file per shard on the workers, and bind the shards into a partitioned data frame with `party_df()`:
 
 ```{r}
 files <- dir(path, full.names = TRUE)
-cluster_assign_partition(cluster, files = files)
-```
+shards <- cluster_map(cluster, files, vroom::vroom)
 
-Then we read in the files on each worker and use `party_df()` to create a partitioned dataframe:
-
-```{r}
-cluster_send(cluster, flights2 <- vroom::vroom(files))
-
-flights2 <- party_df(cluster, "flights2")
+flights2 <- party_df(cluster, shards)
 flights2
 ```
 
@@ -155,3 +149,12 @@ system.time({
 ```
 
 The cost of transmitting messages to the nodes is roughly constant, so the longer the task you're parallelising, the closer you'll get to a linear speed up. 
+
+## Migrating from previous versions
+
+This version of multidplyr replaces the per-worker model with a single work-stealing pool. If you used earlier versions, note:
+
+* `cluster_call()`, `cluster_send()`, `cluster_assign_each()`, and `cluster_assign_partition()` are gone: the pool gives no per-worker guarantees. Use `cluster_map()` to evaluate a function over a vector of inputs on the workers (e.g. reading one file per shard), and `party_df(cluster, shards)` to bind the results.
+* `party_df()` no longer takes the name of a variable that exists on every worker; it takes a list of data frames.
+* `cluster_assign()`, `cluster_copy()`, `cluster_library()`, and `cluster_rm()` no longer modify worker environments. They maintain a registry of values and packages that multidplyr makes visible inside every verb evaluation, so you can keep using them exactly as before.
+* Shards are no longer named or explicitly removed: memory is reclaimed by garbage collection, and dropped `party_df`s release their shared memory automatically.

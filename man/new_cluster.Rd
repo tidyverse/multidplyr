@@ -14,8 +14,11 @@ number of cores in your computer as it will degrade performance.}
 A `multidplyr_cluster` object.
 }
 \description{
-Clusters created with this function will automatically clean up after
-themselves.
+A cluster is a pool of worker R processes managed by
+[mizu](https://github.com/shikokuchuo/mizu). Work is submitted to the pool
+as a whole and stolen by idle workers, so there is no way (or need) to
+address individual workers. Workers are torn down when the cluster is
+garbage collected.
 }
 \examples{
 cluster <- new_cluster(2)

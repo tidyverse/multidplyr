@@ -4,34 +4,31 @@
 \alias{party_df}
 \title{A `party_df` partitioned data frame}
 \usage{
-party_df(cluster, name, auto_rm = FALSE)
+party_df(cluster, shards, groups = character())
 }
 \arguments{
-\item{cluster}{A cluster}
+\item{cluster}{A cluster.}
 
-\item{name}{Name of data frame variable. Must exist on every worker,
-be a data frame, and have the same names.}
+\item{shards}{A list of data frames, one per shard. All shards must have
+the same column names. Grouped data frames are ungrouped and their
+group variables must agree.}
 
-\item{auto_rm}{If `TRUE`, will automatically `rm()` the data frame on
-the workers when this object is created.}
+\item{groups}{A character vector of grouping variables, applied to every
+shard when a verb is evaluated. Defaults to the shards' own grouping.}
 }
 \value{
 An S3 object with class `multidplyr_party_df`.
 }
 \description{
-This S3 class represents a data frame partitioned across workers in a
-cluster. You can use this constructor if you have already spread
-data frames spread across a cluster. If not, start with [partition()]
-instead.
+This S3 class represents a data frame partitioned across a cluster. You
+can use this constructor if you have already computed the shards yourself
+(e.g. by reading one file per shard with [cluster_map()]). If not, start
+with [partition()] instead.
 }
 \examples{
-# If a real example, you might spread file names across the clusters
-# and read in using data.table::fread()/vroom::vroom()/qs2::qs_read().
-cl <- default_cluster()
-cluster_send(cl[1], n <- 10)
-cluster_send(cl[2], n <- 15)
-cluster_send(cl, df <- data.frame(x = runif(n)))
-
-df <- party_df(cl, "df")
-df
+# Read one file per shard on the workers, then bind them into a party_df
+\dontrun{
+shards <- cluster_map(cl, files, vroom::vroom)
+df <- party_df(cl, shards)
+}
 }

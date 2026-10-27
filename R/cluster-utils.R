@@ -1,49 +1,33 @@
-#' Cluster utitility functions
+#' Cluster utility functions
 #'
-#' These functions provide useful helpers for performaning common operations.
-#' `cluster_assign()` assigns the same value on each worker;
-#' `cluster_assign_each()` assigns different values on each worker;
-#' `cluster_assign_partition()` partitions vectors so that each worker gets
-#' (approximately) the same number of pieces.
+#' These functions maintain the cluster's *registry*: the set of values and
+#' packages made visible inside every verb evaluation and [cluster_map()]
+#' call. Use them to give workers access to objects (e.g. helper functions or
+#' lookup tables) and packages from your session.
 #'
-#' @param cluster,.cluster Cluster to work on
-#' @param ... Name-value pairs
-#' @param packages Character vector of packages to load
+#' @param cluster,.cluster Cluster to work on.
+#' @param ... Name-value pairs.
+#' @param packages Character vector of packages to load.
+#' @param names Name of variables to copy or remove.
+#' @param env Environment in which to look for variables to copy.
 #' @name cluster_utils
-#' @return Functions that modify the worker environment invisibly return
-#'   `cluster` so calls can be piped together. The other functions return
-#'   lists with one element for each worker.
+#' @return All functions return `cluster` invisibly, so calls can be piped
+#'   together.
 #' @examples
 #' cl <- default_cluster()
-#' cluster_assign(cl, a = runif(1))
-#' cluster_call(cl, a)
+#' # Make package functions available inside verbs
+#' cluster_library(cl, "dplyr")
 #'
-#' # Assign different values on each cluster
-#' cluster_assign_each(cl, b = c(1, 10))
-#' cluster_call(cl, b)
+#' # Make a value visible inside verbs
+#' cluster_assign(cl, a = 10)
+#' partition(mtcars, cl) %>% mutate(x = mpg + a)
 #'
-#' # Partition a vector so that each worker gets approximately the
-#' # same amount of it
-#' cluster_assign_partition(cl, c = 1:11)
-#' cluster_call(cl, c)
+#' # cluster_copy() is a useful shortcut for existing objects
+#' b <- 20
+#' cluster_copy(cl, "b")
 #'
-#' # If you want different to compute different values on each
-#' # worker, use `cluster_call()` directly:
-#' cluster_call(cl, d <- runif(1))
-#' cluster_call(cl, d)
-#'
-#' # cluster_copy() is a useful shortcut
-#' e <- 10
-#' cluster_copy(cl, "e")
-#'
-#' cluster_call(cl, ls())
-#' cluster_rm(cl, letters[1:5])
-#' cluster_call(cl, ls())
-#'
-#' # Use cluster_library() to load packages
-#' cluster_call(cl, search())
-#' cluster_library(cl, "magrittr")
-#' cluster_call(cl, search())
+#' # Values can be removed again
+#' cluster_rm(cl, c("a", "b"))
 NULL
 
 #' @rdname cluster_utils
@@ -53,46 +37,11 @@ cluster_assign <- function(.cluster, ...) {
   values <- list2(...)
   stopifnot(is_named(values))
 
-  path <- tempfile()
-  on.exit(unlink(path))
-
-  qs2::qs_save(values, path, compress_level = 1, nthreads = 1)
-  cluster_send(.cluster, list2env(qs2::qs_read(!!path), globalenv()))
-
+  .cluster$env$bindings[names(values)] <- lapply(values, mori::share)
   invisible(.cluster)
 }
 
 #' @rdname cluster_utils
-#' @export
-cluster_assign_each <- function(.cluster, ...) {
-  stopifnot(is_cluster(.cluster))
-  values <- tibble(..., .rows = length(.cluster))
-
-  for (i in seq_len(nrow(values))) {
-    cluster_assign(.cluster[i], !!!lapply(values, "[[", i))
-  }
-
-  invisible(.cluster)
-}
-
-#' @export
-#' @rdname cluster_utils
-cluster_assign_partition <- function(.cluster, ...) {
-  stopifnot(is_cluster(.cluster))
-  values <- list(...)
-
-  m <- length(.cluster)
-  values_split <- lapply(values, function(x) {
-    vctrs::vec_split(x, cut(vctrs::vec_seq_along(x), m, labels = FALSE))$val
-  })
-
-  cluster_assign_each(.cluster, !!!values_split)
-  invisible(.cluster)
-}
-
-#' @rdname cluster_utils
-#' @param names Name of variables to copy.
-#' @param env Environment in which to look for varibles to copy.
 #' @export
 cluster_copy <- function(cluster, names, env = caller_env()) {
   stopifnot(is_cluster(cluster))
@@ -101,15 +50,16 @@ cluster_copy <- function(cluster, names, env = caller_env()) {
   cluster_assign(cluster, !!!env_get_list(env, names, inherit = TRUE))
 }
 
-# Always suceeds: only gives warning if object not found, and warnings
-# are not syndicated back to master
 #' @rdname cluster_utils
 #' @export
 cluster_rm <- function(cluster, names) {
   stopifnot(is_cluster(cluster))
   stopifnot(is.character(names))
 
-  cluster_send(cluster, rm(list = !!names, envir = globalenv()))
+  cluster$env$bindings <- cluster$env$bindings[setdiff(
+    names(cluster$env$bindings),
+    names
+  )]
   invisible(cluster)
 }
 
@@ -118,6 +68,6 @@ cluster_rm <- function(cluster, names) {
 cluster_library <- function(cluster, packages) {
   lapply(packages, library, character.only = TRUE)
 
-  cluster_send(cluster, lapply(!!packages, library, character.only = TRUE))
+  cluster$env$packages <- union(cluster$env$packages, packages)
   invisible(cluster)
 }

@@ -4,22 +4,30 @@
 \alias{partition}
 \title{Partition data across workers in a cluster}
 \usage{
-partition(data, cluster)
+partition(data, cluster, n_shards = NULL)
 }
 \arguments{
 \item{data}{Dataset to partition, typically grouped. When grouped, all
-observations in a group will be assigned to the same cluster.}
+observations in a group will be assigned to the same shard.}
 
 \item{cluster}{Cluster to use.}
+
+\item{n_shards}{Number of shards to create. The default creates up to 4
+shards per worker so that the pool can balance load dynamically.}
 }
 \value{
 A [party_df].
 }
 \description{
-Partitioning ensures that all observations in a group end up on the same
-worker. To try and keep the observations on each worker balanced,
-`partition()` uses a greedy algorithm that iteratively assigns each group to
-the worker that currently has the fewest rows.
+Partitioning ensures that all observations in a group end up in the same
+shard. To keep the shards balanced, `partition()` uses a greedy algorithm
+that iteratively assigns each group to the shard that currently has the
+fewest rows.
+}
+\details{
+The data is shared with the workers once (zero copy, via
+[mori::share()]) and sliced into shards in parallel on the workers, so
+`partition()` performs no data copies in the host session.
 }
 \examples{
 library(dplyr)

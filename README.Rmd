@@ -26,6 +26,8 @@ knitr::opts_chunk$set(
 
 multidplyr is a backend for dplyr that partitions a data frame across multiple cores. You tell multidplyr how to split the data up with `partition()` and then the data stays on each node until you explicitly retrieve it with `collect()`. This minimises the amount of time spent moving data around, and maximises parallel performance. This idea is inspired by [partools](https://github.com/matloff/partools) by Norm Matloff and [distributedR](https://github.com/vertica/DistributedR) by the Vertica Analytics team.
 
+This branch of multidplyr is built on [mizu](https://github.com/shikokuchuo/mizu) and [mori](https://cran.r-project.org/package=mori): the workers form a single work-stealing process pool and the data lives in shared memory. `partition()` performs no data copies in the host session — the data is shared once and sliced in parallel on the workers — verb results return as zero-copy views for ungrouped data with plain columns, and cross with a single serialisation (no deep copy) otherwise. Load is balanced dynamically, so a slow shard no longer holds back the others.
+
 Due to the overhead associated with communicating between the nodes, you won't see much performance improvement with simple operations on less than ~10 million observations, and you may want to instead try [dtplyr](https://dtplyr.tidyverse.org/), which uses [data.table](https://R-datatable.com/). multidplyr's strength is found parallelising calls to slower and more complex functions.
 
 ## Installation
@@ -43,6 +45,14 @@ And the development version from [GitHub](https://github.com/) with:
 pak::pak("tidyverse/multidplyr")
 ```
 
+The mizu-based branch additionally needs mizu, which is not yet on CRAN:
+
+``` r
+pak::pak("shikokuchuo/mizu")
+```
+
+multidplyr runs on 64-bit Linux (kernel >= 5.3), macOS, and Windows. The data lives in shared memory, so on Linux the partitions are bounded by `/dev/shm` (typically half of RAM).
+
 ## Usage
 
 To use multidplyr, you first create a cluster of the desired number of workers. Each one of these workers is a separate R process, and the operating system will spread their execution across multiple cores:
@@ -57,17 +67,14 @@ cluster_library(cluster, "dplyr")
 There are two primary ways to use multidplyr. The first, and most efficient, way is to read different files on each worker:
 
 ```{r, eval = FALSE}
-# Create a filename vector containing different values on each worker
-cluster_assign_each(cluster, filename = c("a.csv", "b.csv", "c.csv", "d.csv"))
+# Read one file per shard, in parallel on the workers
+shards <- cluster_map(cluster, c("a.csv", "b.csv", "c.csv", "d.csv"), vroom::vroom)
 
-# Use vroom to quickly load the csvs
-cluster_send(cluster, my_data <- vroom::vroom(filename))
-
-# Create a party_df using the my_data variable on each worker
-my_data <- party_df(cluster, "my_data")
+# Then bind the shards into a party_df
+my_data <- party_df(cluster, shards)
 ```
 
-Alternatively, if you already have the data loaded in the main session, you can use `partition()` to automatically spread it across the workers. Before calling `partition()`, it's a good idea to call `group_by()` to ensure that all of the observations belonging to a group end up on the same worker.
+Alternatively, if you already have the data loaded in the main session, you can use `partition()` to automatically spread it across the workers. Before calling `partition()`, it's a good idea to call `group_by()` to ensure that all of the observations belonging to a group end up in the same shard.
 
 ```{r}
 library(nycflights13)

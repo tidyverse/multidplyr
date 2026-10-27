@@ -9,3 +9,13 @@
       i `y` is a <data.frame> object.
       i Set `copy = TRUE` if `y` can be copied to the same source as `x` (may be slow).
 
+# joining party_dfs needs matching shard counts
+
+    Code
+      inner_join(pf1, pf2, by = "x")
+    Condition
+      Error in `shard_call_dual()`:
+      ! `x` and `y` must have the same number of shards.
+      i `x` has 2 shards and `y` has 3.
+      i Partition both data frames with the same `n_shards` and grouping.
+
